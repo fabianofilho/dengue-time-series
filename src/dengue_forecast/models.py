@@ -8,6 +8,7 @@ Modelos incluídos:
 - XGBoost
 - CatBoost
 - RandomForest
+- Ridge
 - TimesFM (Google, zero-shot foundation model)
 """
 from __future__ import annotations
@@ -29,6 +30,7 @@ except ImportError:
 from catboost import CatBoostRegressor
 from lightgbm import LGBMRegressor
 from sklearn.ensemble import RandomForestRegressor
+from sklearn.linear_model import Ridge
 from skforecast.recursive import ForecasterRecursive
 from statsmodels.tsa.statespace.sarimax import SARIMAX
 from xgboost import XGBRegressor
@@ -119,6 +121,14 @@ def randomforest_forecaster(lags: int = 24) -> SkforecastWrapper:
         estimator=RandomForestRegressor(random_state=42, n_estimators=100),
         lags=lags,
         name="randomforest",
+    )
+
+
+def ridge_forecaster(lags: int = 24) -> SkforecastWrapper:
+    return SkforecastWrapper(
+        estimator=Ridge(random_state=42),
+        lags=lags,
+        name="ridge",
     )
 
 

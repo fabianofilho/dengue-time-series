@@ -30,3 +30,5 @@ env/
 # CatBoost
 catboost_info/
 .venv/
+build/
+paper/figures/*.png

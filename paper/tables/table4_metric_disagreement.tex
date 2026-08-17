@@ -1,0 +1,32 @@
+% gerado por scripts/build_paper_assets.py -- nao editar a mao
+\begin{table}[htbp]
+\centering
+\small
+\caption{Best-performing model per city under each accuracy metric, showing where the
+choice of metric changes the winner.}
+\label{tab:metric-disagreement}
+\begin{tabular}{llllc}
+\toprule
+City & Best by sMAPE & Best by MAE & Best by RMSE & All three agree \\
+\midrule
+Sao Paulo & TimesFM & TimesFM & LightGBM & No \\
+Rio de Janeiro & TimesFM & TimesFM & TimesFM & Yes \\
+Belo Horizonte & XGBoost & TimesFM & TimesFM & No \\
+Brasilia & TimesFM & TimesFM & SARIMAX & No \\
+Fortaleza & TimesFM & TimesFM & TimesFM & Yes \\
+Recife & TimesFM & TimesFM & TimesFM & Yes \\
+Manaus & TimesFM & TimesFM & Random Forest & No \\
+Salvador & TimesFM & TimesFM & TimesFM & Yes \\
+\bottomrule
+\end{tabular}
+
+\vspace{0.5em}
+\begin{minipage}{\textwidth}
+\footnotesize
+The three metrics select the same model in 4 of the eight cities. sMAPE weights
+relative error and therefore rewards accuracy during inter-epidemic troughs, when case
+counts are low; RMSE weights absolute squared error and therefore rewards accuracy at
+epidemic peaks. Reporting a single metric would conceal this disagreement, so the
+primary metric is declared in advance (sMAPE) and the others are reported alongside it.
+\end{minipage}
+\end{table}

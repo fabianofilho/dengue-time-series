@@ -1,0 +1,641 @@
+{
+  "n_cities": 8,
+  "n_models": 6,
+  "n_months_per_city": 180,
+  "n_folds_per_city": 121,
+  "n_predictions_per_model_city": 1452,
+  "n_predictions_total": 69696,
+  "study_period": "2010-01 to 2024-12",
+  "mean_smape_by_model": {
+    "timesfm": 75.31,
+    "catboost": 85.59,
+    "xgboost": 85.9,
+    "randomforest": 89.3,
+    "sarimax": 105.47,
+    "lgbm": 114.57
+  },
+  "median_smape_by_model": {
+    "timesfm": 71.56,
+    "catboost": 78.14,
+    "xgboost": 84.3,
+    "randomforest": 84.86,
+    "sarimax": 101.44,
+    "lgbm": 106.62
+  },
+  "cities_ranked_first_by_model": {
+    "timesfm": 7,
+    "catboost": 0,
+    "xgboost": 1,
+    "randomforest": 0,
+    "sarimax": 0,
+    "lgbm": 0
+  },
+  "timesfm_smape_range": [
+    56.0,
+    97.1
+  ],
+  "best_supervised_by_mean_smape": "catboost",
+  "per_city": {
+    "Sao Paulo": {
+      "timesfm": {
+        "sMAPE": 78.0,
+        "sMAPE_CI": [
+          75.17,
+          80.8
+        ],
+        "MAE": 9616.7,
+        "RMSE": 44023.7
+      },
+      "catboost": {
+        "sMAPE": 78.74,
+        "sMAPE_CI": [
+          75.7,
+          81.71
+        ],
+        "MAE": 9892.3,
+        "RMSE": 43837.6
+      },
+      "xgboost": {
+        "sMAPE": 84.85,
+        "sMAPE_CI": [
+          81.74,
+          87.81
+        ],
+        "MAE": 10686.3,
+        "RMSE": 44490.2
+      },
+      "randomforest": {
+        "sMAPE": 87.33,
+        "sMAPE_CI": [
+          84.42,
+          90.4
+        ],
+        "MAE": 10726.8,
+        "RMSE": 43821.9
+      },
+      "sarimax": {
+        "sMAPE": 87.06,
+        "sMAPE_CI": [
+          83.94,
+          90.17
+        ],
+        "MAE": 17031.3,
+        "RMSE": 104019.9
+      },
+      "lgbm": {
+        "sMAPE": 119.79,
+        "sMAPE_CI": [
+          117.04,
+          122.7
+        ],
+        "MAE": 11224.7,
+        "RMSE": 43379.9
+      }
+    },
+    "Rio de Janeiro": {
+      "timesfm": {
+        "sMAPE": 96.8,
+        "sMAPE_CI": [
+          94.03,
+          99.45
+        ],
+        "MAE": 1965.6,
+        "RMSE": 5958.4
+      },
+      "catboost": {
+        "sMAPE": 126.41,
+        "sMAPE_CI": [
+          123.61,
+          129.12
+        ],
+        "MAE": 4246.4,
+        "RMSE": 7831.5
+      },
+      "xgboost": {
+        "sMAPE": 119.68,
+        "sMAPE_CI": [
+          116.67,
+          122.63
+        ],
+        "MAE": 7554.3,
+        "RMSE": 16234.3
+      },
+      "randomforest": {
+        "sMAPE": 133.27,
+        "sMAPE_CI": [
+          130.52,
+          136.06
+        ],
+        "MAE": 7200.5,
+        "RMSE": 12778.8
+      },
+      "sarimax": {
+        "sMAPE": 135.57,
+        "sMAPE_CI": [
+          132.2,
+          138.85
+        ],
+        "MAE": 2511.6,
+        "RMSE": 6336.2
+      },
+      "lgbm": {
+        "sMAPE": 154.66,
+        "sMAPE_CI": [
+          152.04,
+          157.41
+        ],
+        "MAE": 5813.6,
+        "RMSE": 8474.8
+      }
+    },
+    "Belo Horizonte": {
+      "timesfm": {
+        "sMAPE": 97.07,
+        "sMAPE_CI": [
+          94.04,
+          100.17
+        ],
+        "MAE": 6383.8,
+        "RMSE": 17387.6
+      },
+      "catboost": {
+        "sMAPE": 95.19,
+        "sMAPE_CI": [
+          92.29,
+          98.26
+        ],
+        "MAE": 8473.9,
+        "RMSE": 18281.5
+      },
+      "xgboost": {
+        "sMAPE": 88.73,
+        "sMAPE_CI": [
+          85.34,
+          92.03
+        ],
+        "MAE": 9158.1,
+        "RMSE": 20583.5
+      },
+      "randomforest": {
+        "sMAPE": 90.24,
+        "sMAPE_CI": [
+          86.98,
+          93.62
+        ],
+        "MAE": 8852.0,
+        "RMSE": 19148.1
+      },
+      "sarimax": {
+        "sMAPE": 134.04,
+        "sMAPE_CI": [
+          130.61,
+          137.38
+        ],
+        "MAE": 10754.6,
+        "RMSE": 21658.2
+      },
+      "lgbm": {
+        "sMAPE": 151.35,
+        "sMAPE_CI": [
+          148.68,
+          154.06
+        ],
+        "MAE": 15758.1,
+        "RMSE": 21233.3
+      }
+    },
+    "Brasilia": {
+      "timesfm": {
+        "sMAPE": 74.26,
+        "sMAPE_CI": [
+          71.65,
+          76.86
+        ],
+        "MAE": 3822.9,
+        "RMSE": 12668.9
+      },
+      "catboost": {
+        "sMAPE": 76.62,
+        "sMAPE_CI": [
+          74.29,
+          79.09
+        ],
+        "MAE": 3886.8,
+        "RMSE": 12393.2
+      },
+      "xgboost": {
+        "sMAPE": 83.74,
+        "sMAPE_CI": [
+          81.19,
+          86.42
+        ],
+        "MAE": 4196.1,
+        "RMSE": 12678.4
+      },
+      "randomforest": {
+        "sMAPE": 82.38,
+        "sMAPE_CI": [
+          79.82,
+          85.11
+        ],
+        "MAE": 4202.4,
+        "RMSE": 12647.3
+      },
+      "sarimax": {
+        "sMAPE": 103.16,
+        "sMAPE_CI": [
+          99.9,
+          106.54
+        ],
+        "MAE": 4481.9,
+        "RMSE": 12356.6
+      },
+      "lgbm": {
+        "sMAPE": 100.55,
+        "sMAPE_CI": [
+          97.74,
+          103.3
+        ],
+        "MAE": 4559.1,
+        "RMSE": 12365.9
+      }
+    },
+    "Fortaleza": {
+      "timesfm": {
+        "sMAPE": 64.2,
+        "sMAPE_CI": [
+          62.16,
+          66.22
+        ],
+        "MAE": 1434.3,
+        "RMSE": 2692.8
+      },
+      "catboost": {
+        "sMAPE": 77.54,
+        "sMAPE_CI": [
+          74.95,
+          80.2
+        ],
+        "MAE": 1954.9,
+        "RMSE": 3143.9
+      },
+      "xgboost": {
+        "sMAPE": 89.37,
+        "sMAPE_CI": [
+          86.64,
+          92.09
+        ],
+        "MAE": 2789.7,
+        "RMSE": 4500.2
+      },
+      "randomforest": {
+        "sMAPE": 98.4,
+        "sMAPE_CI": [
+          95.71,
+          101.13
+        ],
+        "MAE": 3275.6,
+        "RMSE": 4406.9
+      },
+      "sarimax": {
+        "sMAPE": 87.61,
+        "sMAPE_CI": [
+          84.48,
+          90.73
+        ],
+        "MAE": 1941.3,
+        "RMSE": 3481.2
+      },
+      "lgbm": {
+        "sMAPE": 102.08,
+        "sMAPE_CI": [
+          98.95,
+          104.96
+        ],
+        "MAE": 2915.3,
+        "RMSE": 3885.4
+      }
+    },
+    "Recife": {
+      "timesfm": {
+        "sMAPE": 67.27,
+        "sMAPE_CI": [
+          64.87,
+          69.58
+        ],
+        "MAE": 737.1,
+        "RMSE": 1473.7
+      },
+      "catboost": {
+        "sMAPE": 83.25,
+        "sMAPE_CI": [
+          80.56,
+          85.95
+        ],
+        "MAE": 1208.0,
+        "RMSE": 1924.1
+      },
+      "xgboost": {
+        "sMAPE": 83.3,
+        "sMAPE_CI": [
+          80.39,
+          86.38
+        ],
+        "MAE": 1229.4,
+        "RMSE": 2005.0
+      },
+      "randomforest": {
+        "sMAPE": 81.22,
+        "sMAPE_CI": [
+          78.47,
+          83.97
+        ],
+        "MAE": 1226.3,
+        "RMSE": 1953.5
+      },
+      "sarimax": {
+        "sMAPE": 105.65,
+        "sMAPE_CI": [
+          102.44,
+          108.79
+        ],
+        "MAE": 1364.1,
+        "RMSE": 2544.1
+      },
+      "lgbm": {
+        "sMAPE": 111.16,
+        "sMAPE_CI": [
+          108.44,
+          113.92
+        ],
+        "MAE": 1616.8,
+        "RMSE": 2197.3
+      }
+    },
+    "Manaus": {
+      "timesfm": {
+        "sMAPE": 56.04,
+        "sMAPE_CI": [
+          53.87,
+          58.17
+        ],
+        "MAE": 269.1,
+        "RMSE": 526.0
+      },
+      "catboost": {
+        "sMAPE": 70.93,
+        "sMAPE_CI": [
+          69.05,
+          72.82
+        ],
+        "MAE": 348.5,
+        "RMSE": 541.7
+      },
+      "xgboost": {
+        "sMAPE": 65.48,
+        "sMAPE_CI": [
+          63.48,
+          67.49
+        ],
+        "MAE": 324.3,
+        "RMSE": 505.9
+      },
+      "randomforest": {
+        "sMAPE": 67.87,
+        "sMAPE_CI": [
+          66.03,
+          69.71
+        ],
+        "MAE": 328.3,
+        "RMSE": 505.8
+      },
+      "sarimax": {
+        "sMAPE": 99.73,
+        "sMAPE_CI": [
+          96.27,
+          103.12
+        ],
+        "MAE": 352.9,
+        "RMSE": 604.6
+      },
+      "lgbm": {
+        "sMAPE": 94.8,
+        "sMAPE_CI": [
+          92.4,
+          97.3
+        ],
+        "MAE": 523.9,
+        "RMSE": 700.0
+      }
+    },
+    "Salvador": {
+      "timesfm": {
+        "sMAPE": 68.85,
+        "sMAPE_CI": [
+          66.52,
+          71.17
+        ],
+        "MAE": 423.3,
+        "RMSE": 713.3
+      },
+      "catboost": {
+        "sMAPE": 76.04,
+        "sMAPE_CI": [
+          73.76,
+          78.4
+        ],
+        "MAE": 489.9,
+        "RMSE": 731.5
+      },
+      "xgboost": {
+        "sMAPE": 72.08,
+        "sMAPE_CI": [
+          69.37,
+          74.68
+        ],
+        "MAE": 508.5,
+        "RMSE": 802.6
+      },
+      "randomforest": {
+        "sMAPE": 73.72,
+        "sMAPE_CI": [
+          71.13,
+          76.24
+        ],
+        "MAE": 513.8,
+        "RMSE": 762.4
+      },
+      "sarimax": {
+        "sMAPE": 90.98,
+        "sMAPE_CI": [
+          87.6,
+          94.16
+        ],
+        "MAE": 566.7,
+        "RMSE": 906.8
+      },
+      "lgbm": {
+        "sMAPE": 82.16,
+        "sMAPE_CI": [
+          79.84,
+          84.44
+        ],
+        "MAE": 554.1,
+        "RMSE": 749.9
+      }
+    }
+  },
+  "descriptive": {
+    "Sao Paulo": {
+      "city": "Sao Paulo",
+      "uf": "SP",
+      "region": "Southeast",
+      "n": 180,
+      "mean": 9509.383333333333,
+      "median": 1198.5,
+      "min": 255,
+      "max": 331402,
+      "cv": 431.2742545561145,
+      "total": 1711689
+    },
+    "Belo Horizonte": {
+      "city": "Belo Horizonte",
+      "uf": "MG",
+      "region": "Southeast",
+      "n": 180,
+      "mean": 6034.211111111111,
+      "median": 988.5,
+      "min": 148,
+      "max": 122453,
+      "cv": 264.2161523810357,
+      "total": 1086158
+    },
+    "Brasilia": {
+      "city": "Brasilia",
+      "uf": "DF",
+      "region": "Central-West",
+      "n": 180,
+      "mean": 4025.25,
+      "median": 1134.5,
+      "min": 118,
+      "max": 98704,
+      "cv": 281.76996833668284,
+      "total": 724545
+    },
+    "Rio de Janeiro": {
+      "city": "Rio de Janeiro",
+      "uf": "RJ",
+      "region": "Southeast",
+      "n": 180,
+      "mean": 3546.85,
+      "median": 635.5,
+      "min": 28,
+      "max": 65260,
+      "cv": 245.54827652616834,
+      "total": 638433
+    },
+    "Fortaleza": {
+      "city": "Fortaleza",
+      "uf": "CE",
+      "region": "Northeast",
+      "n": 180,
+      "mean": 2122.4444444444443,
+      "median": 1018.0,
+      "min": 133,
+      "max": 18986,
+      "cv": 143.9786291937639,
+      "total": 382040
+    },
+    "Recife": {
+      "city": "Recife",
+      "uf": "PE",
+      "region": "Northeast",
+      "n": 180,
+      "mean": 1031.0722222222223,
+      "median": 487.0,
+      "min": 67,
+      "max": 8504,
+      "cv": 135.0987348541731,
+      "total": 185593
+    },
+    "Manaus": {
+      "city": "Manaus",
+      "uf": "AM",
+      "region": "North",
+      "n": 180,
+      "mean": 734.9,
+      "median": 264.5,
+      "min": 69,
+      "max": 21605,
+      "cv": 286.14759966817974,
+      "total": 132282
+    },
+    "Salvador": {
+      "city": "Salvador",
+      "uf": "BA",
+      "region": "Northeast",
+      "n": 180,
+      "mean": 648.9833333333333,
+      "median": 364.5,
+      "min": 19,
+      "max": 4331,
+      "cv": 107.72483570975959,
+      "total": 116817
+    }
+  },
+  "metric_disagreement": [
+    {
+      "city": "Sao Paulo",
+      "smape": "timesfm",
+      "mae": "timesfm",
+      "rmse": "lgbm"
+    },
+    {
+      "city": "Rio de Janeiro",
+      "smape": "timesfm",
+      "mae": "timesfm",
+      "rmse": "timesfm"
+    },
+    {
+      "city": "Belo Horizonte",
+      "smape": "xgboost",
+      "mae": "timesfm",
+      "rmse": "timesfm"
+    },
+    {
+      "city": "Brasilia",
+      "smape": "timesfm",
+      "mae": "timesfm",
+      "rmse": "sarimax"
+    },
+    {
+      "city": "Fortaleza",
+      "smape": "timesfm",
+      "mae": "timesfm",
+      "rmse": "timesfm"
+    },
+    {
+      "city": "Recife",
+      "smape": "timesfm",
+      "mae": "timesfm",
+      "rmse": "timesfm"
+    },
+    {
+      "city": "Manaus",
+      "smape": "timesfm",
+      "mae": "timesfm",
+      "rmse": "randomforest"
+    },
+    {
+      "city": "Salvador",
+      "smape": "timesfm",
+      "mae": "timesfm",
+      "rmse": "timesfm"
+    }
+  ],
+  "bootstrap": {
+    "replicates": 2000,
+    "seed": 42,
+    "method": "percentile"
+  }
+}

@@ -1,7 +1,10 @@
 PYTHON ?= /opt/miniconda3/envs/dsc/bin/python
 UV ?= $(HOME)/.local/bin/uv
 
-.PHONY: setup fetch-data process-data benchmark-all benchmark-sp
+TECTONIC ?= tectonic
+
+.PHONY: setup fetch-data process-data benchmark-all benchmark-sp \
+        paper-assets paper paper-clean
 
 setup:
 	$(UV) pip install --python $(PYTHON) -r requirements.txt
@@ -31,3 +34,16 @@ benchmark-all:
 			--horizon 12 \
 			--min-train-size 48; \
 	done
+
+# --- manuscrito -------------------------------------------------------------
+# paper-assets recalcula toda tabela e figura dos dados brutos. Rode sempre
+# antes de compilar: as tabelas em paper/tables/ sao geradas, nao editadas.
+paper-assets:
+	$(PYTHON) scripts/build_paper_assets.py
+
+paper: paper-assets
+	cd paper && $(TECTONIC) -X compile manuscript.tex --outdir ../build
+	@echo "PDF em build/manuscript.pdf"
+
+paper-clean:
+	rm -rf build paper/tables paper/figures paper/verified_numbers.json

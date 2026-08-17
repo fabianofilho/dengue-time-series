@@ -42,6 +42,7 @@ paper-assets:
 	$(PYTHON) scripts/build_paper_assets.py
 
 paper: paper-assets
+	mkdir -p build
 	cd paper && $(TECTONIC) -X compile manuscript.tex --outdir ../build
 	@echo "PDF em build/manuscript.pdf"
 

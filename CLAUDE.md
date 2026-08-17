@@ -66,8 +66,10 @@ Instruções do usuário sempre sobrepõe este arquivo.
 ## Sobre este projeto
 
 Benchmark comparativo de modelos de forecasting de dengue em 8 capitais brasileiras
-(2010 a 2024), com dados mensais do InfoDengue (Fiocruz/FGV), mais caracterizacao
-epidemiologica por clusters temporais e espaco-temporais via SaTScan.
+(2010 a 2024), com dados mensais do InfoDengue (Fiocruz/FGV).
+
+Escopo: SaTScan foi descartado do artigo por decisao do Fabiano. Nao reintroduzir
+analise de cluster sem pedido explicito.
 
 Consolida o trabalho do repo fabianofilho/dengue-timeseries-skforecast com o
 benchmark de 8 cidades e agregacao por regiao do fork de falco-md (Wilson Falco).
@@ -104,3 +106,13 @@ magnitude. Ao adicionar modelo novo, sempre conferir MAE e RMSE tambem.
 - `python -m venv .venv && .venv/Scripts/python.exe -m pip install -r requirements.txt` - setup
 - `jupyter lab notebooks/04_all_cities_and_region_benchmark.ipynb` - benchmark das 8 cidades
 - `make` - ver alvos disponiveis
+
+## Armadilha conhecida: populacao do IBGE
+Nao usar a tabela de estimativas (SIDRA 6579) direto como denominador. Ela
+mistura dois regimes: ate 2021 e a projecao anterior ao Censo 2022, que o censo
+revisou para baixo entre -7,6% (Sao Paulo) e -16,6% (Salvador). Concatenar gera
+degrau em 2022 em todas as cidades, e qualquer analise de taxa le isso como
+sinal epidemiologico.
+
+scripts/fetch_ibge.py ancora nos Censos 2010 e 2022 e interpola
+geometricamente. Variacao anual maxima resultante: 1,14% (Manaus).

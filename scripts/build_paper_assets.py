@@ -118,6 +118,32 @@ def load_series() -> dict[str, pd.Series]:
     return out
 
 
+def load_population() -> dict[str, pd.Series]:
+    """Populacao mensal por cidade, interpolada da serie anual do IBGE.
+
+    A serie anual esta ancorada nos Censos 2010 e 2022 (ver scripts/fetch_ibge.py).
+    Aqui ela vira mensal por interpolacao linear entre os pontos de 1 de julho,
+    que e a data de referencia das estimativas do IBGE.
+    """
+    df = pd.read_csv(ROOT / "data" / "raw" / "ibge_population.csv")
+    out = {}
+    for name in (v[0] for v in CITIES.values()):
+        sub = df[df["city"] == name].sort_values("year")
+        anchors = pd.Series(
+            sub["population"].to_numpy(dtype=float),
+            index=pd.to_datetime([f"{y}-07-01" for y in sub["year"]]),
+        )
+        idx = pd.date_range("2010-01-01", "2024-12-01", freq="MS")
+        out[name] = (
+            anchors.reindex(anchors.index.union(idx))
+            .interpolate(method="time")
+            .bfill()
+            .ffill()
+            .reindex(idx)
+        )
+    return out
+
+
 def load_predictions() -> dict[str, pd.DataFrame]:
     out = {}
     for slug, (name, _, _) in CITIES.items():
@@ -180,42 +206,54 @@ def write(path: Path, content: str) -> None:
 # --------------------------------------------------------------------------- #
 # Tabela 1: descritiva
 # --------------------------------------------------------------------------- #
-def table1(series: dict[str, pd.Series]) -> tuple[str, list[dict]]:
+def table1(
+    series: dict[str, pd.Series], pop: dict[str, pd.Series]
+) -> tuple[str, list[dict]]:
     rows = []
     for name, (city, uf, region) in ((v[0], v) for v in CITIES.values()):
         s = series[city]
+        p = pop[city]
+        inc = s / p * 100_000  # incidencia mensal por 100 mil habitantes
         rows.append(
             {
                 "city": city,
                 "uf": uf,
                 "region": region,
                 "n": int(s.size),
-                "mean": float(s.mean()),
                 "median": float(s.median()),
-                "min": int(s.min()),
                 "max": int(s.max()),
                 "cv": float(s.std(ddof=1) / s.mean() * 100),
                 "total": int(s.sum()),
+                "pop2022": int(p.loc["2022-07-01"]),
+                "inc_mean_annual": float(inc.mean() * 12),
+                "inc_median": float(inc.median()),
+                "inc_max": float(inc.max()),
             }
         )
-    rows.sort(key=lambda r: -r["total"])
+    rows.sort(key=lambda r: -r["inc_mean_annual"])
 
     body = "\n".join(
-        rf"{tex_escape(r['city'])} ({r['uf']}) & {r['region']} & {r['n']} & "
-        rf"{r['mean']:,.0f} & {r['median']:,.0f} & {r['min']:,} & {r['max']:,} & "
-        rf"{r['cv']:.0f} & {r['total']:,} \\"
+        rf"{tex_escape(r['city'])} ({r['uf']}) & {r['region']} & "
+        rf"{r['pop2022'] / 1e6:.2f} & {r['total']:,} & {r['median']:,.0f} & "
+        rf"{r['max']:,} & {r['cv']:.0f} & "
+        rf"{r['inc_mean_annual']:,.0f} & {r['inc_median']:.0f} & {r['inc_max']:,.0f} \\"
         for r in rows
     )
     tex = rf"""% gerado por scripts/build_paper_assets.py -- nao editar a mao
 \begin{{table}}[htbp]
 \centering
-\small
-\caption{{Descriptive statistics of the monthly notified dengue case series,
-eight Brazilian state capitals, January 2010 to December 2024.}}
+\footnotesize
+\setlength{{\tabcolsep}}{{4pt}}
+\caption{{Notified dengue burden in eight Brazilian state capitals, January 2010 to
+December 2024: monthly case counts and population-standardised incidence.}}
 \label{{tab:descriptive}}
-\begin{{tabular}}{{llrrrrrrr}}
+\begin{{tabular}}{{llrrrrrrrr}}
 \toprule
-City & Region & $n$ & Mean & Median & Min & Max & CV (\%) & Total \\
+ & & Pop. 2022 & \multicolumn{{4}}{{c}}{{Monthly cases}}
+ & \multicolumn{{3}}{{c}}{{Incidence per 100{{,}}000}} \\
+\cmidrule(lr){{4-7}} \cmidrule(lr){{8-10}}
+City & Region & (millions) & Total & Median & Max & CV (\%)
+ & Annual & Median & Max \\
 \midrule
 {body}
 \bottomrule
@@ -224,9 +262,13 @@ City & Region & $n$ & Mean & Median & Min & Max & CV (\%) & Total \\
 \vspace{{0.5em}}
 \begin{{minipage}}{{\textwidth}}
 \footnotesize
-CV: coefficient of variation (standard deviation divided by the mean, expressed as a
-percentage). $n$: number of monthly observations. Rows are sorted by the 15-year case
-total. Source: InfoDengue (Fiocruz/FGV).
+Each city contributed 180 monthly observations. CV: coefficient of variation of the
+monthly case count (standard deviation divided by the mean, as a percentage). Incidence
+columns are notified cases per 100{{,}}000 inhabitants; Annual is the mean monthly
+incidence multiplied by twelve, Median and Max are monthly values. Rows are sorted by
+mean annual incidence, which reorders the table relative to absolute counts. Population
+denominators are interpolated monthly from an annual series anchored on the 2010 and 2022
+Censuses (see Methods). Case source: InfoDengue (Fiocruz/FGV); population source: IBGE.
 \end{{minipage}}
 \end{{table}}
 """
@@ -643,6 +685,7 @@ def fig5_observed_vs_predicted(preds: dict[str, pd.DataFrame]) -> None:
 def main() -> None:
     print("Carregando dados...")
     series = load_series()
+    pop = load_population()
     preds = load_predictions()
 
     print(f"Calculando metricas e bootstrap ({BOOT_N} replicas)...")
@@ -651,7 +694,7 @@ def main() -> None:
     print("  escrito results/comparisons/metrics_with_ci.csv")
 
     print("Gerando tabelas LaTeX...")
-    t1, desc_rows = table1(series)
+    t1, desc_rows = table1(series, pop)
     write(TABLES / "table1_descriptive.tex", t1)
     write(TABLES / "table2_smape.tex", table2(met))
     write(TABLES / "table3_mae_rmse.tex", table3(met))

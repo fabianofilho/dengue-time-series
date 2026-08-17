@@ -127,11 +127,9 @@ inference. Whether that transfers to dengue counts, which are volatile, strongly
 and punctuated by epidemics an order of magnitude above baseline, has not been tested.
 
 This study therefore aimed to: (i) describe the evolution of dengue incidence across
-eight Brazilian state capitals over 15 years; (ii) benchmark a zero-shot foundation model
-against six purpose-trained forecasting models under a single standardised
-rolling-origin validation design; and (iii) characterise periods of critical
-epidemiological burden using scan statistics, in order to situate forecast error against
-the epidemic phases that matter operationally.
+eight Brazilian state capitals over 15 years; and (ii) benchmark a zero-shot foundation
+model against six purpose-trained forecasting models under a single standardised
+rolling-origin validation design.
 
 % =============================================================================
 \section{Methods}
@@ -155,6 +153,17 @@ Notification data were obtained through the InfoDengue public API
 \citep{Codeco2018infodengue}. Weekly counts for epidemiological week 1 of 2010 through
 week 52 of 2024 were aggregated to calendar months using the month-start convention,
 yielding 180 monthly observations per city and 1{,}440 city-months in total.
+
+Population denominators, used only to express burden as incidence in
+Table~\ref{tab:descriptive} and not in any forecasting model, come from IBGE. We anchored
+the annual series on the two actual enumerations, the 2010 and 2022 Censuses, and
+interpolated geometrically between them at a constant annual rate, then extrapolated 2023
+and 2024 at the same rate; monthly values were interpolated linearly from mid-year
+anchors. We did not use the published intercensal estimate series, because it mixes two
+incompatible regimes: values up to 2021 come from the pre-2022 projection, which the
+Census revised downward by between 7.6\% (S\~ao Paulo) and 16.6\% (Salvador). Splicing
+the two produces a discontinuity in 2022 in every city, and any rate-based analysis would
+read that discontinuity as an epidemiological signal.
 
 \subsection{Outcome and predictors}
 
@@ -253,23 +262,6 @@ these intervals therefore understate the true uncertainty and are interpreted th
 as a lower bound on the spread rather than as a formal test. No hypothesis test of
 model superiority was performed, and none is claimed.
 
-\subsection{Cluster analysis}
-
-Temporal and space-time clusters of dengue incidence were to be estimated with SaTScan
-version 10.1 under a discrete Poisson model, using city-month population as the expected
-count, with a maximum temporal window of 50\% of the study period and significance
-assessed by 999 Monte Carlo replications at $p < 0.05$. Three scans were planned: a
-purely temporal high-rate scan per city, a space-time scan across all eight cities, and a
-purely temporal low-rate scan per city to characterise inter-epidemic troughs. Population
-denominators were to come from IBGE intercensal estimates (2010 to 2022) and projections
-(2023 to 2024), with city centroids from the IBGE Malha Municipal.
-
-\missing{The SaTScan analysis has not been run. No cluster output, population denominator
-file or centroid file exists in the project repository. Every cluster result in
-Section~\ref{sec:clusters} is a placeholder. Either the analysis is executed and the
-results inserted, or this objective and the corresponding aim in the Introduction are
-removed before submission.}
-
 \subsection{Software}
 
 Python 3.12 with pandas, scikit-learn 1.3, skforecast, statsmodels 0.14, LightGBM,
@@ -283,14 +275,23 @@ reproducible from the repository by running \texttt{scripts/build\_paper\_assets
 \subsection{Descriptive characteristics}
 
 Table~\ref{tab:descriptive} summarises the eight series and Figure~\ref{fig:series} shows
-them. The cities differ by more than an order of magnitude in burden: S\~ao Paulo
-accumulated 1{,}711{,}689 notified cases over the period against 116{,}817 in Salvador.
-They also differ in volatility. The coefficient of variation ranges from 108\% in
+them. In absolute counts the cities differ by more than an order of magnitude: S\~ao
+Paulo accumulated 1{,}711{,}689 notified cases over the period against 116{,}817 in
+Salvador. Standardising by population reorders them substantially. Belo Horizonte carries
+the highest burden at a mean 3{,}104 notified cases per 100{,}000 inhabitants per year,
+followed by Bras\'ilia at 1{,}730; S\~ao Paulo, first by raw count, falls to fourth at
+996, and Salvador is lowest at 311. The gap between the highest and lowest incidence is
+tenfold, against a fifteenfold gap in raw counts driven largely by city size.
+
+The series are also extremely volatile, and this matters more for forecasting than the
+level does. The coefficient of variation of the monthly count ranges from 108\% in
 Salvador to 431\% in S\~ao Paulo, where the median month recorded 1{,}198 cases and the
-peak month 331{,}402, a ratio of about 277 to 1. Manaus shows the same pattern at a smaller
-scale (median 264, maximum 21{,}605). This concentration of the case burden into a
-handful of months is the central difficulty for every model evaluated here, and it is
-what separates the metrics in Section~\ref{sec:disagreement}.
+peak month 331{,}402, a ratio of about 277 to 1. Manaus shows the same pattern at a
+smaller scale (median 264, maximum 21{,}605). Median monthly incidence is between 10 and
+42 per 100{,}000 in every city, while peak monthly incidence reaches 5{,}307 in Belo
+Horizonte, so the burden is concentrated in a handful of months rather than spread across
+the series. That concentration is the central difficulty for every model evaluated here,
+and it is what separates the metrics in Section~\ref{sec:disagreement}.
 
 \input{tables/table1_descriptive}
 
@@ -413,15 +414,6 @@ baseline and neither reproduces the 2024 peak. CatBoost is shown as the best
 purpose-trained model by mean sMAPE.}
 \label{fig:obspred}
 \end{figure}
-
-\subsection{Temporal and space-time clusters}
-\label{sec:clusters}
-
-\missing{Entire subsection. Requires the SaTScan analysis described in Methods: high-rate
-purely temporal clusters per city, the space-time scan across all eight cities, and
-low-rate clusters marking inter-epidemic troughs, each with start and end dates, observed
-and expected counts, relative risk, log likelihood ratio and $p$-value. Nothing in this
-subsection can be written from the data currently in the repository.}
 
 % =============================================================================
 \section{Discussion}

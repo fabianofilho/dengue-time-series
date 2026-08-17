@@ -1,30 +1,39 @@
 % gerado por scripts/build_paper_assets.py -- nao editar a mao
 \begin{table}[htbp]
 \centering
-\small
-\caption{Descriptive statistics of the monthly notified dengue case series,
-eight Brazilian state capitals, January 2010 to December 2024.}
+\footnotesize
+\setlength{\tabcolsep}{4pt}
+\caption{Notified dengue burden in eight Brazilian state capitals, January 2010 to
+December 2024: monthly case counts and population-standardised incidence.}
 \label{tab:descriptive}
-\begin{tabular}{llrrrrrrr}
+\begin{tabular}{llrrrrrrrr}
 \toprule
-City & Region & $n$ & Mean & Median & Min & Max & CV (\%) & Total \\
+ & & Pop. 2022 & \multicolumn{4}{c}{Monthly cases}
+ & \multicolumn{3}{c}{Incidence per 100{,}000} \\
+\cmidrule(lr){4-7} \cmidrule(lr){8-10}
+City & Region & (millions) & Total & Median & Max & CV (\%)
+ & Annual & Median & Max \\
 \midrule
-Sao Paulo (SP) & Southeast & 180 & 9,509 & 1,198 & 255 & 331,402 & 431 & 1,711,689 \\
-Belo Horizonte (MG) & Southeast & 180 & 6,034 & 988 & 148 & 122,453 & 264 & 1,086,158 \\
-Brasilia (DF) & Central-West & 180 & 4,025 & 1,134 & 118 & 98,704 & 282 & 724,545 \\
-Rio de Janeiro (RJ) & Southeast & 180 & 3,547 & 636 & 28 & 65,260 & 246 & 638,433 \\
-Fortaleza (CE) & Northeast & 180 & 2,122 & 1,018 & 133 & 18,986 & 144 & 382,040 \\
-Recife (PE) & Northeast & 180 & 1,031 & 487 & 67 & 8,504 & 135 & 185,593 \\
-Manaus (AM) & North & 180 & 735 & 264 & 69 & 21,605 & 286 & 132,282 \\
-Salvador (BA) & Northeast & 180 & 649 & 364 & 19 & 4,331 & 108 & 116,817 \\
+Belo Horizonte (MG) & Southeast & 2.32 & 1,086,158 & 988 & 122,453 & 264 & 3,104 & 42 & 5,307 \\
+Brasilia (DF) & Central-West & 2.82 & 724,545 & 1,134 & 98,704 & 282 & 1,730 & 42 & 3,461 \\
+Fortaleza (CE) & Northeast & 2.43 & 382,040 & 1,018 & 18,986 & 144 & 1,044 & 42 & 775 \\
+Sao Paulo (SP) & Southeast & 11.45 & 1,711,689 & 1,198 & 331,402 & 431 & 996 & 11 & 2,887 \\
+Recife (PE) & Northeast & 1.49 & 185,593 & 487 & 8,504 & 135 & 817 & 33 & 560 \\
+Rio de Janeiro (RJ) & Southeast & 6.21 & 638,433 & 636 & 65,260 & 246 & 679 & 10 & 1,035 \\
+Manaus (AM) & North & 2.06 & 132,282 & 264 & 21,605 & 286 & 468 & 14 & 1,191 \\
+Salvador (BA) & Northeast & 2.42 & 116,817 & 364 & 4,331 & 108 & 311 & 15 & 182 \\
 \bottomrule
 \end{tabular}
 
 \vspace{0.5em}
 \begin{minipage}{\textwidth}
 \footnotesize
-CV: coefficient of variation (standard deviation divided by the mean, expressed as a
-percentage). $n$: number of monthly observations. Rows are sorted by the 15-year case
-total. Source: InfoDengue (Fiocruz/FGV).
+Each city contributed 180 monthly observations. CV: coefficient of variation of the
+monthly case count (standard deviation divided by the mean, as a percentage). Incidence
+columns are notified cases per 100{,}000 inhabitants; Annual is the mean monthly
+incidence multiplied by twelve, Median and Max are monthly values. Rows are sorted by
+mean annual incidence, which reorders the table relative to absolute counts. Population
+denominators are interpolated monthly from an annual series anchored on the 2010 and 2022
+Censuses (see Methods). Case source: InfoDengue (Fiocruz/FGV); population source: IBGE.
 \end{minipage}
 \end{table}

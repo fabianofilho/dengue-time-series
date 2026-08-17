@@ -6,26 +6,26 @@
 \caption{Forecasting accuracy by model and city: mean absolute error (MAE) and root
 mean squared error (RMSE), in notified cases per month.}
 \label{tab:mae-rmse}
-\begin{tabular}{llcccccc}
+\begin{tabular}{llccccccc}
 \toprule
-City & Metric & TimesFM & CatBoost & XGBoost & Random Forest & SARIMAX & LightGBM \\
+City & Metric & TimesFM & CatBoost & XGBoost & Random Forest & SARIMAX & Ridge & LightGBM \\
 \midrule
-\multirow{2}{*}{Sao Paulo} & MAE & \textbf{9,617} & 9,892 & 10,686 & 10,727 & 17,031 & 11,225 \\
- & RMSE & 44,024 & 43,838 & 44,490 & 43,822 & 104,020 & \textbf{43,380} \\[2pt]
-\multirow{2}{*}{Rio de Janeiro} & MAE & \textbf{1,966} & 4,246 & 7,554 & 7,200 & 2,512 & 5,814 \\
- & RMSE & \textbf{5,958} & 7,832 & 16,234 & 12,779 & 6,336 & 8,475 \\[2pt]
-\multirow{2}{*}{Belo Horizonte} & MAE & \textbf{6,384} & 8,474 & 9,158 & 8,852 & 10,755 & 15,758 \\
- & RMSE & \textbf{17,388} & 18,281 & 20,584 & 19,148 & 21,658 & 21,233 \\[2pt]
-\multirow{2}{*}{Brasilia} & MAE & \textbf{3,823} & 3,887 & 4,196 & 4,202 & 4,482 & 4,559 \\
- & RMSE & 12,669 & 12,393 & 12,678 & 12,647 & \textbf{12,357} & 12,366 \\[2pt]
-\multirow{2}{*}{Fortaleza} & MAE & \textbf{1,434} & 1,955 & 2,790 & 3,276 & 1,941 & 2,915 \\
- & RMSE & \textbf{2,693} & 3,144 & 4,500 & 4,407 & 3,481 & 3,885 \\[2pt]
-\multirow{2}{*}{Recife} & MAE & \textbf{737} & 1,208 & 1,229 & 1,226 & 1,364 & 1,617 \\
- & RMSE & \textbf{1,474} & 1,924 & 2,005 & 1,954 & 2,544 & 2,197 \\[2pt]
-\multirow{2}{*}{Manaus} & MAE & \textbf{269} & 349 & 324 & 328 & 353 & 524 \\
- & RMSE & 526 & 542 & 506 & \textbf{506} & 605 & 700 \\[2pt]
-\multirow{2}{*}{Salvador} & MAE & \textbf{423} & 490 & 508 & 514 & 567 & 554 \\
- & RMSE & \textbf{713} & 731 & 803 & 762 & 907 & 750 \\[2pt]
+\multirow{2}{*}{Sao Paulo} & MAE & \textbf{9,617} & 9,892 & 10,686 & 10,727 & 17,031 & 11,588 & 11,225 \\
+ & RMSE & 44,024 & 43,838 & 44,490 & 43,822 & 104,020 & 44,710 & \textbf{43,380} \\[2pt]
+\multirow{2}{*}{Rio de Janeiro} & MAE & \textbf{1,966} & 4,246 & 7,554 & 7,200 & 2,512 & 5,043 & 5,814 \\
+ & RMSE & \textbf{5,958} & 7,832 & 16,234 & 12,779 & 6,336 & 8,743 & 8,475 \\[2pt]
+\multirow{2}{*}{Belo Horizonte} & MAE & \textbf{6,384} & 8,474 & 9,158 & 8,852 & 10,755 & 8,184 & 15,758 \\
+ & RMSE & 17,388 & 18,281 & 20,584 & 19,148 & 21,658 & \textbf{17,197} & 21,233 \\[2pt]
+\multirow{2}{*}{Brasilia} & MAE & \textbf{3,823} & 3,887 & 4,196 & 4,202 & 4,482 & 4,240 & 4,559 \\
+ & RMSE & 12,669 & 12,393 & 12,678 & 12,647 & \textbf{12,357} & 12,554 & 12,366 \\[2pt]
+\multirow{2}{*}{Fortaleza} & MAE & \textbf{1,434} & 1,955 & 2,790 & 3,276 & 1,941 & 1,965 & 2,915 \\
+ & RMSE & \textbf{2,693} & 3,144 & 4,500 & 4,407 & 3,481 & 3,021 & 3,885 \\[2pt]
+\multirow{2}{*}{Recife} & MAE & \textbf{737} & 1,208 & 1,229 & 1,226 & 1,364 & 1,410 & 1,617 \\
+ & RMSE & \textbf{1,474} & 1,924 & 2,005 & 1,954 & 2,544 & 3,204 & 2,197 \\[2pt]
+\multirow{2}{*}{Manaus} & MAE & \textbf{269} & 349 & 324 & 328 & 353 & 279 & 524 \\
+ & RMSE & 526 & 542 & 506 & \textbf{506} & 605 & 506 & 700 \\[2pt]
+\multirow{2}{*}{Salvador} & MAE & \textbf{423} & 490 & 508 & 514 & 567 & 516 & 554 \\
+ & RMSE & \textbf{713} & 731 & 803 & 762 & 907 & 766 & 750 \\[2pt]
 \bottomrule
 \end{tabular}
 

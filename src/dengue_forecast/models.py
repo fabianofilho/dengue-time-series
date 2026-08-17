@@ -31,6 +31,7 @@ from catboost import CatBoostRegressor
 from lightgbm import LGBMRegressor
 from sklearn.ensemble import RandomForestRegressor
 from sklearn.linear_model import Ridge
+from sklearn.preprocessing import StandardScaler
 from skforecast.recursive import ForecasterRecursive
 from statsmodels.tsa.statespace.sarimax import SARIMAX
 from xgboost import XGBRegressor
@@ -80,13 +81,19 @@ class SarimaxForecaster(Forecaster):
 class SkforecastWrapper(Forecaster):
     """Wrapper genérico para modelos de ML usando ForecasterRecursive do skforecast."""
 
-    def __init__(self, estimator, lags: int = 24, name: str | None = None):
+    def __init__(self, estimator, lags: int = 24, name: str | None = None, transformer_y=None):
         self.estimator = estimator
         self.lags = lags
         self.name = name or estimator.__class__.__name__.lower().replace("regressor", "")
+        # Só os estimadores sensíveis a escala precisam disto. As árvores são
+        # invariantes a escala e passam None, o que preserva os resultados já
+        # publicados delas.
+        self.transformer_y = transformer_y
 
     def forecast(self, train: pd.Series, horizon: int) -> np.ndarray:
-        forecaster = ForecasterRecursive(estimator=self.estimator, lags=self.lags)
+        forecaster = ForecasterRecursive(
+            estimator=self.estimator, lags=self.lags, transformer_y=self.transformer_y
+        )
         forecaster.fit(y=train)
         predictions = forecaster.predict(steps=horizon)
         return np.maximum(0, predictions.to_numpy())
@@ -125,10 +132,21 @@ def randomforest_forecaster(lags: int = 24) -> SkforecastWrapper:
 
 
 def ridge_forecaster(lags: int = 24) -> SkforecastWrapper:
+    """Ridge sobre lags padronizados.
+
+    O StandardScaler nao e cosmetico. Sem ele a penalidade L2 com alpha=1.0 e
+    desprezivel diante de contagens na casa dos milhares, e nos folds iniciais,
+    onde o numero de linhas de treino se aproxima do numero de lags, o ajuste
+    fica quase singular. A previsao recursiva de 12 passos amplifica isso: em
+    Salvador, o fold com 49 meses de treino produzia 8.7e14 casos e sozinho
+    contaminava o MAE e o RMSE agregados da cidade. Com padronizacao nenhum
+    fold diverge. As arvores nao precisam disto por serem invariantes a escala.
+    """
     return SkforecastWrapper(
         estimator=Ridge(random_state=42),
         lags=lags,
         name="ridge",
+        transformer_y=StandardScaler(),
     )
 
 

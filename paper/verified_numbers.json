@@ -1,10 +1,10 @@
 {
   "n_cities": 8,
-  "n_models": 6,
+  "n_models": 7,
   "n_months_per_city": 180,
   "n_folds_per_city": 121,
   "n_predictions_per_model_city": 1452,
-  "n_predictions_total": 69696,
+  "n_predictions_total": 81312,
   "study_period": "2010-01 to 2024-12",
   "mean_smape_by_model": {
     "timesfm": 75.31,
@@ -12,6 +12,7 @@
     "xgboost": 85.9,
     "randomforest": 89.3,
     "sarimax": 105.47,
+    "ridge": 105.16,
     "lgbm": 114.57
   },
   "median_smape_by_model": {
@@ -20,6 +21,7 @@
     "xgboost": 84.3,
     "randomforest": 84.86,
     "sarimax": 101.44,
+    "ridge": 108.42,
     "lgbm": 106.62
   },
   "cities_ranked_first_by_model": {
@@ -28,6 +30,7 @@
     "xgboost": 1,
     "randomforest": 0,
     "sarimax": 0,
+    "ridge": 0,
     "lgbm": 0
   },
   "timesfm_smape_range": [
@@ -81,6 +84,15 @@
         ],
         "MAE": 17031.3,
         "RMSE": 104019.9
+      },
+      "ridge": {
+        "sMAPE": 111.49,
+        "sMAPE_CI": [
+          108.36,
+          114.58
+        ],
+        "MAE": 11588.4,
+        "RMSE": 44710.2
       },
       "lgbm": {
         "sMAPE": 119.79,
@@ -138,6 +150,15 @@
         "MAE": 2511.6,
         "RMSE": 6336.2
       },
+      "ridge": {
+        "sMAPE": 132.83,
+        "sMAPE_CI": [
+          129.69,
+          135.91
+        ],
+        "MAE": 5043.1,
+        "RMSE": 8742.8
+      },
       "lgbm": {
         "sMAPE": 154.66,
         "sMAPE_CI": [
@@ -193,6 +214,15 @@
         ],
         "MAE": 10754.6,
         "RMSE": 21658.2
+      },
+      "ridge": {
+        "sMAPE": 133.03,
+        "sMAPE_CI": [
+          129.94,
+          136.05
+        ],
+        "MAE": 8184.2,
+        "RMSE": 17197.2
       },
       "lgbm": {
         "sMAPE": 151.35,
@@ -250,6 +280,15 @@
         "MAE": 4481.9,
         "RMSE": 12356.6
       },
+      "ridge": {
+        "sMAPE": 114.39,
+        "sMAPE_CI": [
+          111.2,
+          117.74
+        ],
+        "MAE": 4240.1,
+        "RMSE": 12554.2
+      },
       "lgbm": {
         "sMAPE": 100.55,
         "sMAPE_CI": [
@@ -305,6 +344,15 @@
         ],
         "MAE": 1941.3,
         "RMSE": 3481.2
+      },
+      "ridge": {
+        "sMAPE": 89.22,
+        "sMAPE_CI": [
+          86.28,
+          92.05
+        ],
+        "MAE": 1965.1,
+        "RMSE": 3021.2
       },
       "lgbm": {
         "sMAPE": 102.08,
@@ -362,6 +410,15 @@
         "MAE": 1364.1,
         "RMSE": 2544.1
       },
+      "ridge": {
+        "sMAPE": 105.36,
+        "sMAPE_CI": [
+          102.39,
+          108.43
+        ],
+        "MAE": 1410.0,
+        "RMSE": 3204.2
+      },
       "lgbm": {
         "sMAPE": 111.16,
         "sMAPE_CI": [
@@ -418,6 +475,15 @@
         "MAE": 352.9,
         "RMSE": 604.6
       },
+      "ridge": {
+        "sMAPE": 62.54,
+        "sMAPE_CI": [
+          60.42,
+          64.57
+        ],
+        "MAE": 278.8,
+        "RMSE": 506.1
+      },
       "lgbm": {
         "sMAPE": 94.8,
         "sMAPE_CI": [
@@ -473,6 +539,15 @@
         ],
         "MAE": 566.7,
         "RMSE": 906.8
+      },
+      "ridge": {
+        "sMAPE": 92.4,
+        "sMAPE_CI": [
+          89.53,
+          95.33
+        ],
+        "MAE": 516.3,
+        "RMSE": 766.4
       },
       "lgbm": {
         "sMAPE": 82.16,
@@ -600,7 +675,7 @@
       "city": "Belo Horizonte",
       "smape": "xgboost",
       "mae": "timesfm",
-      "rmse": "timesfm"
+      "rmse": "ridge"
     },
     {
       "city": "Brasilia",

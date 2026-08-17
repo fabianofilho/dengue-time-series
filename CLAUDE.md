@@ -85,7 +85,20 @@ Manaus e Salvador.
 
 ## Validacao
 Rolling origin com janela expansiva: horizonte 12 meses, treino minimo 48 meses,
-passo 1 mes. 121 folds por cidade, 1452 previsoes. Metricas: MAE, RMSE e sMAPE.
+passo 1 mes. 121 folds por cidade, 1452 previsoes por modelo por cidade,
+81.312 no total (7 modelos x 8 cidades). Metricas: MAE, RMSE e sMAPE.
+
+## Armadilha conhecida: scaling no Ridge
+O Ridge e o unico modelo do benchmark que nao e invariante a escala. Sem
+StandardScaler nos lags, a penalidade L2 e desprezivel diante de contagens na
+casa dos milhares e os folds iniciais ficam quase singulares; a previsao
+recursiva de 12 passos entao explode (em Salvador, um unico fold chegou a
+8.7e14 casos e contaminou o MAE da cidade inteira). O `ridge_forecaster` ja
+passa `transformer_y=StandardScaler()`. As arvores passam None de proposito,
+para nao alterar os resultados ja publicados delas.
+
+O sMAPE nao denuncia isso: e limitado, entao absorve divergencia de qualquer
+magnitude. Ao adicionar modelo novo, sempre conferir MAE e RMSE tambem.
 
 ## Comandos uteis
 - `python -m venv .venv && .venv/Scripts/python.exe -m pip install -r requirements.txt` - setup

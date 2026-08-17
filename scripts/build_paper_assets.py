@@ -55,13 +55,14 @@ RESULT_SLUG = {
     "salvador": "salvador",
 }
 
-MODELS = ["timesfm", "catboost", "xgboost", "randomforest", "sarimax", "lgbm"]
+MODELS = ["timesfm", "catboost", "xgboost", "randomforest", "sarimax", "ridge", "lgbm"]
 MODEL_LABEL = {
     "timesfm": "TimesFM",
     "catboost": "CatBoost",
     "xgboost": "XGBoost",
     "randomforest": "Random Forest",
     "sarimax": "SARIMAX",
+    "ridge": "Ridge",
     "lgbm": "LightGBM",
 }
 SUPERVISED = [m for m in MODELS if m != "timesfm"]
@@ -243,7 +244,7 @@ def table2(met: pd.DataFrame) -> str:
         vals = [sub.loc[m, "sMAPE"] for m in MODELS]
         cells = bold_min(vals, lambda v: f"{v:.1f}")
         cis = [
-            rf"\scriptsize({sub.loc[m, 'sMAPE_lo']:.1f}, {sub.loc[m, 'sMAPE_hi']:.1f})"
+            rf"\tiny({sub.loc[m, 'sMAPE_lo']:.1f}, {sub.loc[m, 'sMAPE_hi']:.1f})"
             for m in MODELS
         ]
         lines.append(rf"{tex_escape(city)} & " + " & ".join(cells) + r" \\")
@@ -266,13 +267,13 @@ def table2(met: pd.DataFrame) -> str:
     tex = rf"""% gerado por scripts/build_paper_assets.py -- nao editar a mao
 \begin{{table}}[htbp]
 \centering
-\small
-\setlength{{\tabcolsep}}{{4pt}}
+\footnotesize
+\setlength{{\tabcolsep}}{{2.5pt}}
 \caption{{Forecasting accuracy by model and city: sMAPE (\%) with 95\% bootstrap
 percentile confidence intervals. Rolling-origin cross-validation, 12-month horizon,
 1{{,}}452 pooled predictions per model per city.}}
 \label{{tab:smape}}
-\begin{{tabular}}{{lcccccc}}
+\begin{{tabular}}{{lccccccc}}
 \toprule
 City & {header} \\
 \midrule
@@ -325,7 +326,7 @@ def table3(met: pd.DataFrame) -> str:
 \caption{{Forecasting accuracy by model and city: mean absolute error (MAE) and root
 mean squared error (RMSE), in notified cases per month.}}
 \label{{tab:mae-rmse}}
-\begin{{tabular}}{{llcccccc}}
+\begin{{tabular}}{{llccccccc}}
 \toprule
 City & Metric & {header} \\
 \midrule

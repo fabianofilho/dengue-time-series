@@ -21,6 +21,7 @@ from dengue_forecast.models import (
     catboost_forecaster,
     lgbm_forecaster,
     randomforest_forecaster,
+    ridge_forecaster,
     xgboost_forecaster,
 )
 
@@ -34,11 +35,20 @@ def parse_args() -> argparse.Namespace:
     parser.add_argument("--min-train-size", type=int, default=48, help="Janela mínima de treino (meses)")
     parser.add_argument(
         "--models",
-        default="sarimax,prophet,lgbm,xgboost,catboost,randomforest,timesfm",
+        default="sarimax,prophet,lgbm,xgboost,catboost,randomforest,ridge,timesfm",
         help="Lista de modelos para rodar (separados por vírgula)",
     )
     parser.add_argument("--output-prefix", required=True, help="Prefixo para os arquivos de saída")
     parser.add_argument("--lags", type=int, default=24, help="Número de lags para modelos de ML")
+    parser.add_argument(
+        "--append",
+        action="store_true",
+        help=(
+            "Mescla nos CSVs existentes em vez de sobrescrever. As linhas dos modelos "
+            "rodados agora substituem as antigas; os demais modelos ficam intactos. "
+            "Use para acrescentar um modelo sem reexecutar os caros (TimesFM)."
+        ),
+    )
     return parser.parse_args()
 
 
@@ -58,6 +68,8 @@ def build_models(model_names: list[str], lags: int):
         models.append(catboost_forecaster(lags=lags))
     if "randomforest" in selected:
         models.append(randomforest_forecaster(lags=lags))
+    if "ridge" in selected:
+        models.append(ridge_forecaster(lags=lags))
     if "timesfm" in selected:
         models.append(TimesFMForecaster())
 
@@ -98,16 +110,28 @@ def main() -> None:
     output_prefix = Path(args.output_prefix)
     output_prefix.parent.mkdir(parents=True, exist_ok=True)
 
+    ran = [m.name for m in models]
+
+    def merge(new_df: pd.DataFrame, path: Path) -> pd.DataFrame:
+        """Substitui as linhas dos modelos rodados agora, preserva as demais."""
+        if not (args.append and path.exists()):
+            return new_df
+        old = pd.read_csv(path)
+        kept = old[~old["model"].isin(ran)]
+        print(f"[INFO] Append em {path.name}: mantendo {sorted(kept['model'].unique())}")
+        return pd.concat([kept, new_df], ignore_index=True)
+
     if metrics_rows:
-        metrics_df = pd.DataFrame(metrics_rows).sort_values(by="smape")
         metrics_path = output_prefix.with_name(output_prefix.name + "_metrics.csv")
+        metrics_df = merge(pd.DataFrame(metrics_rows), metrics_path)
+        metrics_df = metrics_df.sort_values(by="smape")
         metrics_df.to_csv(metrics_path, index=False)
         print(f"\n[INFO] Métricas salvas em: {metrics_path}")
         print(metrics_df)
 
     if preds_frames:
-        preds_df = pd.concat(preds_frames, ignore_index=True)
         preds_path = output_prefix.with_name(output_prefix.name + "_predictions.csv")
+        preds_df = merge(pd.concat(preds_frames, ignore_index=True), preds_path)
         preds_df.to_csv(preds_path, index=False)
         print(f"[INFO] Previsões salvas em: {preds_path}")
 

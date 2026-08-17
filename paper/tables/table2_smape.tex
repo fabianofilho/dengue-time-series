@@ -1,35 +1,35 @@
 % gerado por scripts/build_paper_assets.py -- nao editar a mao
 \begin{table}[htbp]
 \centering
-\small
-\setlength{\tabcolsep}{4pt}
+\footnotesize
+\setlength{\tabcolsep}{2.5pt}
 \caption{Forecasting accuracy by model and city: sMAPE (\%) with 95\% bootstrap
 percentile confidence intervals. Rolling-origin cross-validation, 12-month horizon,
 1{,}452 pooled predictions per model per city.}
 \label{tab:smape}
-\begin{tabular}{lcccccc}
+\begin{tabular}{lccccccc}
 \toprule
-City & TimesFM & CatBoost & XGBoost & Random Forest & SARIMAX & LightGBM \\
+City & TimesFM & CatBoost & XGBoost & Random Forest & SARIMAX & Ridge & LightGBM \\
 \midrule
-Sao Paulo & \textbf{78.0} & 78.7 & 84.8 & 87.3 & 87.1 & 119.8 \\
- & \scriptsize(75.2, 80.8) & \scriptsize(75.7, 81.7) & \scriptsize(81.7, 87.8) & \scriptsize(84.4, 90.4) & \scriptsize(83.9, 90.2) & \scriptsize(117.0, 122.7) \\[2pt]
-Rio de Janeiro & \textbf{96.8} & 126.4 & 119.7 & 133.3 & 135.6 & 154.7 \\
- & \scriptsize(94.0, 99.4) & \scriptsize(123.6, 129.1) & \scriptsize(116.7, 122.6) & \scriptsize(130.5, 136.1) & \scriptsize(132.2, 138.8) & \scriptsize(152.0, 157.4) \\[2pt]
-Belo Horizonte & 97.1 & 95.2 & \textbf{88.7} & 90.2 & 134.0 & 151.4 \\
- & \scriptsize(94.0, 100.2) & \scriptsize(92.3, 98.3) & \scriptsize(85.3, 92.0) & \scriptsize(87.0, 93.6) & \scriptsize(130.6, 137.4) & \scriptsize(148.7, 154.1) \\[2pt]
-Brasilia & \textbf{74.3} & 76.6 & 83.7 & 82.4 & 103.2 & 100.5 \\
- & \scriptsize(71.6, 76.9) & \scriptsize(74.3, 79.1) & \scriptsize(81.2, 86.4) & \scriptsize(79.8, 85.1) & \scriptsize(99.9, 106.5) & \scriptsize(97.7, 103.3) \\[2pt]
-Fortaleza & \textbf{64.2} & 77.5 & 89.4 & 98.4 & 87.6 & 102.1 \\
- & \scriptsize(62.2, 66.2) & \scriptsize(75.0, 80.2) & \scriptsize(86.6, 92.1) & \scriptsize(95.7, 101.1) & \scriptsize(84.5, 90.7) & \scriptsize(99.0, 105.0) \\[2pt]
-Recife & \textbf{67.3} & 83.3 & 83.3 & 81.2 & 105.6 & 111.2 \\
- & \scriptsize(64.9, 69.6) & \scriptsize(80.6, 86.0) & \scriptsize(80.4, 86.4) & \scriptsize(78.5, 84.0) & \scriptsize(102.4, 108.8) & \scriptsize(108.4, 113.9) \\[2pt]
-Manaus & \textbf{56.0} & 70.9 & 65.5 & 67.9 & 99.7 & 94.8 \\
- & \scriptsize(53.9, 58.2) & \scriptsize(69.0, 72.8) & \scriptsize(63.5, 67.5) & \scriptsize(66.0, 69.7) & \scriptsize(96.3, 103.1) & \scriptsize(92.4, 97.3) \\[2pt]
-Salvador & \textbf{68.9} & 76.0 & 72.1 & 73.7 & 91.0 & 82.2 \\
- & \scriptsize(66.5, 71.2) & \scriptsize(73.8, 78.4) & \scriptsize(69.4, 74.7) & \scriptsize(71.1, 76.2) & \scriptsize(87.6, 94.2) & \scriptsize(79.8, 84.4) \\[2pt]
+Sao Paulo & \textbf{78.0} & 78.7 & 84.8 & 87.3 & 87.1 & 111.5 & 119.8 \\
+ & \tiny(75.2, 80.8) & \tiny(75.7, 81.7) & \tiny(81.7, 87.8) & \tiny(84.4, 90.4) & \tiny(83.9, 90.2) & \tiny(108.4, 114.6) & \tiny(117.0, 122.7) \\[2pt]
+Rio de Janeiro & \textbf{96.8} & 126.4 & 119.7 & 133.3 & 135.6 & 132.8 & 154.7 \\
+ & \tiny(94.0, 99.4) & \tiny(123.6, 129.1) & \tiny(116.7, 122.6) & \tiny(130.5, 136.1) & \tiny(132.2, 138.8) & \tiny(129.7, 135.9) & \tiny(152.0, 157.4) \\[2pt]
+Belo Horizonte & 97.1 & 95.2 & \textbf{88.7} & 90.2 & 134.0 & 133.0 & 151.4 \\
+ & \tiny(94.0, 100.2) & \tiny(92.3, 98.3) & \tiny(85.3, 92.0) & \tiny(87.0, 93.6) & \tiny(130.6, 137.4) & \tiny(129.9, 136.0) & \tiny(148.7, 154.1) \\[2pt]
+Brasilia & \textbf{74.3} & 76.6 & 83.7 & 82.4 & 103.2 & 114.4 & 100.5 \\
+ & \tiny(71.6, 76.9) & \tiny(74.3, 79.1) & \tiny(81.2, 86.4) & \tiny(79.8, 85.1) & \tiny(99.9, 106.5) & \tiny(111.2, 117.7) & \tiny(97.7, 103.3) \\[2pt]
+Fortaleza & \textbf{64.2} & 77.5 & 89.4 & 98.4 & 87.6 & 89.2 & 102.1 \\
+ & \tiny(62.2, 66.2) & \tiny(75.0, 80.2) & \tiny(86.6, 92.1) & \tiny(95.7, 101.1) & \tiny(84.5, 90.7) & \tiny(86.3, 92.1) & \tiny(99.0, 105.0) \\[2pt]
+Recife & \textbf{67.3} & 83.3 & 83.3 & 81.2 & 105.6 & 105.4 & 111.2 \\
+ & \tiny(64.9, 69.6) & \tiny(80.6, 86.0) & \tiny(80.4, 86.4) & \tiny(78.5, 84.0) & \tiny(102.4, 108.8) & \tiny(102.4, 108.4) & \tiny(108.4, 113.9) \\[2pt]
+Manaus & \textbf{56.0} & 70.9 & 65.5 & 67.9 & 99.7 & 62.5 & 94.8 \\
+ & \tiny(53.9, 58.2) & \tiny(69.0, 72.8) & \tiny(63.5, 67.5) & \tiny(66.0, 69.7) & \tiny(96.3, 103.1) & \tiny(60.4, 64.6) & \tiny(92.4, 97.3) \\[2pt]
+Salvador & \textbf{68.9} & 76.0 & 72.1 & 73.7 & 91.0 & 92.4 & 82.2 \\
+ & \tiny(66.5, 71.2) & \tiny(73.8, 78.4) & \tiny(69.4, 74.7) & \tiny(71.1, 76.2) & \tiny(87.6, 94.2) & \tiny(89.5, 95.3) & \tiny(79.8, 84.4) \\[2pt]
 \midrule
-Mean across cities & \textbf{75.3} & 85.6 & 85.9 & 89.3 & 105.5 & 114.6 \\
-Cities ranked first & \textbf{7/8} & 0/8 & 1/8 & 0/8 & 0/8 & 0/8 \\
+Mean across cities & \textbf{75.3} & 85.6 & 85.9 & 89.3 & 105.5 & 105.2 & 114.6 \\
+Cities ranked first & \textbf{7/8} & 0/8 & 1/8 & 0/8 & 0/8 & 0/8 & 0/8 \\
 \bottomrule
 \end{tabular}
 

@@ -54,27 +54,29 @@ must be trained and periodically retrained for each city, which limits how widel
 can be deployed. Whether a pre-trained time-series foundation model can substitute for
 that per-city pipeline has not been tested on Brazilian dengue data.
 
-\noindent\textbf{Methods.} We benchmarked six forecasting models on monthly notified
+\noindent\textbf{Methods.} We benchmarked seven forecasting models on monthly notified
 dengue counts from InfoDengue for eight Brazilian state capitals covering January 2010
-to December 2024 (180 monthly observations per city). Five models were trained per city
-(SARIMAX, LightGBM, XGBoost, CatBoost and Random Forest, the last four using recursive
-multi-step forecasting with 24 autoregressive lags), and one, TimesFM 2.5, was applied
-zero-shot with no city-specific training. Evaluation used rolling-origin cross-validation
-with an expanding window (minimum training window 48 months, forecast horizon 12 months,
-step 1 month), producing 121 folds and 1{,}452 pooled predictions per model per city and
-69{,}696 predictions overall. The pre-specified primary metric was sMAPE; MAE and RMSE
-were reported alongside it. Uncertainty was quantified by bootstrap resampling of the
-pooled predictions (2{,}000 replicates, percentile method). Reporting follows TRIPOD+AI.
+to December 2024 (180 monthly observations per city). Six models were trained per city
+(SARIMAX, Ridge regression, LightGBM, XGBoost, CatBoost and Random Forest, the last five
+using recursive multi-step forecasting with 24 autoregressive lags), and one, TimesFM
+2.5, was applied zero-shot with no city-specific training. Evaluation used rolling-origin
+cross-validation with an expanding window (minimum training window 48 months, forecast
+horizon 12 months, step 1 month), producing 121 folds and 1{,}452 pooled predictions per
+model per city and 81{,}312 predictions overall. The pre-specified primary metric was
+sMAPE; MAE and RMSE were reported alongside it. Uncertainty was quantified by bootstrap
+resampling of the pooled predictions (2{,}000 replicates, percentile method). Reporting
+follows TRIPOD+AI.
 
 \noindent\textbf{Results.} TimesFM achieved the lowest sMAPE in seven of eight cities
 (mean across cities 75.3\%, range 56.0\% to 97.1\%) against 85.6\% for CatBoost, the best
-purpose-trained model, and 105.5\% for SARIMAX. By MAE, TimesFM ranked first in all eight
-cities. The largest margin was in Rio de Janeiro (sMAPE 96.8\%, 95\% CI 94.0 to 99.4,
-versus 119.7\%, 116.7 to 122.6, for XGBoost). In S\~ao Paulo the two leading models were
-indistinguishable (78.0\%, 75.2 to 80.8, versus 78.7\%, 75.7 to 81.7, for CatBoost). The
-three metrics selected the same model in only four of eight cities, and in Belo Horizonte
-XGBoost led on sMAPE while TimesFM led on both MAE and RMSE. All models substantially
-underestimated the 2024 epidemic peaks.
+purpose-trained model, 105.2\% for Ridge, 105.5\% for SARIMAX and 114.6\% for LightGBM. By
+MAE, TimesFM ranked first in all eight cities. The largest margin was in Rio de Janeiro
+(sMAPE 96.8\%, 95\% CI 94.0 to 99.4, versus 119.7\%, 116.7 to 122.6, for XGBoost). In
+S\~ao Paulo the two leading models were indistinguishable (78.0\%, 75.2 to 80.8, versus
+78.7\%, 75.7 to 81.7, for CatBoost). The three metrics selected the same model in only
+four of eight cities: in Belo Horizonte each metric named a different winner, XGBoost on
+sMAPE, TimesFM on MAE and Ridge on RMSE. All models substantially underestimated the 2024
+epidemic peaks.
 
 \noindent\textbf{Conclusion.} A zero-shot foundation model matched or exceeded
 purpose-trained models for 12-month-ahead dengue forecasting across heterogeneous
@@ -126,7 +128,7 @@ and punctuated by epidemics an order of magnitude above baseline, has not been t
 
 This study therefore aimed to: (i) describe the evolution of dengue incidence across
 eight Brazilian state capitals over 15 years; (ii) benchmark a zero-shot foundation model
-against five purpose-trained forecasting models under a single standardised
+against six purpose-trained forecasting models under a single standardised
 rolling-origin validation design; and (iii) characterise periods of critical
 epidemiological burden using scan statistics, in order to situate forecast error against
 the epidemic phases that matter operationally.
@@ -160,8 +162,8 @@ The outcome was the monthly count of notified dengue cases per city, modelled on
 original scale with no transformation. Forecasts below zero were clipped to zero.
 
 No exogenous covariates were used. This is a deliberate constraint: it holds the feature
-set identical across all six models, so that differences in accuracy are attributable to
-the forecasting architecture rather than to unequal access to information. The five
+set identical across all seven models, so that differences in accuracy are attributable to
+the forecasting architecture rather than to unequal access to information. The six
 purpose-trained models used 24 autoregressive lags of the monthly count, a two-year
 lookback chosen to span the dominant inter-annual dengue cycle in Brazil. The
 consequences of excluding climate covariates are addressed in the limitations.
@@ -172,6 +174,19 @@ consequences of excluding climate covariates are addressed in the limitations.
 $(1,1,1)$ and seasonal order $(1,1,0)_{12}$, estimated by maximum likelihood in
 \texttt{statsmodels}. Orders were fixed across cities and folds rather than selected per
 fold, which reflects realistic deployment but may understate its optimised performance.
+
+\textbf{Ridge regression} provided a linear autoregressive baseline on the same 24 lags,
+with the default L2 penalty. Unlike the tree ensembles, Ridge is not scale-invariant, and
+the lags were standardised before fitting. This is not a cosmetic choice. Without
+standardisation the penalty is negligible relative to counts in the thousands, and in the
+earliest folds, where the number of training rows approaches the number of lags, the fit
+becomes near-singular; recursive 12-step prediction then amplifies the result. In
+Salvador a single fold, the one with 49 months of training, produced a forecast of
+$8.7 \times 10^{14}$ cases and by itself dominated that city's pooled MAE and RMSE. After
+standardisation no fold diverged in any city. We report this because the failure is
+nearly silent under sMAPE, which is bounded and therefore absorbs a divergence of any
+magnitude: the unscaled Salvador run returned a plausible-looking sMAPE of 96.3\% while
+its MAE was $6.7 \times 10^{11}$.
 
 \textbf{LightGBM, XGBoost, CatBoost and Random Forest}
 \citep{Ke2017lightgbm,Chen2016xgboost,Prokhorenkova2018catboost,Breiman2001} were wrapped
@@ -190,12 +205,11 @@ fine-tuning, no city-specific adaptation and no refitting at any fold. It theref
 receives strictly less information than its competitors, which see the city's own
 training window at every fold.
 
-Two models specified in the study protocol were not evaluated and are reported here for
+One model specified in the study protocol was not evaluated and is reported here for
 completeness. Prophet \citep{Taylor2018prophet} failed to run in seven of the eight
 cities because of an unresolved dependency, and partial results from a single city are
-not interpretable as a benchmark. Ridge regression was implemented in the codebase but
-never executed on the eight-city pipeline. Neither model appears in the results, and
-neither is discussed as though it had been tested.
+not interpretable as a benchmark. It does not appear in the results and is not discussed
+as though it had been tested.
 
 \subsection{Evaluation design}
 
@@ -208,7 +222,7 @@ annual cycles before its first forecast; the origin then advances one month at a
 
 For a series of length $T = 180$ with minimum training size $m = 48$ and horizon
 $h = 12$, this yields $T - m - h + 1 = 121$ folds per city, $121 \times 12 = 1{,}452$
-predictions per model per city, and $1{,}452 \times 6 \times 8 = 69{,}696$ predictions in
+predictions per model per city, and $1{,}452 \times 7 \times 8 = 81{,}312$ predictions in
 total.
 
 This is temporal out-of-sample evaluation within a single data source, which is internal
@@ -297,7 +311,7 @@ Figure~\ref{fig:heatmap} displays the same values as a heatmap. TimesFM achieved
 lowest sMAPE in seven of eight cities, with a mean across cities of 75.3\% (range 56.0\%
 in Manaus to 97.1\% in Belo Horizonte). The best purpose-trained model on the same
 summary was CatBoost at 85.6\%, followed by XGBoost at 85.9\%, Random Forest at 89.3\%,
-SARIMAX at 105.5\% and LightGBM at 114.6\%.
+Ridge at 105.2\%, SARIMAX at 105.5\% and LightGBM at 114.6\%.
 
 The margin varies sharply by city and the intervals matter for reading it. In Rio de
 Janeiro the separation is wide and the intervals do not overlap: TimesFM 96.8\% (95\% CI
@@ -335,10 +349,12 @@ cities, whereas TimesFM is a single unmodified model throughout.}
 
 Table~\ref{tab:mae-rmse} reports MAE and RMSE on the case-count scale. By MAE, TimesFM
 ranked first in all eight cities, including Belo Horizonte, where it led on sMAPE in
-none. The RMSE ranking is less consistent: TimesFM led in five cities, while LightGBM led
-in S\~ao Paulo, SARIMAX in Bras\'ilia and Random Forest in Manaus, despite all three
-ranking poorly on both other metrics in those same cities. The Manaus result is a
-near-tie that rounding conceals (Random Forest 505.8 against XGBoost 505.9 cases).
+none. The RMSE ranking is less consistent: TimesFM led in four cities, while LightGBM led
+in S\~ao Paulo, SARIMAX in Bras\'ilia, Random Forest in Manaus and Ridge in Belo
+Horizonte, despite all four ranking poorly on both other metrics in those same cities.
+Two of these are near-ties that rounding conceals: Manaus (Random Forest 505.8 against
+XGBoost 505.9 cases) and Belo Horizonte, where Ridge leads TimesFM by 190 cases on an
+RMSE above 17{,}000 while trailing it by 36 percentage points on sMAPE.
 
 The gap between MAE and RMSE within a city quantifies how much of the total error sits in
 a few months. In S\~ao Paulo the best MAE is 9{,}617 cases against an RMSE above 43{,}000
@@ -352,10 +368,11 @@ peaks rather than spread across the series.
 
 Table~\ref{tab:metric-disagreement} and Figure~\ref{fig:disagreement} make explicit a
 result that a single-metric report would hide: sMAPE, MAE and RMSE select the same model
-in only four of the eight cities. Belo Horizonte is the clearest case. Under sMAPE,
-XGBoost wins and the headline claim of this study fails there; under MAE and RMSE,
-TimesFM wins. Both statements are true, and which one is reported determines whether
-Belo Horizonte reads as a counterexample.
+in only four of the eight cities. Belo Horizonte is the extreme case: each of the three
+metrics names a different winner. XGBoost wins on sMAPE, and the headline claim of this
+study fails there; TimesFM wins on MAE; Ridge, which has the worst sMAPE of any model in
+that city at 133.0\%, wins on RMSE. All three statements are true, and which one is
+reported determines whether Belo Horizonte reads as a counterexample.
 
 The mechanism is arithmetic rather than epidemiological. sMAPE normalises each error by
 the magnitude of the observation, so the many low-count months between epidemics dominate
@@ -412,17 +429,20 @@ subsection can be written from the data currently in the repository.}
 \subsection{Main findings}
 
 Across eight Brazilian state capitals and 15 years of surveillance data, a foundation
-model applied with no local training matched or exceeded five purpose-trained models at a
+model applied with no local training matched or exceeded six purpose-trained models at a
 12-month horizon. It ranked first by sMAPE in seven of eight cities and by MAE in all
 eight. The comparison is asymmetric in TimesFM's disfavour: the supervised models were
 refitted on each city at each of 121 folds, while TimesFM saw the series only as context
 at inference.
 
 The operational consequence is about cost rather than accuracy. The best supervised model
-is not the same model in every city, as Figure~\ref{fig:vsbest} shows, so a per-city
-pipeline requires per-city model selection, retraining and monitoring. A single
-unmodified foundation model removes that overhead, which is what makes extension to
-municipalities without modelling capacity plausible.
+is not the same model in every city: four different ones take that place across the eight
+capitals, CatBoost in three, XGBoost in three, Random Forest in Recife and Ridge in
+Manaus (Figure~\ref{fig:vsbest}). A per-city pipeline therefore requires per-city model
+selection, retraining and monitoring, and the selection itself consumes data that could
+otherwise be used for fitting. A single unmodified foundation model removes that
+overhead, which is what makes extension to municipalities without modelling capacity
+plausible.
 
 That said, the accuracy in absolute terms is poor everywhere. A mean sMAPE of 75\% is not
 a small error, and no model anticipated the 2024 epidemic in any city. The honest
@@ -456,8 +476,8 @@ error magnitudes not directly comparable to the short-horizon literature.
 \subsection{Belo Horizonte}
 
 Belo Horizonte is the one city where a supervised model leads on the primary metric, and
-it is worth being precise about what that means. XGBoost leads on sMAPE; TimesFM leads on
-MAE and RMSE. The city's series combines sharp high-magnitude peaks with long near-zero
+it is worth being precise about what that means. XGBoost leads on sMAPE, TimesFM on MAE,
+and Ridge on RMSE. The city's series combines sharp high-magnitude peaks with long near-zero
 troughs, a profile that lag features capture well and that penalises a model normalising
 error by observation magnitude. Cities with this signature are candidates for a hybrid
 arrangement in which foundation model output is corrected by a locally fitted residual
@@ -502,7 +522,7 @@ make up most of Brazil, is untested.
 
 \subsection{Conclusion}
 
-A zero-shot foundation model matched or exceeded five purpose-trained models for
+A zero-shot foundation model matched or exceeded six purpose-trained models for
 12-month-ahead dengue forecasting in eight Brazilian state capitals, without any
 city-specific training, and did so under a validation design that gave its competitors
 repeated access to local data it never saw. This supports evaluating foundation models as

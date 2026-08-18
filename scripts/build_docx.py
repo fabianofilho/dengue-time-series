@@ -700,8 +700,15 @@ def declarations(doc: Document) -> None:
          "(Fiocruz/FGV). TimesFM was developed by Google DeepMind."),
     ]:
         body(doc, text, bold_lead=lead)
-    body(doc, "", bold_lead="Author contributions. ")
-    flag(doc, "CRediT contribution statement for each of the three authors")
+    body(doc, (
+        "Following the CRediT taxonomy. Fabiano Barcellos-Filho: Conceptualization, Data "
+        "curation, Formal analysis, Investigation, Methodology, Project administration, "
+        "Software, Validation, Visualization, Writing: original draft, Writing: review "
+        "and editing. Jose Trajano: Conceptualization, Formal analysis, Methodology, "
+        "Supervision, Writing: review and editing. Wilson Falco: Data curation, "
+        "Investigation, Software, Writing: review and editing. All authors read and "
+        "approved the final manuscript."
+    ), bold_lead="Author contributions. ")
 
 
 def main() -> None:

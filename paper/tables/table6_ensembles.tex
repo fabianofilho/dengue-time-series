@@ -1,0 +1,37 @@
+% gerado por scripts/build_paper_assets.py -- nao editar a mao
+\begin{table}[htbp]
+\centering
+\small
+\caption{Individual models and model combinations on the same evaluation set, averaged
+over the eight cities.}
+\label{tab:ensembles}
+\begin{tabular}{lrrrc}
+\toprule
+Approach & sMAPE (\%) & MAE & RMSE & Cities ranked first \\
+\midrule
+TimesFM & 74.9 & 3,082 & 10,862 & 5/8 \\
+Median ensemble$\dagger$ & 79.0 & 3,392 & 10,908 & 1/8 \\
+CatBoost & 83.4 & 3,691 & 11,165 & 1/8 \\
+Inverse-error weighted ensemble$\dagger$ & 83.8 & 3,531 & 10,809 & 0/8 \\
+XGBoost & 84.5 & 4,230 & 12,511 & 1/8 \\
+Random Forest & 86.9 & 4,224 & 11,827 & 0/8 \\
+Mean ensemble$\dagger$ & 87.6 & 3,787 & 10,979 & 0/8 \\
+Stacked ensemble (Ridge)$\dagger$ & 94.8 & 3,526 & 10,532 & 0/8 \\
+Ridge & 100.1 & 3,696 & 10,856 & 0/8 \\
+SARIMAX & 108.6 & 4,070 & 11,531 & 0/8 \\
+LightGBM & 116.2 & 5,435 & 11,874 & 0/8 \\
+\bottomrule
+\end{tabular}
+
+\vspace{0.5em}
+\begin{minipage}{\textwidth}
+\footnotesize
+$\dagger$ marks a combination of the seven individual models. Weights and the stacking
+meta-model are fitted only on folds earlier than the one being predicted, so the
+combination never sees the fold it is evaluated on. Individual models and combinations are
+scored on exactly the same rows: the first 20 folds are withheld as a training window for
+the combiners, leaving 1{,}188 predictions per approach per city. Comparing a combination
+evaluated on 99 folds against a single model evaluated on 119 would favour the combination,
+because the withheld folds are those with the shortest training window.
+\end{minipage}
+\end{table}

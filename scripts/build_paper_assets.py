@@ -855,6 +855,124 @@ def fig7_fan(pred: pd.DataFrame) -> None:
     save(fig, "fig7_fan")
 
 
+
+# --------------------------------------------------------------------------- #
+# Tabela 6: combinacoes de modelos
+# --------------------------------------------------------------------------- #
+CITY_DISPLAY = {
+    "rio": "Rio de Janeiro",
+    "sao_paulo": "Sao Paulo",
+    "belo_horizonte": "Belo Horizonte",
+}
+
+ENS_LABEL = {
+    "mean": "Mean ensemble",
+    "median": "Median ensemble",
+    "weighted": "Inverse-error weighted ensemble",
+    "stacking": "Stacked ensemble (Ridge)",
+}
+
+
+def load_ensembles() -> pd.DataFrame:
+    return pd.read_csv(RESULTS / "comparisons" / "ensemble_summary.csv")
+
+
+def table6(ens: pd.DataFrame) -> tuple[str, dict]:
+    g = ens.groupby(["approach", "kind"])[["sMAPE", "MAE", "RMSE"]].mean().reset_index()
+    wins = ens.loc[ens.groupby("city")["sMAPE"].idxmin()]["approach"].value_counts()
+
+    beats = {}
+    for city, sub in ens.groupby("city"):
+        mem = sub[sub["kind"] == "member"]["sMAPE"].min()
+        best_ens = sub[sub["kind"] == "ensemble"]["sMAPE"].min()
+        beats[city] = float(mem - best_ens)
+    n_beats = sum(1 for v in beats.values() if v > 0)
+
+    g = g.sort_values("sMAPE")
+    rows = []
+    for _, r in g.iterrows():
+        name = ENS_LABEL.get(r["approach"], MODEL_LABEL.get(r["approach"], r["approach"]))
+        mark = r"$\dagger$" if r["kind"] == "ensemble" else ""
+        rows.append(
+            rf"{name}{mark} & {r['sMAPE']:.1f} & {r['MAE']:,.0f} & {r['RMSE']:,.0f} & "
+            rf"{int(wins.get(r['approach'], 0))}/8 \\"
+        )
+    body_rows = "\n".join(rows)
+
+    best_by = {m: g.sort_values(m).iloc[0]["approach"] for m in ("sMAPE", "MAE", "RMSE")}
+    summary = {
+        "n_cities_ensemble_beats_best_member": n_beats,
+        "delta_by_city": {k: round(v, 2) for k, v in beats.items()},
+        "best_by_metric": best_by,
+        "mean_by_approach": {
+            r["approach"]: {m: round(float(r[m]), 2) for m in ("sMAPE", "MAE", "RMSE")}
+            for _, r in g.iterrows()
+        },
+    }
+
+    tex = (
+        "% gerado por scripts/build_paper_assets.py -- nao editar a mao\n"
+        r"""\begin{table}[htbp]
+\centering
+\small
+\caption{Individual models and model combinations on the same evaluation set, averaged
+over the eight cities.}
+\label{tab:ensembles}
+\begin{tabular}{lrrrc}
+\toprule
+Approach & sMAPE (\%) & MAE & RMSE & Cities ranked first \\
+\midrule
+"""
+        + body_rows
+        + r"""
+\bottomrule
+\end{tabular}
+
+\vspace{0.5em}
+\begin{minipage}{\textwidth}
+\footnotesize
+$\dagger$ marks a combination of the seven individual models. Weights and the stacking
+meta-model are fitted only on folds earlier than the one being predicted, so the
+combination never sees the fold it is evaluated on. Individual models and combinations are
+scored on exactly the same rows: the first 20 folds are withheld as a training window for
+the combiners, leaving 1{,}188 predictions per approach per city. Comparing a combination
+evaluated on 99 folds against a single model evaluated on 119 would favour the combination,
+because the withheld folds are those with the shortest training window.
+\end{minipage}
+\end{table}
+"""
+    )
+    return tex, summary
+
+
+def fig8_ensembles(ens: pd.DataFrame) -> None:
+    """Quanto o melhor ensemble ganha ou perde do melhor membro, por cidade."""
+    rows = []
+    for city, sub in ens.groupby("city"):
+        mem = sub[sub["kind"] == "member"]["sMAPE"].min()
+        best = sub[sub["kind"] == "ensemble"]["sMAPE"].min()
+        rows.append((CITY_DISPLAY.get(city, city.replace("_", " ").title()), mem - best))
+    rows.sort(key=lambda r: r[1])
+    names = [r[0] for r in rows]
+    vals = [r[1] for r in rows]
+
+    fig, ax = plt.subplots(figsize=(7.2, 3.2))
+    colors = ["#c62828" if v <= 0 else "#2e7d32" for v in vals]
+    ax.barh(range(len(names)), vals, color=colors, height=0.62)
+    for i, v in enumerate(vals):
+        ax.text(v + (0.25 if v > 0 else -0.25), i, f"{v:+.1f}", va="center",
+                ha="left" if v > 0 else "right", fontsize=8)
+    ax.axvline(0, color="black", lw=0.9)
+    ax.set_yticks(range(len(names)))
+    ax.set_yticklabels(names)
+    ax.set_xlabel("sMAPE advantage of the best combination over the best single model "
+                  "(percentage points)")
+    ax.set_xlim(min(vals) * 1.35, max(max(vals) * 2.6, 2.5))
+    ax.set_title("Combining models does not help in seven of eight cities",
+                 loc="left", fontweight="bold")
+    fig.tight_layout()
+    save(fig, "fig8_ensembles")
+
 # --------------------------------------------------------------------------- #
 def main() -> None:
     print("Carregando dados...")
@@ -878,6 +996,9 @@ def main() -> None:
     ipred = load_interval_predictions()
     t5, interval_summary = table5(cal, ipred)
     write(TABLES / "table5_intervals.tex", t5)
+    ens = load_ensembles()
+    t6, ensemble_summary = table6(ens)
+    write(TABLES / "table6_ensembles.tex", t6)
 
     print("Gerando figuras...")
     setup_style()
@@ -888,6 +1009,7 @@ def main() -> None:
     fig5_observed_vs_predicted(preds)
     fig6_calibration(cal, ipred)
     fig7_fan(ipred)
+    fig8_ensembles(ens)
 
     # numeros citados no corpo do texto, para conferencia
     tf = met[met["model"] == "timesfm"]
@@ -937,6 +1059,7 @@ def main() -> None:
         "metric_disagreement": disagree,
         "bootstrap": {"replicates": BOOT_N, "seed": BOOT_SEED, "method": "percentile"},
         "intervals": interval_summary,
+        "ensembles": ensemble_summary,
     }
     (PAPER / "verified_numbers.json").write_text(
         json.dumps(verified, indent=2, ensure_ascii=False), encoding="utf-8"

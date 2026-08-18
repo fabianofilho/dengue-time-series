@@ -47,6 +47,13 @@ LABEL = {
     "ridge": "Ridge",
     "lgbm": "LightGBM",
 }
+ENS_LABEL = {
+    "mean": "Mean ensemble",
+    "median": "Median ensemble",
+    "weighted": "Weighted ensemble",
+    "stacking": "Stacked ensemble (Ridge)",
+}
+
 CITY_ORDER = [
     "Sao Paulo", "Rio de Janeiro", "Belo Horizonte", "Brasilia",
     "Fortaleza", "Recife", "Manaus", "Salvador",
@@ -546,7 +553,7 @@ def results(doc: Document, v: dict) -> None:
     add_table(doc,
               ["Construction", "Model", "Cov. 50%", "Cov. 80%", "Cov. 95%",
                "rWIS", "Cities best"],
-              rows, "Table 4.",
+              rows, "Table 6.",
               "Calibration and sharpness of conformal prediction intervals. Coverage "
               "close to the nominal level indicates calibration. rWIS is the weighted "
               "interval score divided by the mean observed count of the city; lower is "
@@ -558,6 +565,61 @@ def results(doc: Document, v: dict) -> None:
     add_figure(doc, "fig7_fan", "Figure 7.",
                "Six-month-ahead TimesFM forecasts with additive conformal intervals. Red "
                "points mark observations falling outside the 95% interval.")
+
+
+def ensembles(doc: Document, v: dict) -> None:
+    en = v.get("ensembles")
+    if not en:
+        heading(doc, "Model combinations", 2)
+        flag(doc, "ensemble results absent from verified_numbers.json; run "
+                  "scripts/run_ensembles.py then scripts/build_paper_assets.py")
+        return
+
+    heading(doc, "Combining models does not rescue the ranking", 2)
+    n_beat = en["n_cities_ensemble_beats_best_member"]
+    deltas = en["delta_by_city"]
+    worst = min(deltas, key=lambda c: deltas[c])
+    means = en["mean_by_approach"]
+    best_by = en["best_by_metric"]
+
+    body(doc, (
+        f"The best combination fails to beat the best single model of that city in "
+        f"{v['n_cities'] - n_beat} of {v['n_cities']} cities. The single exception is Sao "
+        f"Paulo, where the median ensemble improves on the best member by "
+        f"{deltas['sao_paulo']:.1f} sMAPE points. Elsewhere the shortfall reaches "
+        f"{abs(deltas[worst]):.1f} points in "
+        f"{worst.replace('_', ' ').title().replace('Rio', 'Rio de Janeiro')}."
+    ))
+    body(doc, (
+        f"Among the combinations themselves the median ensemble is the best at "
+        f"{means['median']['sMAPE']:.1f}% mean sMAPE, ahead of every individual model "
+        f"except TimesFM, and its advantage over the arithmetic mean at "
+        f"{means['mean']['sMAPE']:.1f}% comes from resisting the members that diverge. "
+        f"The metric dependence reported above reappears here and reverses the "
+        f"conclusion: on sMAPE and MAE the best approach overall is a single model, "
+        f"{LABEL.get(best_by['sMAPE'], best_by['sMAPE'])}, while on RMSE it is the "
+        f"stacked ensemble at {means['stacking']['RMSE']:,.0f} against "
+        f"{means['timesfm']['RMSE']:,.0f} for TimesFM. Whether combining models helps has "
+        f"no metric-free answer in these data."
+    ))
+
+    rows = []
+    for name, m in sorted(means.items(), key=lambda kv: kv[1]["sMAPE"]):
+        label = ENS_LABEL.get(name)
+        rows.append([
+            (label + " †") if label else LABEL.get(name, name),
+            f"{m['sMAPE']:.1f}", f"{m['MAE']:,.0f}", f"{m['RMSE']:,.0f}",
+        ])
+    add_table(doc, ["Approach", "sMAPE (%)", "MAE", "RMSE"], rows,
+              "Table 5.",
+              "Individual models and model combinations on the same evaluation set, "
+              "averaged over the eight cities. † marks a combination. Weights and the "
+              "stacking meta-model are fitted only on folds earlier than the one being "
+              "predicted, and every approach is scored on the same 1,188 predictions per "
+              "city.")
+    add_figure(doc, "fig8_ensembles", "Figure 8.",
+               "Difference in sMAPE between the best combination and the best single "
+               "model, by city. Positive values mean the combination wins.")
 
 
 def discussion(doc: Document, v: dict) -> None:
@@ -658,6 +720,7 @@ def main() -> None:
     abstract(doc, v)
     methods(doc, v)
     results(doc, v)
+    ensembles(doc, v)
     discussion(doc, v)
     declarations(doc)
 

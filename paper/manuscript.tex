@@ -46,20 +46,7 @@ A Rolling-Origin Benchmark}
 
 \maketitle
 
-\begin{center}
-\fcolorbox{red}{red!7}{%
-\parbox{0.92\textwidth}{\centering \color{red}\bfseries
-DRAFT, DO NOT SUBMIT OR CIRCULATE.\\[2pt]
-\normalfont\color{red}
-Every number in this version was computed on a mis-aggregated monthly series.
-Weekly notification counts were assigned whole to the month containing the start of
-the epidemiological week, so 118 of 180 months summed 28 days of cases and 62 summed
-35, a calendar-driven oscillation of 25\%. The median month is off by 10.1\% and the
-March 2024 peak in Sao Paulo is overstated by 16.8\%. The corrected cohort has 178
-months (February 2010 to November 2024) and the full benchmark is being re-run on it.
-Numbers here will change.}}
-\end{center}
-\vspace{0.5em}
+
 
 % =============================================================================
 \begin{abstract}
@@ -72,13 +59,13 @@ that per-city pipeline has not, to our knowledge, been evaluated on Brazilian de
 
 \noindent\textbf{Methods.} We benchmarked seven forecasting models on monthly notified
 dengue counts from InfoDengue for eight Brazilian state capitals covering January 2010
-to December 2024 (180 monthly observations per city). Six models were trained per city
+to December 2024 (178 monthly observations per city). Six models were trained per city
 (SARIMAX, Ridge regression, LightGBM, XGBoost, CatBoost and Random Forest, the last five
 using recursive multi-step forecasting with 24 autoregressive lags), and one, TimesFM
 2.5, was applied zero-shot with no city-specific training. Evaluation used rolling-origin
 cross-validation with an expanding window (minimum training window 48 months, forecast
-horizon 12 months, step 1 month), producing 121 folds and 1{,}452 pooled predictions per
-model per city and 81{,}312 predictions overall. The pre-specified primary metric was
+horizon 12 months, step 1 month), producing 119 folds and 1{,}428 pooled predictions per
+model per city and 79{,}968 predictions overall. The pre-specified primary metric was
 sMAPE; MAE and RMSE were reported alongside it. Uncertainty in the accuracy estimates was
 quantified by bootstrap resampling of the pooled predictions (2{,}000 replicates,
 percentile method). Split conformal prediction intervals, calibrated only on residuals
@@ -87,28 +74,28 @@ levels and assessed for empirical coverage and weighted interval score. Reportin
 TRIPOD+AI.
 
 \noindent\textbf{Results.} TimesFM achieved the lowest sMAPE in seven of eight cities
-(mean across cities 75.3\%, range 56.0\% to 97.1\%) against 85.6\% for CatBoost, the best
-purpose-trained model, 105.2\% for Ridge, 105.5\% for SARIMAX and 114.6\% for LightGBM. By
-MAE, TimesFM ranked first in all eight cities. The largest margin was in Rio de Janeiro
-(sMAPE 96.8\%, 95\% CI 94.0 to 99.4, versus 119.7\%, 116.7 to 122.6, for XGBoost). In
-S\~ao Paulo the two leading models were indistinguishable (78.0\%, 75.2 to 80.8, versus
-78.7\%, 75.7 to 81.7, for CatBoost). The three metrics selected the same model in only
-four of eight cities: in Belo Horizonte each metric named a different winner, XGBoost on
-sMAPE, TimesFM on MAE and Ridge on RMSE. Conformal intervals were close to calibrated
-overall, with 92.0\% empirical coverage at the nominal 95\% level for TimesFM, but
-coverage fell from 92.7\% across 2015 to 2023 to 71.3\% in the 2024 epidemic year, and
-the median 95\% interval spanned 13.5 times the median observed count. The ranking of
-models by weighted interval score reversed between two equally defensible interval
-constructions, so no probabilistic ranking is claimed.
+(mean across cities 74.6\%, range 55.6\% to 96.6\%) against 85.0\% for CatBoost, the best
+purpose-trained model, 104.3\% for Ridge, 111.2\% for SARIMAX and 113.7\% for LightGBM. By
+MAE it ranked first in seven of eight. The largest margin was in Rio de Janeiro (sMAPE
+96.1\%, 95\% CI 93.3 to 98.7, versus 123.0\%, 120.1 to 126.0, for XGBoost). In S\~ao Paulo
+the two leading models were closer and their intervals overlapped (75.5\%, 72.8 to 78.3,
+versus 80.1\%, 77.3 to 82.9, for CatBoost). The three accuracy metrics selected the same
+model in only four of eight cities, and in two of them, Belo Horizonte and Bras\'ilia, each
+metric named a different winner. Conformal intervals were close to calibrated overall, at
+93.0\% empirical coverage at the nominal 95\% level for TimesFM, but the ranking by
+weighted interval score reversed between two equally defensible interval constructions, so
+no probabilistic ranking is claimed. Combining the seven models did not beat the best
+single model in seven of eight cities on the primary metric, although the stacked ensemble
+achieved the lowest RMSE of any approach.
 
 \noindent\textbf{Conclusion.} A zero-shot foundation model matched or exceeded
 purpose-trained models for 12-month-ahead dengue point forecasting across heterogeneous
 Brazilian capitals without any local training, which lowers the cost of extending
 forecasting to municipalities that lack modelling capacity. That advantage does not
 extend to probabilistic forecasts, where the ranking depends on the interval
-construction. Intervals were wide, and coverage collapsed during the one epidemic in the
-series, so these forecasts are suited to planning baselines rather than outbreak
-triggers.
+construction, nor is it improved by combining models. Intervals were wide, and coverage
+collapsed during the one epidemic in the series, so these forecasts are suited to planning
+baselines rather than outbreak triggers.
 
 \vspace{0.8em}
 \noindent\textbf{Keywords:} dengue; forecasting; foundation model; time series;
@@ -180,8 +167,25 @@ and cover a wide range of climatic, demographic and transmission profiles.
 Notification data were obtained through the InfoDengue public API
 (\url{https://info.dengue.mat.br/}), which aggregates mandatory notifications from SINAN
 \citep{Codeco2018infodengue}. Weekly counts for epidemiological week 1 of 2010 through
-week 52 of 2024 were aggregated to calendar months using the month-start convention,
-yielding 180 monthly observations per city and 1{,}440 city-months in total.
+week 52 of 2024 were converted to calendar months by distributing each epidemiological
+week uniformly across the seven days it covers and summing by month, yielding 178 complete
+monthly observations per city and 1{,}424 city-months in total.
+
+That conversion is not the obvious one, and the obvious one is wrong. Assigning each week
+whole to the month containing its start date, which is what a naive monthly resample does,
+produces a series in which some months receive four weeks of cases and others five. On
+this dataset 118 of 180 months summed 28 days and 62 summed 35, a calendar-driven
+oscillation of 25\% whose period of roughly 12.4 months does not even align with the
+annual seasonality the models are trying to learn. The error is not small: in S\~ao Paulo
+it displaced the median month by 10.1\%, reached 30.7\% at worst, and inflated the March
+2024 peak by 16.8\%. Every result below uses the day-weighted conversion. Months only
+partly covered by the weekly series are dropped, which removes January 2010, whose first
+epidemiological week begins on the third, and December 2024, whose last week ends on the
+twenty-eighth.
+
+Reporting delay was assessed and found not to require correction: across all 782 weeks in
+all eight cities the notified count and the InfoDengue nowcast estimate are identical,
+indicating the nowcast has fully converged for this extraction.
 
 Population denominators, used only to express burden as incidence in
 Table~\ref{tab:descriptive} and not in any forecasting model, come from IBGE. We anchored
@@ -258,9 +262,9 @@ from the evaluation period reaches the model \citep{Kapoor2023}. The minimum tra
 window was 48 months, chosen so that every supervised model sees at least two complete
 annual cycles before its first forecast; the origin then advances one month at a time.
 
-For a series of length $T = 180$ with minimum training size $m = 48$ and horizon
-$h = 12$, this yields $T - m - h + 1 = 121$ folds per city, $121 \times 12 = 1{,}452$
-predictions per model per city, and $1{,}452 \times 7 \times 8 = 81{,}312$ predictions in
+For a series of length $T = 178$ with minimum training size $m = 48$ and horizon
+$h = 12$, this yields $T - m - h + 1 = 119$ folds per city, $119 \times 12 = 1{,}428$
+predictions per model per city, and $1{,}428 \times 7 \times 8 = 79{,}968$ predictions in
 total.
 
 This is temporal out-of-sample evaluation within a single data source, which is internal
@@ -284,7 +288,7 @@ scale. The three are reported together because they reward different behaviour: 
 rewards accuracy in inter-epidemic troughs, RMSE rewards accuracy at peaks, and reporting
 only one would conceal the disagreement quantified in Table~\ref{tab:metric-disagreement}.
 
-Uncertainty was quantified by resampling the 1{,}452 paired predictions with replacement
+Uncertainty was quantified by resampling the 1{,}428 paired predictions with replacement
 (2{,}000 replicates, percentile method) to obtain 95\% intervals for sMAPE. Predictions
 from the same rolling-origin fold, and from adjacent origins, are not independent;
 these intervals therefore understate the true uncertainty and are interpreted throughout
@@ -307,7 +311,7 @@ informs the interval. Quantiles use the finite-sample conformal correction, the
 $\lceil (n+1)(1-\alpha) \rceil$-th order statistic of $n$ calibration residuals, which
 without correction leaves coverage systematically below nominal at small $n$. We required
 20 prior folds before emitting an interval, so the first 20 folds of each series carry
-none and 1{,}212 of the 1{,}452 predictions per model per city are evaluated. Intervals
+none and 1{,}188 of the 1{,}428 predictions per model per city are evaluated. Intervals
 were produced at the 50\%, 80\% and 95\% nominal levels, and stratified by $h$ because
 forecast uncertainty grows with the horizon.
 
@@ -320,7 +324,7 @@ spanning four orders of magnitude but couples the models' errors: a model that
 occasionally predicts near zero while thousands of cases occur generates residuals of
 $\log(\text{thousands})$, and that quantile widens the intervals of every other
 prediction at the same horizon. TimesFM does exactly this, returning a forecast of zero
-in 96 of 1{,}452 predictions in Belo Horizonte and 41 in Rio de Janeiro, against none and
+in 101 of 1{,}428 predictions in Belo Horizonte and 30 in Rio de Janeiro, against none and
 one for CatBoost. We report both constructions and claim only what holds under both.
 
 Intervals were assessed on three axes: empirical coverage against the nominal level,
@@ -330,6 +334,27 @@ the outcome scale \citep{Bracher2021wis,Gneiting2007scoring}. Because WIS is
 scale-dependent and these cities differ by more than an order of magnitude in case
 volume, we divide each city's WIS by that city's mean observed count before averaging
 across cities, and report this as rWIS.
+
+\subsection{Model combinations}
+
+Because no single model wins under every metric, we tested whether combining them helps.
+Four combinations of the seven models were evaluated on the forecasts already produced,
+without refitting anything: the arithmetic mean, the median, a mean weighted by the
+inverse of each model's mean absolute error, and a stacked ensemble using standardised
+Ridge regression on the members' predictions.
+
+Two design choices decide whether such a comparison means anything. First, weights and the
+stacking meta-model are fitted only on folds strictly earlier than the one being
+predicted, on the same expanding window used for the point forecasts and the conformal
+intervals. Selecting weights on the whole backtest makes a combination look better than it
+is and leaves no trace in the reported number. Second, individual models and combinations
+are scored on exactly the same rows: the first 20 folds are withheld as a training window
+for the combiners, so 1{,}188 of the 1{,}428 predictions per approach per city are
+evaluated. Comparing a combination scored on 99 folds against a single model scored on 119
+would favour the combination, because the withheld folds are those with the shortest
+training window and therefore the hardest. All seven models enter as members, including
+the weak ones, since discarding a member on the basis of the same backtest used to
+evaluate the result would be selection on the outcome.
 
 \subsection{Software}
 
@@ -345,19 +370,19 @@ reproducible from the repository by running \texttt{scripts/build\_paper\_assets
 
 Table~\ref{tab:descriptive} summarises the eight series and Figure~\ref{fig:series} shows
 them. In absolute counts the cities differ by more than an order of magnitude: S\~ao
-Paulo accumulated 1{,}711{,}689 notified cases over the period against 116{,}817 in
+Paulo accumulated 1{,}702{,}694 notified cases over the period against 116{,}190 in
 Salvador. Standardising by population reorders them substantially. Belo Horizonte carries
-the highest burden at a mean 3{,}104 notified cases per 100{,}000 inhabitants per year,
-followed by Bras\'ilia at 1{,}730; S\~ao Paulo, first by raw count, falls to fourth at
-996, and Salvador is lowest at 311. The gap between the highest and lowest incidence is
-tenfold, against a fifteenfold gap in raw counts driven largely by city size.
+the highest burden at a mean 3{,}124 notified cases per 100{,}000 inhabitants per year,
+followed by Bras\'ilia at 1{,}740; S\~ao Paulo, first by raw count, falls to fourth at
+1{,}002, and Salvador is lowest at 312. The gap between the highest and lowest incidence
+is tenfold, against a roughly fifteenfold gap in raw counts driven largely by city size.
 
 The series are also extremely volatile, and this matters more for forecasting than the
 level does. The coefficient of variation of the monthly count ranges from 108\% in
-Salvador to 431\% in S\~ao Paulo, where the median month recorded 1{,}198 cases and the
-peak month 331{,}402, a ratio of about 277 to 1. Manaus shows the same pattern at a
-smaller scale (median 264, maximum 21{,}605). Median monthly incidence is between 10 and
-42 per 100{,}000 in every city, while peak monthly incidence reaches 5{,}307 in Belo
+Salvador to 432\% in S\~ao Paulo, where the median month recorded 1{,}192 cases and the
+peak month 342{,}838, a ratio of about 288 to 1. Manaus shows the same pattern at a
+smaller scale (median 274, maximum 19{,}556). Median monthly incidence is between 10 and
+43 per 100{,}000 in every city, while peak monthly incidence reaches 4{,}938 in Belo
 Horizonte, so the burden is concentrated in a handful of months rather than spread across
 the series. That concentration is the central difficulty for every model evaluated here,
 and it is what separates the metrics in Section~\ref{sec:disagreement}.
@@ -380,18 +405,17 @@ Table~\ref{tab:smape} reports sMAPE with bootstrap intervals and
 Figure~\ref{fig:heatmap} displays the same values as a heatmap. TimesFM achieved the
 lowest sMAPE in seven of eight cities, with a mean across cities of 75.3\% (range 56.0\%
 in Manaus to 97.1\% in Belo Horizonte). The best purpose-trained model on the same
-summary was CatBoost at 85.6\%, followed by XGBoost at 85.9\%, Random Forest at 89.3\%,
-Ridge at 105.2\%, SARIMAX at 105.5\% and LightGBM at 114.6\%.
+summary was CatBoost at 85.0\%, followed by XGBoost at 86.7\%, Random Forest at 88.9\%,
+Ridge at 104.3\%, SARIMAX at 111.2\% and LightGBM at 113.7\%.
 
 The margin varies sharply by city and the intervals matter for reading it. In Rio de
-Janeiro the separation is wide and the intervals do not overlap: TimesFM 96.8\% (95\% CI
-94.0 to 99.4) against 119.7\% (116.7 to 122.6) for XGBoost, the best supervised model
+Janeiro the separation is wide and the intervals do not overlap: TimesFM 96.1\% (95\% CI
+93.3 to 98.7) against 123.0\% (120.1 to 126.0) for XGBoost, the best supervised model
 there. Manaus, Fortaleza and Recife show the same pattern of non-overlap. In S\~ao Paulo
-the intervals overlap almost entirely, at 78.0\% (75.2 to 80.8) for TimesFM against
-78.7\% (75.7 to 81.7) for CatBoost; the 0.7 percentage point gap there is not evidence of
-an advantage and is not treated as one. Belo Horizonte is the one city where a supervised
-model leads on the primary metric, with XGBoost at 88.7\% (85.3 to 92.0) against 97.1\%
-(94.0 to 100.2) for TimesFM.
+the two leading models are closer and their intervals overlap, at 75.5\% (72.8 to 78.3)
+for TimesFM against 80.1\% (77.3 to 82.9) for CatBoost, so that gap is not treated as
+established. Belo Horizonte is the one city where a supervised model leads on the primary
+metric, with XGBoost at 87.5\% (84.1 to 90.7) against 96.6\% (93.2 to 99.7) for TimesFM.
 
 \input{tables/table2_smape}
 
@@ -418,16 +442,15 @@ cities, whereas TimesFM is a single unmodified model throughout.}
 \subsection{Absolute error}
 
 Table~\ref{tab:mae-rmse} reports MAE and RMSE on the case-count scale. By MAE, TimesFM
-ranked first in all eight cities, including Belo Horizonte, where it led on sMAPE in
-none. The RMSE ranking is less consistent: TimesFM led in four cities, while LightGBM led
-in S\~ao Paulo, SARIMAX in Bras\'ilia, Random Forest in Manaus and Ridge in Belo
-Horizonte, despite all four ranking poorly on both other metrics in those same cities.
-Two of these are near-ties that rounding conceals: Manaus (Random Forest 505.8 against
-XGBoost 505.9 cases) and Belo Horizonte, where Ridge leads TimesFM by 190 cases on an
-RMSE above 17{,}000 while trailing it by 36 percentage points on sMAPE.
+ranked first in seven of eight cities, including Belo Horizonte, where it led on sMAPE in
+none; CatBoost took Bras\'ilia. The RMSE ranking is far less consistent: TimesFM led in
+four cities, LightGBM in two and Ridge in two, despite LightGBM and Ridge ranking last and
+second-to-last on the primary metric overall. A model can win on RMSE by being
+conservative at epidemic peaks while being poor everywhere else, and that is what happens
+here.
 
 The gap between MAE and RMSE within a city quantifies how much of the total error sits in
-a few months. In S\~ao Paulo the best MAE is 9{,}617 cases against an RMSE above 43{,}000
+a few months. In S\~ao Paulo the best MAE is 8{,}759 cases against an RMSE above 41{,}000
 for every model, a ratio consistent with error concentrated almost entirely in epidemic
 peaks rather than spread across the series.
 
@@ -438,11 +461,12 @@ peaks rather than spread across the series.
 
 Table~\ref{tab:metric-disagreement} and Figure~\ref{fig:disagreement} make explicit a
 result that a single-metric report would hide: sMAPE, MAE and RMSE select the same model
-in only four of the eight cities. Belo Horizonte is the extreme case: each of the three
-metrics names a different winner. XGBoost wins on sMAPE, and the headline claim of this
-study fails there; TimesFM wins on MAE; Ridge, which has the worst sMAPE of any model in
-that city at 133.0\%, wins on RMSE. All three statements are true, and which one is
-reported determines whether Belo Horizonte reads as a counterexample.
+in only four of the eight cities. Belo Horizonte and Bras\'ilia are the extreme cases:
+in each, all three metrics name a different winner. In Belo Horizonte XGBoost wins on
+sMAPE, and the headline claim of this study fails there; TimesFM wins on MAE; and Ridge
+wins on RMSE despite having one of the worst sMAPE values in that city. In Bras\'ilia the
+winners are TimesFM, CatBoost and LightGBM respectively. Every one of those statements is
+true, and which is reported determines whether either city reads as a counterexample.
 
 The mechanism is arithmetic rather than epidemiological. sMAPE normalises each error by
 the magnitude of the observation, so the many low-count months between epidemics dominate
@@ -490,29 +514,29 @@ Table~\ref{tab:intervals} reports coverage, sharpness and rWIS for both interval
 constructions, and Figure~\ref{fig:calibration} shows the same information graphically.
 Conformal calibration works: pooled over all folds and cities, empirical coverage tracks
 the nominal level closely for every model except LightGBM. At the nominal 95\% level
-TimesFM achieved 91.7\% under the multiplicative construction and 92.0\% under the
-additive one, and CatBoost 91.3\% and 90.3\%. LightGBM was the worst calibrated in both,
-at 89.8\% and 86.1\%. Ridge and SARIMAX were the only models to reach or exceed nominal
-coverage, at 95.9\% and 93.9\% under the multiplicative construction, and they do so for
+TimesFM achieved 91.9\% under the multiplicative construction and 93.0\% under the
+additive one, and CatBoost 91.0\% and 91.4\%. LightGBM was the worst calibrated in both,
+at 89.4\% and 87.3\%. Ridge and SARIMAX were the only models to reach or exceed nominal
+coverage, at 95.8\% and 94.2\% under the multiplicative construction, and they do so for
 an unflattering reason: their point forecasts are poor enough that the calibration
 residuals are very wide, which buys coverage with uninformative intervals.
 
-Coverage degrades mildly with the horizon, from 94.3\% at one month ahead to 91.0\% at
-twelve under the multiplicative construction, and from 94.8\% to 91.1\% under the
+Coverage degrades mildly with the horizon, from 95.2\% at one month ahead to 91.5\% at
+twelve under the multiplicative construction, and from 95.8\% to 91.7\% under the
 additive one. This is the expected and benign pattern.
 
-The failure that matters is temporal rather than structural. Restricted to 2015 through
-2023, coverage at the nominal 95\% level is 92.6\% (multiplicative) and 92.7\%
-(additive). In 2024 it falls to 88.9\% and 71.3\% respectively. Figure~\ref{fig:fan}
+The failure that matters is temporal rather than structural. Restricted to the years
+before 2024, coverage at the nominal 95\% level is 92.8\% (multiplicative) and 93.6\%
+(additive). In 2024 it falls to 87.2\% and 69.2\% respectively. Figure~\ref{fig:fan}
 shows the mechanism for S\~ao Paulo: through a decade of ordinary years the observed
-series sits inside the band, and the 2024 epidemic exits it entirely for four consecutive
-months, peaking at more than 330{,}000 cases against an upper bound an order of magnitude
-below. The intervals are honest about ordinary variation and silent about the event a
+series sits inside the band, and the 2024 epidemic exits it entirely for several
+consecutive months, peaking above 340{,}000 cases against an upper bound an order of
+magnitude below. The intervals are honest about ordinary variation and silent about the event a
 surveillance system most needs warning of.
 
 Sharpness is poor throughout, and this qualifies the coverage result. The median width of
-the 95\% interval is 13.5 times the median observed count under the additive construction
-and 27.9 times under the multiplicative one, reaching 49.5 and 510.9 times in the worst
+the 95\% interval is 13.0 times the median observed count under the additive construction
+and 25.8 times under the multiplicative one, reaching 60.7 and 416.2 times in the worst
 city. An interval that spans an order of magnitude around the forecast is calibrated in
 the technical sense and close to useless for planning.
 
@@ -542,23 +566,55 @@ the band is far wider than the series through the entire inter-epidemic period.}
 
 \subsection{The probabilistic ranking is not robust}
 
-Under the multiplicative construction, CatBoost has the lowest rWIS and achieves it in
-five of eight cities, while TimesFM ranks fourth. Under the additive construction the
-ordering reverses: TimesFM has the lowest rWIS and wins six of eight cities, and CatBoost
-drops to third with none. Both constructions are defensible, both are calibrated to
-roughly the same degree, and they disagree about which model produces the better
-probabilistic forecast.
+Under the multiplicative construction, CatBoost has the lowest rWIS at 0.68 while TimesFM
+ranks fourth at 1.37. Under the additive construction the ordering reverses: TimesFM has
+the lowest rWIS at 0.58 and CatBoost drops to third at 0.67. Both constructions are
+defensible, both are calibrated to roughly the same degree, and they disagree about which
+model produces the better probabilistic forecast.
 
 The reason is the coupling described in the Methods. TimesFM produces the better point
 forecast in Belo Horizonte and Rio de Janeiro by MAE, but it also returns exact zeros in
 those two cities, which inflates its multiplicative intervals everywhere and costs it the
-comparison on that scale. Decomposing rWIS in Rio de Janeiro confirms this: TimesFM has
-the smaller median term, 301 against 480 for CatBoost, and an interval width term of
-7{,}809 against 149.
+comparison on that scale.
 
 We therefore report no probabilistic ranking of the models. The point-forecast ranking in
 Sections~3.2 and 3.3 is stable across sMAPE and MAE; the probabilistic ranking is an
 artefact of a modelling choice that the data do not settle.
+
+\subsection{Combining models does not rescue the ranking}
+\label{sec:ensembles}
+
+Table~\ref{tab:ensembles} reports the four combinations alongside the seven individual
+models on the same evaluation set, and Figure~\ref{fig:ensembles} shows the per-city
+outcome. The best combination fails to beat the best single model of that city in seven of
+eight cities. The single exception is S\~ao Paulo, where the median ensemble improves on
+the best member by 1.3 sMAPE points. Elsewhere the shortfall reaches 12.7 points in Rio de
+Janeiro and 12.5 in Fortaleza.
+
+Among the combinations themselves the ordering is informative. The median ensemble is the
+best at 79.0\% mean sMAPE, ahead of every individual model except TimesFM, and its
+advantage over the arithmetic mean at 87.6\% comes from resisting the members that
+diverge: LightGBM and SARIMAX drag an average but not a median. Stacking is the worst
+combination on the primary metric at 94.8\%.
+
+The metric dependence documented in Section~\ref{sec:disagreement} reappears here, and it
+reverses the conclusion. On sMAPE and MAE the best approach overall is a single model,
+TimesFM. On RMSE the best approach overall is the stacked ensemble, at 10{,}532 against
+10{,}862 for TimesFM, with the weighted ensemble second. Stacking is simultaneously the
+worst combination at tracking the inter-epidemic baseline and the best at not being
+catastrophically wrong at peaks. Whether combining models helps therefore has no
+metric-free answer in these data.
+
+\input{tables/table6_ensembles}
+
+\begin{figure}[htbp]
+\centering
+\includegraphics[width=\textwidth]{fig8_ensembles.pdf}
+\caption{Difference in sMAPE between the best model combination and the best single model,
+by city. Positive values, in green, mean the combination wins. Only S\~ao Paulo favours
+combining, and by a small margin.}
+\label{fig:ensembles}
+\end{figure}
 
 % =============================================================================
 \section{Discussion}
@@ -567,15 +623,15 @@ artefact of a modelling choice that the data do not settle.
 
 Across eight Brazilian state capitals and 15 years of surveillance data, a foundation
 model applied with no local training matched or exceeded six purpose-trained models at a
-12-month horizon. It ranked first by sMAPE in seven of eight cities and by MAE in all
-eight. The comparison is asymmetric in TimesFM's disfavour: the supervised models were
-refitted on each city at each of 121 folds, while TimesFM saw the series only as context
+12-month horizon. It ranked first by sMAPE and by MAE in seven of eight cities, losing
+Belo Horizonte on the former and Bras\'ilia on the latter. The comparison is asymmetric in TimesFM's disfavour: the supervised models were
+refitted on each city at each of 119 folds, while TimesFM saw the series only as context
 at inference.
 
 The operational consequence is about cost rather than accuracy. The best supervised model
 is not the same model in every city: four different ones take that place across the eight
-capitals, CatBoost in three, XGBoost in three, Random Forest in Recife and Ridge in
-Manaus (Figure~\ref{fig:vsbest}). A per-city pipeline therefore requires per-city model
+capitals, CatBoost in three, XGBoost in three, Ridge in Manaus and Random Forest in
+Salvador (Figure~\ref{fig:vsbest}). A per-city pipeline therefore requires per-city model
 selection, retraining and monitoring, and the selection itself consumes data that could
 otherwise be used for fitting. A single unmodified foundation model removes that
 overhead, which is what makes extension to municipalities without modelling capacity
@@ -632,6 +688,18 @@ both find that model choice is unstable and that 2024 defeated every approach. T
 convergence is a stronger result than either study alone, and it argues against
 single-model deployment more forcefully than our benchmark does on its own.
 
+Where the two diverge is on the remedy. The Sprint found that aggregation delivered the
+stability no single entry achieved, and the resulting ensembles were adopted by Brazilian
+health authorities. We tested four combinations and found that none beats the best
+individual model in seven of eight cities on the primary metric
+(Section~\ref{sec:ensembles}). The difference is unlikely to be a contradiction. Their
+members were six independent teams with different feature sets and climate covariates;
+ours are seven models sharing one lag structure and no covariates at all. Aggregation
+rewards disagreement between members, and by construction we removed most of it. The
+practical reading is that an ensemble is worth building for dengue surveillance in Brazil,
+but that assembling one out of variations on a single autoregressive recipe will not
+deliver the benefit.
+
 The 12-month horizon here is considerably longer than the 4 to 8 weeks typical of
 published dengue benchmarks. That makes these results relevant to annual planning cycles
 and correspondingly less relevant to short-term outbreak response, and it also makes the
@@ -686,15 +754,15 @@ for other foundation models \citep{Ansari2024chronos,Woo2024moirai}, other check
 or the smaller municipalities with shorter and more irregular reporting histories that
 make up most of Brazil, is untested.
 
-Eighth, no ensemble was evaluated. This is the most consequential omission given the
-external evidence: the 2024 Dengue Forecasting Sprint found that combining models was
-what produced stable performance across locations and years, and the resulting ensembles
-were adopted by Brazilian health authorities \citep{Araujo2026sprint}. Our own results
-point the same way, since no single model wins under every metric and the probabilistic
-ranking is unstable. A benchmark that identifies instability and then recommends a single
-model is arguing against itself; testing whether an ensemble of the models evaluated here,
-including the zero-shot forecasts, is more stable than any of its members is the
-immediate next step.
+Eighth, the combinations tested here are unweighted or linear in the members'
+predictions, and all members share the same 24 lagged inputs. That shared input is the
+most likely reason combining did not help: models trained on identical features capture
+similar structure, so a combination averages correlated errors rather than adding
+information. The Dengue Forecasting Sprint combined six independent teams with different
+feature sets and climate covariates \citep{Araujo2026sprint}, which is a far more
+favourable setting for aggregation than ours. Our negative result is therefore about
+combining redundant models, not about ensembles in general, and it does not contradict
+theirs.
 
 \subsection{Conclusion}
 

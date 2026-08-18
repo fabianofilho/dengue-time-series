@@ -144,6 +144,17 @@ def load_population() -> dict[str, pd.Series]:
     return out
 
 
+def load_interval_calibration() -> pd.DataFrame:
+    """Calibracao dos intervalos, produzida por scripts/run_intervals.py."""
+    return pd.read_csv(RESULTS / "comparisons" / "interval_calibration.csv")
+
+
+def load_interval_predictions() -> pd.DataFrame:
+    return pd.read_csv(
+        RESULTS / "comparisons" / "predictions_with_intervals.csv", parse_dates=["date"]
+    )
+
+
 def load_predictions() -> dict[str, pd.DataFrame]:
     out = {}
     for slug, (name, _, _) in CITIES.items():
@@ -443,6 +454,82 @@ primary metric is declared in advance (sMAPE) and the others are reported alongs
 
 
 # --------------------------------------------------------------------------- #
+# Tabela 5: calibracao dos intervalos
+# --------------------------------------------------------------------------- #
+def table5(cal: pd.DataFrame, pred: pd.DataFrame) -> tuple[str, dict]:
+    scale_by_city = pred.groupby("city")["y_true"].mean()
+    cal = cal.copy()
+    cal["rWIS"] = [r.WIS / scale_by_city[r.city] for r in cal.itertuples()]
+
+    blocks, summary = [], {}
+    for scale, label in (
+        ("log1p", "Multiplicative intervals (residuals calibrated on the log1p scale)"),
+        ("absolute", "Additive intervals (residuals calibrated on the raw scale)"),
+    ):
+        c = cal[cal["scale"] == scale]
+        g = c.groupby("model").agg(
+            c50=("coverage_50", "mean"),
+            c80=("coverage_80", "mean"),
+            c95=("coverage_95", "mean"),
+            rwis=("rWIS", "mean"),
+        )
+        wins = c.loc[c.groupby("city")["rWIS"].idxmin()].groupby("model").size()
+        g["wins"] = wins.reindex(g.index).fillna(0).astype(int)
+        g = g.reindex(sorted(g.index, key=lambda m: g.loc[m, "rwis"]))
+        summary[scale] = {
+            m: {k: round(float(v), 4) for k, v in g.loc[m].items()} for m in g.index
+        }
+
+        rows = [
+            rf"\quad {MODEL_LABEL[m]} & {g.loc[m, 'c50'] * 100:.1f} & "
+            rf"{g.loc[m, 'c80'] * 100:.1f} & {g.loc[m, 'c95'] * 100:.1f} & "
+            rf"{g.loc[m, 'rwis']:.2f} & {int(g.loc[m, 'wins'])}/8 \\"
+            for m in g.index
+        ]
+        head = rf"\multicolumn{{6}}{{l}}{{\textit{{{label}}}}} \\"
+        blocks.append("\n".join([head] + rows))
+
+    body = "\n\\addlinespace[4pt]\n".join(blocks)
+    tex = (
+        "% gerado por scripts/build_paper_assets.py -- nao editar a mao\n"
+        r"""\begin{table}[htbp]
+\centering
+\small
+\caption{Calibration and sharpness of conformal prediction intervals, averaged over the
+eight cities, under two interval constructions.}
+\label{tab:intervals}
+\begin{tabular}{lcccrc}
+\toprule
+ & \multicolumn{3}{c}{Empirical coverage (\%)} & & \\
+\cmidrule(lr){2-4}
+Model & at 50\% & at 80\% & at 95\% & rWIS & Cities best \\
+\midrule
+"""
+        + body
+        + r"""
+\bottomrule
+\end{tabular}
+
+\vspace{0.5em}
+\begin{minipage}{\textwidth}
+\footnotesize
+Coverage is the percentage of observations falling inside the interval; a value close to
+the nominal level indicates calibration. rWIS is the weighted interval score divided by
+the city's mean observed count, which makes it comparable across cities; lower is better.
+Cities best counts the cities in which a model achieved the lowest rWIS. Intervals are
+calibrated only on residuals from earlier folds, so the first 20 folds of each series
+carry no interval and 1{,}212 of the 1{,}452 predictions per model per city are
+evaluated. The two blocks differ solely in the scale on which residuals are calibrated.
+The ordering by rWIS is not preserved between them, and that is why both are reported and
+no probabilistic ranking of the models is claimed.
+\end{minipage}
+\end{table}
+"""
+    )
+    return tex, summary
+
+
+# --------------------------------------------------------------------------- #
 # figuras
 # --------------------------------------------------------------------------- #
 def setup_style() -> None:
@@ -623,30 +710,39 @@ def fig4_metric_disagreement(met: pd.DataFrame) -> None:
     colors = plt.cm.tab10(np.linspace(0, 1, 10))
     cmap = {m: colors[i] for i, m in enumerate(MODELS)}
 
+    # Ordem de modelo fixa e posicao numerica em todos os paineis. Com rotulo de
+    # texto mais sharey, o matplotlib acumula categorias na ordem de insercao e
+    # desalinha barra e numero entre paineis.
+    ypos = {m: i for i, m in enumerate(MODELS)}
+
     for ax, metric in zip(axes, metrics):
         winners = []
         for c in order:
             sub = met[met["city"] == c].set_index("model")
             winners.append(sub[metric].idxmin())
-        counts = {m: winners.count(m) for m in MODELS if winners.count(m) > 0}
-        names = sorted(counts, key=lambda m: -counts[m])
+        counts = {m: winners.count(m) for m in MODELS}
         ax.barh(
-            [MODEL_LABEL[m] for m in names],
-            [counts[m] for m in names],
-            color=[cmap[m] for m in names],
+            [ypos[m] for m in MODELS],
+            [counts[m] for m in MODELS],
+            color=[cmap[m] for m in MODELS],
+            height=0.66,
         )
-        for i, m in enumerate(names):
-            ax.text(counts[m] + 0.08, i, str(counts[m]), va="center", fontsize=8)
+        for m in MODELS:
+            if counts[m]:
+                ax.text(counts[m] + 0.15, ypos[m], str(counts[m]), va="center", fontsize=8)
+        ax.set_yticks(list(ypos.values()))
+        ax.set_yticklabels([MODEL_LABEL[m] for m in MODELS])
+        ax.set_ylim(len(MODELS) - 0.5, -0.5)
         ax.set_title(f"Best by {metric}", loc="left", fontweight="bold")
-        ax.set_xlim(0, 8.6)
+        ax.set_xlim(0, 9.2)
+        ax.set_xticks(range(0, 9, 2))
         ax.set_xlabel("Cities ranked first")
-        ax.invert_yaxis()
     fig.suptitle(
         "The choice of accuracy metric changes which model wins",
         fontweight="bold",
-        y=1.0,
+        y=0.995,
     )
-    fig.tight_layout(rect=(0, 0, 1, 0.94))
+    fig.tight_layout(rect=(0, 0, 1, 0.93))
     save(fig, "fig4_metric_disagreement")
 
 
@@ -681,6 +777,84 @@ def fig5_observed_vs_predicted(preds: dict[str, pd.DataFrame]) -> None:
     save(fig, "fig5_observed_vs_predicted")
 
 
+def fig6_calibration(cal: pd.DataFrame, pred: pd.DataFrame) -> None:
+    """Cobertura contra nominal, e cobertura ao longo dos anos."""
+    fig, axes = plt.subplots(1, 3, figsize=(7.2, 2.9))
+    levels = [50, 80, 95]
+
+    for ax, scale, label in zip(
+        axes[:2], ("log1p", "absolute"), ("Multiplicative", "Additive")
+    ):
+        c = cal[cal["scale"] == scale]
+        ax.plot([0, 100], [0, 100], color="0.4", lw=0.9, ls=":", zorder=1)
+        for m in MODELS:
+            v = [c[c["model"] == m][f"coverage_{L}"].mean() * 100 for L in levels]
+            ax.plot(levels, v, marker="o", ms=3.4, lw=1.1,
+                    label=MODEL_LABEL[m], alpha=0.9)
+        ax.set_xticks(levels)
+        ax.set_xlim(42, 103)
+        ax.set_ylim(42, 103)
+        ax.set_xlabel("Nominal level (%)")
+        ax.set_title(f"{label} intervals", loc="left", fontweight="bold")
+    axes[0].set_ylabel("Empirical coverage (%)")
+    axes[0].legend(fontsize=6, loc="upper left", ncol=1)
+
+    ax = axes[2]
+    pr = pred.dropna(subset=["lo_95"]).copy()
+    pr["year"] = pr["date"].dt.year
+    pr["hit"] = (pr["y_true"] >= pr["lo_95"]) & (pr["y_true"] <= pr["hi_95"])
+    for scale, label, color in (("log1p", "Multiplicative", "#1565c0"),
+                                ("absolute", "Additive", "#ef6c00")):
+        g = pr[pr["scale"] == scale].groupby("year")["hit"].mean() * 100
+        ax.plot(g.index, g.values, marker="o", ms=3.4, lw=1.2, color=color, label=label)
+    ax.axhline(95, color="0.4", lw=0.9, ls=":")
+    ax.set_xticks(range(2015, 2025, 3))
+    ax.set_ylim(66, 101)
+    ax.text(0.03, 0.93, "nominal 95%", transform=ax.transAxes, fontsize=6.5, color="0.35")
+    ax.set_xlabel("Year")
+    ax.set_ylabel("Coverage at 95% (%)")
+    ax.set_title("Coverage over time", loc="left", fontweight="bold")
+    ax.legend(fontsize=6.5, loc="lower left")
+    fig.suptitle(
+        "Prediction intervals are calibrated in ordinary years and fail in the 2024 epidemic",
+        fontweight="bold", y=0.995, fontsize=9.5,
+    )
+    fig.tight_layout(rect=(0, 0, 1, 0.945))
+    save(fig, "fig6_calibration")
+
+
+def fig7_fan(pred: pd.DataFrame) -> None:
+    """Fan chart do TimesFM em duas cidades, escala aditiva."""
+    fig, axes = plt.subplots(2, 1, figsize=(7.2, 4.6), sharex=True)
+    for ax, city in zip(axes, ("sao_paulo", "fortaleza")):
+        s = (pred[(pred["scale"] == "absolute") & (pred["city"] == city)
+                  & (pred["model"] == "timesfm") & (pred["h"] == 6)]
+             .dropna(subset=["lo_95"]).sort_values("date"))
+        ax.fill_between(s["date"], s["lo_95"], s["hi_95"], color="#1565c0",
+                        alpha=0.18, lw=0, label="95% interval")
+        ax.fill_between(s["date"], s["lo_50"], s["hi_50"], color="#1565c0",
+                        alpha=0.34, lw=0, label="50% interval")
+        ax.plot(s["date"], s["y_pred"], color="#1565c0", lw=1.1, label="Forecast")
+        ax.plot(s["date"], s["y_true"], color="black", lw=1.2, label="Observed")
+        out = s[(s["y_true"] < s["lo_95"]) | (s["y_true"] > s["hi_95"])]
+        ax.scatter(out["date"], out["y_true"], s=13, color="#c62828", zorder=5,
+                   label="Outside 95% interval")
+        name = {"sao_paulo": "Sao Paulo", "fortaleza": "Fortaleza"}[city]
+        ax.set_title(f"{name}, TimesFM at a six-month horizon", loc="left",
+                     fontweight="bold")
+        ax.set_ylabel("Notified cases")
+        ax.yaxis.set_major_formatter(FuncFormatter(lambda v, _: f"{v:,.0f}"))
+        ax.margins(x=0.01)
+    axes[0].legend(fontsize=7, loc="upper left", ncol=2)
+    axes[-1].set_xlabel("Target month")
+    fig.suptitle(
+        "Six-month-ahead forecasts with conformal intervals (additive construction)",
+        fontweight="bold", y=0.999,
+    )
+    fig.tight_layout(rect=(0, 0, 1, 0.982))
+    save(fig, "fig7_fan")
+
+
 # --------------------------------------------------------------------------- #
 def main() -> None:
     print("Carregando dados...")
@@ -700,6 +874,10 @@ def main() -> None:
     write(TABLES / "table3_mae_rmse.tex", table3(met))
     t4, disagree = table4(met)
     write(TABLES / "table4_metric_disagreement.tex", t4)
+    cal = load_interval_calibration()
+    ipred = load_interval_predictions()
+    t5, interval_summary = table5(cal, ipred)
+    write(TABLES / "table5_intervals.tex", t5)
 
     print("Gerando figuras...")
     setup_style()
@@ -708,6 +886,8 @@ def main() -> None:
     fig3_timesfm_vs_best(met)
     fig4_metric_disagreement(met)
     fig5_observed_vs_predicted(preds)
+    fig6_calibration(cal, ipred)
+    fig7_fan(ipred)
 
     # numeros citados no corpo do texto, para conferencia
     tf = met[met["model"] == "timesfm"]
@@ -756,6 +936,7 @@ def main() -> None:
         "descriptive": {r["city"]: r for r in desc_rows},
         "metric_disagreement": disagree,
         "bootstrap": {"replicates": BOOT_N, "seed": BOOT_SEED, "method": "percentile"},
+        "intervals": interval_summary,
     }
     (PAPER / "verified_numbers.json").write_text(
         json.dumps(verified, indent=2, ensure_ascii=False), encoding="utf-8"

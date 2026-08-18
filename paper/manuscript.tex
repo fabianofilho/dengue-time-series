@@ -13,6 +13,7 @@
 \usepackage[T1]{fontenc}
 \usepackage[utf8]{inputenc}
 \usepackage{lmodern}
+\usepackage{amsmath}
 \usepackage{setspace}
 \usepackage{booktabs}
 \usepackage{multirow}
@@ -45,6 +46,21 @@ A Rolling-Origin Benchmark}
 
 \maketitle
 
+\begin{center}
+\fcolorbox{red}{red!7}{%
+\parbox{0.92\textwidth}{\centering \color{red}\bfseries
+DRAFT, DO NOT SUBMIT OR CIRCULATE.\\[2pt]
+\normalfont\color{red}
+Every number in this version was computed on a mis-aggregated monthly series.
+Weekly notification counts were assigned whole to the month containing the start of
+the epidemiological week, so 118 of 180 months summed 28 days of cases and 62 summed
+35, a calendar-driven oscillation of 25\%. The median month is off by 10.1\% and the
+March 2024 peak in Sao Paulo is overstated by 16.8\%. The corrected cohort has 178
+months (February 2010 to November 2024) and the full benchmark is being re-run on it.
+Numbers here will change.}}
+\end{center}
+\vspace{0.5em}
+
 % =============================================================================
 \begin{abstract}
 \noindent\textbf{Background.} Dengue imposes a recurrent and heavy burden on the
@@ -63,9 +79,12 @@ using recursive multi-step forecasting with 24 autoregressive lags), and one, Ti
 cross-validation with an expanding window (minimum training window 48 months, forecast
 horizon 12 months, step 1 month), producing 121 folds and 1{,}452 pooled predictions per
 model per city and 81{,}312 predictions overall. The pre-specified primary metric was
-sMAPE; MAE and RMSE were reported alongside it. Uncertainty was quantified by bootstrap
-resampling of the pooled predictions (2{,}000 replicates, percentile method). Reporting
-follows TRIPOD+AI.
+sMAPE; MAE and RMSE were reported alongside it. Uncertainty in the accuracy estimates was
+quantified by bootstrap resampling of the pooled predictions (2{,}000 replicates,
+percentile method). Split conformal prediction intervals, calibrated only on residuals
+from earlier folds and stratified by horizon, were added at the 50\%, 80\% and 95\%
+levels and assessed for empirical coverage and weighted interval score. Reporting follows
+TRIPOD+AI.
 
 \noindent\textbf{Results.} TimesFM achieved the lowest sMAPE in seven of eight cities
 (mean across cities 75.3\%, range 56.0\% to 97.1\%) against 85.6\% for CatBoost, the best
@@ -75,15 +94,21 @@ MAE, TimesFM ranked first in all eight cities. The largest margin was in Rio de 
 S\~ao Paulo the two leading models were indistinguishable (78.0\%, 75.2 to 80.8, versus
 78.7\%, 75.7 to 81.7, for CatBoost). The three metrics selected the same model in only
 four of eight cities: in Belo Horizonte each metric named a different winner, XGBoost on
-sMAPE, TimesFM on MAE and Ridge on RMSE. All models substantially underestimated the 2024
-epidemic peaks.
+sMAPE, TimesFM on MAE and Ridge on RMSE. Conformal intervals were close to calibrated
+overall, with 92.0\% empirical coverage at the nominal 95\% level for TimesFM, but
+coverage fell from 92.7\% across 2015 to 2023 to 71.3\% in the 2024 epidemic year, and
+the median 95\% interval spanned 13.5 times the median observed count. The ranking of
+models by weighted interval score reversed between two equally defensible interval
+constructions, so no probabilistic ranking is claimed.
 
 \noindent\textbf{Conclusion.} A zero-shot foundation model matched or exceeded
-purpose-trained models for 12-month-ahead dengue forecasting across heterogeneous
+purpose-trained models for 12-month-ahead dengue point forecasting across heterogeneous
 Brazilian capitals without any local training, which lowers the cost of extending
-forecasting to municipalities that lack modelling capacity. Absolute error remained
-large in every city and no model anticipated the 2024 epidemic, so these forecasts are
-suited to planning baselines rather than outbreak triggers.
+forecasting to municipalities that lack modelling capacity. That advantage does not
+extend to probabilistic forecasts, where the ranking depends on the interval
+construction. Intervals were wide, and coverage collapsed during the one epidemic in the
+series, so these forecasts are suited to planning baselines rather than outbreak
+triggers.
 
 \vspace{0.8em}
 \noindent\textbf{Keywords:} dengue; forecasting; foundation model; time series;
@@ -262,6 +287,46 @@ these intervals therefore understate the true uncertainty and are interpreted th
 as a lower bound on the spread rather than as a formal test. No hypothesis test of
 model superiority was performed, and none is claimed.
 
+\subsection{Prediction intervals}
+
+Point forecasts alone cannot tell a health authority how much confidence to place in a
+number, and TRIPOD+AI requires that predictive uncertainty be reported and assessed
+\citep{Collins2024tripod}. We therefore constructed prediction intervals around every
+point forecast already produced, without refitting any model, using split conformal
+prediction \citep{Angelopoulos2021conformal}.
+
+For a given model, city and horizon step $h$, the interval at fold $k$ is calibrated on
+the residuals that same model produced at the same $h$ in folds strictly earlier than
+$k$. Restricting calibration to earlier folds preserves the same no-leakage property the
+point forecasts have: nothing from the evaluated period, or from any later period,
+informs the interval. Quantiles use the finite-sample conformal correction, the
+$\lceil (n+1)(1-\alpha) \rceil$-th order statistic of $n$ calibration residuals, which
+without correction leaves coverage systematically below nominal at small $n$. We required
+20 prior folds before emitting an interval, so the first 20 folds of each series carry
+none and 1{,}212 of the 1{,}452 predictions per model per city are evaluated. Intervals
+were produced at the 50\%, 80\% and 95\% nominal levels, and stratified by $h$ because
+forecast uncertainty grows with the horizon.
+
+The scale on which residuals are calibrated is a consequential choice, and we could not
+find a basis for preferring one, so both are reported throughout. Additive intervals
+calibrate raw residuals and give a constant width within a horizon, which is too wide in
+the inter-epidemic trough and too narrow at the peak. Multiplicative intervals calibrate
+residuals of $\log(1+y)$ and scale with the predicted level, which suits a series
+spanning four orders of magnitude but couples the models' errors: a model that
+occasionally predicts near zero while thousands of cases occur generates residuals of
+$\log(\text{thousands})$, and that quantile widens the intervals of every other
+prediction at the same horizon. TimesFM does exactly this, returning a forecast of zero
+in 96 of 1{,}452 predictions in Belo Horizonte and 41 in Rio de Janeiro, against none and
+one for CatBoost. We report both constructions and claim only what holds under both.
+
+Intervals were assessed on three axes: empirical coverage against the nominal level,
+which is the calibration assessment; interval width, which is sharpness; and the weighted
+interval score (WIS), a proper scoring rule that combines the two into a single value on
+the outcome scale \citep{Bracher2021wis,Gneiting2007scoring}. Because WIS is
+scale-dependent and these cities differ by more than an order of magnitude in case
+volume, we divide each city's WIS by that city's mean observed count before averaging
+across cities, and report this as rWIS.
+
 \subsection{Software}
 
 Python 3.12 with pandas, scikit-learn 1.3, skforecast, statsmodels 0.14, LightGBM,
@@ -415,6 +480,82 @@ purpose-trained model by mean sMAPE.}
 \label{fig:obspred}
 \end{figure}
 
+\subsection{Prediction intervals are calibrated, except when it matters}
+
+Table~\ref{tab:intervals} reports coverage, sharpness and rWIS for both interval
+constructions, and Figure~\ref{fig:calibration} shows the same information graphically.
+Conformal calibration works: pooled over all folds and cities, empirical coverage tracks
+the nominal level closely for every model except LightGBM. At the nominal 95\% level
+TimesFM achieved 91.7\% under the multiplicative construction and 92.0\% under the
+additive one, and CatBoost 91.3\% and 90.3\%. LightGBM was the worst calibrated in both,
+at 89.8\% and 86.1\%. Ridge and SARIMAX were the only models to reach or exceed nominal
+coverage, at 95.9\% and 93.9\% under the multiplicative construction, and they do so for
+an unflattering reason: their point forecasts are poor enough that the calibration
+residuals are very wide, which buys coverage with uninformative intervals.
+
+Coverage degrades mildly with the horizon, from 94.3\% at one month ahead to 91.0\% at
+twelve under the multiplicative construction, and from 94.8\% to 91.1\% under the
+additive one. This is the expected and benign pattern.
+
+The failure that matters is temporal rather than structural. Restricted to 2015 through
+2023, coverage at the nominal 95\% level is 92.6\% (multiplicative) and 92.7\%
+(additive). In 2024 it falls to 88.9\% and 71.3\% respectively. Figure~\ref{fig:fan}
+shows the mechanism for S\~ao Paulo: through a decade of ordinary years the observed
+series sits inside the band, and the 2024 epidemic exits it entirely for four consecutive
+months, peaking at more than 330{,}000 cases against an upper bound an order of magnitude
+below. The intervals are honest about ordinary variation and silent about the event a
+surveillance system most needs warning of.
+
+Sharpness is poor throughout, and this qualifies the coverage result. The median width of
+the 95\% interval is 13.5 times the median observed count under the additive construction
+and 27.9 times under the multiplicative one, reaching 49.5 and 510.9 times in the worst
+city. An interval that spans an order of magnitude around the forecast is calibrated in
+the technical sense and close to useless for planning.
+
+\input{tables/table5_intervals}
+
+\begin{figure}[htbp]
+\centering
+\includegraphics[width=\textwidth]{fig6_calibration.pdf}
+\caption{Calibration of the conformal prediction intervals. Left and centre: empirical
+coverage against nominal level for each model, under the two interval constructions; the
+dotted diagonal is perfect calibration and points below it indicate undercoverage. Right:
+coverage at the nominal 95\% level by calendar year, pooled over models and cities, with
+the collapse in 2024 visible in both constructions and severe in the additive one.}
+\label{fig:calibration}
+\end{figure}
+
+\begin{figure}[htbp]
+\centering
+\includegraphics[width=\textwidth]{fig7_fan.pdf}
+\caption{Six-month-ahead TimesFM forecasts with additive conformal intervals for two
+cities. Red points mark observations falling outside the 95\% interval. S\~ao Paulo shows
+the 2024 epidemic breaching the band for four consecutive months. Fortaleza shows the
+opposite failure of the additive construction: within a horizon the width is constant, so
+the band is far wider than the series through the entire inter-epidemic period.}
+\label{fig:fan}
+\end{figure}
+
+\subsection{The probabilistic ranking is not robust}
+
+Under the multiplicative construction, CatBoost has the lowest rWIS and achieves it in
+five of eight cities, while TimesFM ranks fourth. Under the additive construction the
+ordering reverses: TimesFM has the lowest rWIS and wins six of eight cities, and CatBoost
+drops to third with none. Both constructions are defensible, both are calibrated to
+roughly the same degree, and they disagree about which model produces the better
+probabilistic forecast.
+
+The reason is the coupling described in the Methods. TimesFM produces the better point
+forecast in Belo Horizonte and Rio de Janeiro by MAE, but it also returns exact zeros in
+those two cities, which inflates its multiplicative intervals everywhere and costs it the
+comparison on that scale. Decomposing rWIS in Rio de Janeiro confirms this: TimesFM has
+the smaller median term, 301 against 480 for CatBoost, and an interval width term of
+7{,}809 against 149.
+
+We therefore report no probabilistic ranking of the models. The point-forecast ranking in
+Sections~3.2 and 3.3 is stable across sMAPE and MAE; the probabilistic ranking is an
+artefact of a modelling choice that the data do not settle.
+
 % =============================================================================
 \section{Discussion}
 
@@ -488,11 +629,13 @@ and vector indices outperform univariate approaches for outbreak onset
 \citep{Barcellos2024,Fang2024}, so the TimesFM advantage may narrow or reverse once
 supervised models receive informative features that a zero-shot model cannot consume.
 
-Third, no probabilistic forecasts were produced and therefore no calibration was
-assessed. TRIPOD+AI requires calibration to be reported, and for point forecasts of this
-kind it cannot be. Without prediction intervals, a health authority cannot know how much
-confidence to place in any single forecast. This is the most consequential gap in the
-present analysis and the first thing a subsequent version should add.
+Third, the prediction intervals are calibrated but not sharp, and their calibration is
+conditional in a way that matters operationally. Median 95\% interval width is between
+13.5 and 27.9 times the median observed count depending on construction, and coverage
+falls to 71.3\% in 2024. An interval that is correct on average across a decade while
+failing during the one epidemic in the series does not support the decision it would be
+used for. Adaptive conformal methods that update the calibration set under distribution
+shift \citep{Gibbs2021adaptive} are the natural next step and were not attempted here.
 
 Fourth, the bootstrap intervals resample predictions that are serially dependent within
 and across folds. They understate uncertainty and are reported as a lower bound, not as a
@@ -515,14 +658,19 @@ make up most of Brazil, is untested.
 \subsection{Conclusion}
 
 A zero-shot foundation model matched or exceeded six purpose-trained models for
-12-month-ahead dengue forecasting in eight Brazilian state capitals, without any
+12-month-ahead dengue point forecasting in eight Brazilian state capitals, without any
 city-specific training, and did so under a validation design that gave its competitors
 repeated access to local data it never saw. This supports evaluating foundation models as
 a low-maintenance forecasting layer within InfoDengue, particularly for municipalities
-where maintaining a bespoke model is not feasible. It does not support using these
-forecasts as outbreak triggers: absolute error remained high in every city, and no model
-anticipated the 2024 epidemic. Adding prediction intervals and assessing calibration are
-prerequisites for operational use.
+where maintaining a bespoke model is not feasible.
+
+Two results bound that recommendation. The advantage does not carry over to probabilistic
+forecasts: the ranking by weighted interval score reverses between two equally defensible
+interval constructions, so the choice of model cannot be settled on that basis with these
+data. And the intervals, while calibrated across the study period as a whole, are wide
+and lose coverage precisely during the 2024 epidemic. Neither finding argues against
+deploying these forecasts as a planning baseline; both argue against reading them as
+outbreak warnings.
 
 % =============================================================================
 \section*{Declarations}

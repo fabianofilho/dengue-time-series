@@ -1,0 +1,47 @@
+% gerado por scripts/build_paper_assets.py -- nao editar a mao
+\begin{table}[htbp]
+\centering
+\small
+\caption{Calibration and sharpness of conformal prediction intervals, averaged over the
+eight cities, under two interval constructions.}
+\label{tab:intervals}
+\begin{tabular}{lcccrc}
+\toprule
+ & \multicolumn{3}{c}{Empirical coverage (\%)} & & \\
+\cmidrule(lr){2-4}
+Model & at 50\% & at 80\% & at 95\% & rWIS & Cities best \\
+\midrule
+\multicolumn{6}{l}{\textit{Multiplicative intervals (residuals calibrated on the log1p scale)}} \\
+\quad CatBoost & 49.4 & 76.9 & 91.3 & 0.69 & 5/8 \\
+\quad Random Forest & 48.8 & 78.8 & 92.0 & 0.87 & 1/8 \\
+\quad XGBoost & 47.9 & 77.2 & 92.0 & 0.97 & 0/8 \\
+\quad TimesFM & 48.5 & 77.3 & 91.7 & 1.46 & 2/8 \\
+\quad LightGBM & 45.3 & 73.2 & 89.8 & 27.23 & 0/8 \\
+\quad Ridge & 57.0 & 84.2 & 95.9 & 29.44 & 0/8 \\
+\quad SARIMAX & 56.2 & 81.2 & 93.9 & 77.77 & 0/8 \\
+\addlinespace[4pt]
+\multicolumn{6}{l}{\textit{Additive intervals (residuals calibrated on the raw scale)}} \\
+\quad TimesFM & 50.9 & 79.2 & 92.0 & 0.59 & 6/8 \\
+\quad Ridge & 54.3 & 82.5 & 94.0 & 0.63 & 1/8 \\
+\quad CatBoost & 47.9 & 75.7 & 90.3 & 0.68 & 0/8 \\
+\quad SARIMAX & 50.7 & 80.1 & 93.7 & 0.70 & 0/8 \\
+\quad Random Forest & 48.3 & 77.1 & 91.5 & 0.73 & 1/8 \\
+\quad XGBoost & 48.2 & 77.2 & 91.6 & 0.78 & 0/8 \\
+\quad LightGBM & 39.2 & 68.5 & 86.1 & 0.81 & 0/8 \\
+\bottomrule
+\end{tabular}
+
+\vspace{0.5em}
+\begin{minipage}{\textwidth}
+\footnotesize
+Coverage is the percentage of observations falling inside the interval; a value close to
+the nominal level indicates calibration. rWIS is the weighted interval score divided by
+the city's mean observed count, which makes it comparable across cities; lower is better.
+Cities best counts the cities in which a model achieved the lowest rWIS. Intervals are
+calibrated only on residuals from earlier folds, so the first 20 folds of each series
+carry no interval and 1{,}212 of the 1{,}452 predictions per model per city are
+evaluated. The two blocks differ solely in the scale on which residuals are calibrated.
+The ordering by rWIS is not preserved between them, and that is why both are reported and
+no probabilistic ranking of the models is claimed.
+\end{minipage}
+\end{table}

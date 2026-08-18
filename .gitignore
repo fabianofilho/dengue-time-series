@@ -32,3 +32,4 @@ catboost_info/
 .venv/
 build/
 paper/figures/*.png
+archive_v1/

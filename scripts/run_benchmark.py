@@ -132,6 +132,10 @@ def main() -> None:
     if preds_frames:
         preds_path = output_prefix.with_name(output_prefix.name + "_predictions.csv")
         preds_df = merge(pd.concat(preds_frames, ignore_index=True), preds_path)
+        # Normaliza para ISO sem hora. Sem isto o --append mistura formatos:
+        # as linhas novas saem como "2014-01-01 00:00:00" e as antigas como
+        # "2014-01-01", e quem for parsear a coluna depois quebra.
+        preds_df["date"] = pd.to_datetime(preds_df["date"]).dt.strftime("%Y-%m-%d")
         preds_df.to_csv(preds_path, index=False)
         print(f"[INFO] Previsões salvas em: {preds_path}")
 

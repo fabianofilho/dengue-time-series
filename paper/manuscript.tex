@@ -120,19 +120,30 @@ from SINAN and publishes near-real-time municipal surveillance data
 \citep{Codeco2018infodengue}. What the country lacks is an integrated forecasting layer
 able to serve the diversity of local epidemic dynamics.
 
-Two gaps limit the existing evidence. First, a systematic review of dengue forecasting
-found that studies rarely report calibration, seldom use comparable validation designs,
-and derive performance predominantly from internal validation, which makes quantitative
-synthesis across methods impossible \citep{Leung2023}. Second, and more consequential for
-deployment, the models that perform best are trained city by city. In S\~ao Paulo,
-generalised additive models outperformed ARIMA and neural networks; across multiple
-Brazilian cities, the best model differed by city \citep{Chen2025rj,Fang2024}. A national
+Comparative benchmarking of dengue forecasting in Brazil is no longer scarce. Recent work
+has evaluated machine learning strategies for short-term forecasting across all 27
+Brazilian capitals with climatic and socioeconomic covariates \citep{Silva2026capitals},
+produced Bayesian probabilistic epidemic bands for 118 health districts
+\citep{Freitas2025bands}, and run a prospective multi-team forecasting challenge across
+five states \citep{Araujo2026sprint}. What remains open is narrower and specific.
+
+First, that literature concentrates on short horizons and on models supplied with
+exogenous covariates, so it cannot separate the contribution of the forecasting
+architecture from the contribution of the extra information. Second, and more
+consequential for deployment, the models that perform best are still trained city by
+city, and the best model differs by city \citep{Chen2025rj,Fang2024}. A national
 surveillance programme covering thousands of municipalities cannot maintain a bespoke
-pipeline for each one.
+pipeline for each one. Third, a systematic review of dengue forecasting found that
+studies rarely report calibration and seldom use comparable validation designs, which
+makes quantitative synthesis across methods impossible \citep{Leung2023}; the reporting
+of predictive uncertainty, as opposed to point accuracy, remains the weakest part of the
+field.
 
 Time-series foundation models offer a different arrangement. Pre-trained on large and
 heterogeneous temporal corpora, they generate forecasts without any task-specific
-training \citep{Das2024timesfm,Ansari2024chronos,Woo2024moirai}. If such a model performs
+training \citep{Das2024timesfm,Ansari2024chronos,Woo2024moirai}. Whether that paradigm
+transfers to epidemic science has been posed as an open question but not settled
+empirically for dengue \citep{Lau2026foundation}. If such a model performs
 comparably to purpose-trained alternatives on dengue series, the marginal cost of
 extending forecasting to an additional municipality falls to the cost of running
 inference. Whether that transfers to dengue counts, which are volatile, strongly seasonal
@@ -509,6 +520,7 @@ purpose-trained model by mean sMAPE.}
 \end{figure}
 
 \subsection{Prediction intervals are calibrated, except when it matters}
+\label{sec:intervals-fail}
 
 Table~\ref{tab:intervals} reports coverage, sharpness and rWIS for both interval
 constructions, and Figure~\ref{fig:calibration} shows the same information graphically.
@@ -687,6 +699,28 @@ covariates at state level and one retrospective without covariates at municipal 
 both find that model choice is unstable and that 2024 defeated every approach. That
 convergence is a stronger result than either study alone, and it argues against
 single-model deployment more forcefully than our benchmark does on its own.
+
+Two further studies bound the contribution and are worth naming precisely, because each
+covers ground we do not. \citet{Silva2026capitals} evaluated machine learning strategies
+for weekly dengue forecasting across all 27 Brazilian capitals at horizons up to four
+weeks, with climatic and socioeconomic covariates. Their coverage of the country is
+wider than ours and their design is the natural comparator for short-term operational
+warning. The present study addresses a different decision: a 12-month horizon serves
+annual planning rather than outbreak response, and withholding covariates isolates the
+architecture, which is what makes a zero-shot model comparable to a trained one on equal
+terms. Neither study substitutes for the other, and a reader choosing a model for
+four-week warning should prefer theirs.
+
+\citet{Freitas2025bands} produced Bayesian probabilistic epidemic bands for 118 Brazilian
+health districts 52 weeks ahead, at a spatial resolution far finer than ours and already
+oriented to Ministry of Health use. That work and ours approach predictive uncertainty
+from opposite directions: they derive bands from the posterior of a single specified
+model, while we wrap distribution-free intervals around the point forecasts of seven
+different models and then measure whether the stated coverage holds. The complementarity
+is the useful part. A calibration audit of the kind reported in
+Section~\ref{sec:intervals-fail} has not, to our knowledge, been applied to their bands,
+and our finding that coverage survives a decade of ordinary years and then fails in 2024
+is a question their framework should also be asked.
 
 A second study overlaps more narrowly but more sharply. Bannoud and colleagues forecast
 dengue in S\~ao Paulo with fourteen machine learning algorithms, urban incident predictors

@@ -1,0 +1,1352 @@
+[
+  {
+    "title": "Leveraging probabilistic forecasts for dengue preparedness and control: The 2024 Dengue Forecasting Sprint in Brazil.",
+    "journal": "Proc Natl Acad Sci U S A",
+    "year": "2026",
+    "doi": "10.1073/pnas.2508989123",
+    "cited": 2,
+    "type": "journal article",
+    "id": "41678308",
+    "facets": [
+      "brasil",
+      "probabilistic"
+    ],
+    "already_cited": true
+  },
+  {
+    "title": "Dengue forecasting and outbreak detection in Brazil using LSTM: integrating human mobility and climate factors.",
+    "journal": "Infect Dis Model",
+    "year": "2026",
+    "doi": "10.1016/j.idm.2025.11.002",
+    "cited": 1,
+    "type": "research-article; journal article",
+    "id": "41321683",
+    "facets": [
+      "brasil",
+      "probabilistic"
+    ],
+    "already_cited": false
+  },
+  {
+    "title": "Spatio-temporal forecasting of dengue in the Americas through hybrid mechanistic and data-driven models: Systematic review and meta-analysis.",
+    "journal": "Infect Dis Model",
+    "year": "2026",
+    "doi": "10.1016/j.idm.2025.12.005",
+    "cited": 1,
+    "type": "review-article; review; journal article",
+    "id": "41503373",
+    "facets": [
+      "probabilistic",
+      "benchmark"
+    ],
+    "already_cited": false
+  },
+  {
+    "title": "Comparative evaluation of machine learning strategies for short-term dengue forecasting in Brazilian capital municipalities.",
+    "journal": "Int J Biometeorol",
+    "year": "2026",
+    "doi": "10.1007/s00484-026-03300-7",
+    "cited": 0,
+    "type": "comparative study; journal article",
+    "id": "42599321",
+    "facets": [
+      "brasil",
+      "benchmark"
+    ],
+    "already_cited": false
+  },
+  {
+    "title": "Fast and trustworthy nowcasting of dengue fever: A case study using attention-based probabilistic neural networks in São Paulo, Brazil.",
+    "journal": "Epidemics",
+    "year": "2026",
+    "doi": "10.1016/j.epidem.2025.100880",
+    "cited": 0,
+    "type": "journal article",
+    "id": "41411852",
+    "facets": [
+      "brasil",
+      "probabilistic"
+    ],
+    "already_cited": false
+  },
+  {
+    "title": "Arthralgia and fever as dominant predictors of Chikungunya confirmation: an explainable artificial intelligence approach.",
+    "journal": "Front Med (Lausanne)",
+    "year": "2026",
+    "doi": "10.3389/fmed.2026.1814257",
+    "cited": 0,
+    "type": "research-article; journal article",
+    "id": "42051709",
+    "facets": [
+      "brasil",
+      "probabilistic"
+    ],
+    "already_cited": false
+  },
+  {
+    "title": "Recent advances in machine learning and Bayesian modeling for tropical disease prediction, diagnosis, and risk analysis: a scoping review.",
+    "journal": "BMC Infect Dis",
+    "year": "2026",
+    "doi": "10.1186/s12879-026-13993-1",
+    "cited": 0,
+    "type": "systematic review; journal article",
+    "id": "42443778",
+    "facets": [
+      "probabilistic",
+      "benchmark"
+    ],
+    "already_cited": false
+  },
+  {
+    "title": "Development and validation of an interpretable machine learning model for early hospital-based differentiation of chikungunya and dengue fever using routine clinical data.",
+    "journal": "BMC Infect Dis",
+    "year": "2026",
+    "doi": "10.1186/s12879-026-13778-6",
+    "cited": 0,
+    "type": "journal article",
+    "id": "42337454",
+    "facets": [
+      "probabilistic",
+      "benchmark"
+    ],
+    "already_cited": false
+  },
+  {
+    "title": "Integrating google trends and hybrid statistical-machine learning models for dengue surveillance in an inland vietnamese province: a 94-month evaluation (2013-2021) with search-signal anomaly screening.",
+    "journal": "Int J Biometeorol",
+    "year": "2026",
+    "doi": "10.1007/s00484-026-03241-1",
+    "cited": 0,
+    "type": "journal article",
+    "id": "42258012",
+    "facets": [
+      "probabilistic",
+      "benchmark"
+    ],
+    "already_cited": false
+  },
+  {
+    "title": "AI-based prediction of dengue incidence using climatic, environmental, and socio-demographic factors: an ensemble random forest approach with agile system development.",
+    "journal": "BMC Infect Dis",
+    "year": "2026",
+    "doi": "10.1186/s12879-026-13270-1",
+    "cited": 0,
+    "type": "journal article",
+    "id": "42082932",
+    "facets": [
+      "probabilistic",
+      "benchmark"
+    ],
+    "already_cited": false
+  },
+  {
+    "title": "A statistical model for forecasting probabilistic epidemic bands for dengue cases in Brazil.",
+    "journal": "Infect Dis Model",
+    "year": "2025",
+    "doi": "10.1016/j.idm.2025.07.014",
+    "cited": 5,
+    "type": "research-article; journal article",
+    "id": "40832368",
+    "facets": [
+      "brasil",
+      "probabilistic"
+    ],
+    "already_cited": false
+  },
+  {
+    "title": "Machine Learning forecasting of dengue in São Paulo using virtual data augmentation and urban incident predictors: Addressing the exceptional surge of cases in 2024.",
+    "journal": "Acta Trop",
+    "year": "2026",
+    "doi": "10.1016/j.actatropica.2026.107992",
+    "cited": 2,
+    "type": "journal article",
+    "id": "41605294",
+    "facets": [
+      "brasil"
+    ],
+    "already_cited": true
+  },
+  {
+    "title": "Resurgent threat in a changing climate: A 20-year bibliometric analysis of global Chikungunya research evolution and pandemic preparedness.",
+    "journal": "PLoS Negl Trop Dis",
+    "year": "2026",
+    "doi": "10.1371/journal.pntd.0013959",
+    "cited": 1,
+    "type": "research-article; journal article",
+    "id": "41730042",
+    "facets": [
+      "brasil"
+    ],
+    "already_cited": false
+  },
+  {
+    "title": "Drone-based composite risk mapping reveals vegetation-shade interaction and housing typology as key determinants of Aedes habitat risk.",
+    "journal": "Sci Rep",
+    "year": "2026",
+    "doi": "10.1038/s41598-026-39951-0",
+    "cited": 1,
+    "type": "research-article; journal article",
+    "id": "41673121",
+    "facets": [
+      "probabilistic"
+    ],
+    "already_cited": false
+  },
+  {
+    "title": "\"Climatic determinants\" and simple thresholds for dengue early warning in Vietnam: a One Health perspective.",
+    "journal": "Sci One Health",
+    "year": "2026",
+    "doi": "10.1016/j.soh.2026.100159",
+    "cited": 1,
+    "type": "review-article; review; journal article",
+    "id": "42205863",
+    "facets": [
+      "probabilistic"
+    ],
+    "already_cited": false
+  },
+  {
+    "title": "A pan-viral map of host dependency factors from multi-omics integration and machine learning across influenza A, SARS-CoV-2, Zika, and dengue viruses.",
+    "journal": "J Transl Med",
+    "year": "2026",
+    "doi": "10.1186/s12967-026-08197-9",
+    "cited": 1,
+    "type": "research-article; journal article",
+    "id": "42069597",
+    "facets": [
+      "benchmark"
+    ],
+    "already_cited": false
+  },
+  {
+    "title": "Predicting short-life-cycle species suitability via dynamic species distribution models: Applications in dengue and malaria epidemiology in Brazil.",
+    "journal": "Acta Trop",
+    "year": "2026",
+    "doi": "10.1016/j.actatropica.2026.108167",
+    "cited": 0,
+    "type": "journal article",
+    "id": "42235783",
+    "facets": [
+      "brasil"
+    ],
+    "already_cited": false
+  },
+  {
+    "title": "Dengue as stress test for the resilience of health systems: An ecological analysis of selected public health functions in Brazil.",
+    "journal": "Public Health",
+    "year": "2026",
+    "doi": "10.1016/j.puhe.2026.106332",
+    "cited": 0,
+    "type": "journal article",
+    "id": "42160947",
+    "facets": [
+      "brasil"
+    ],
+    "already_cited": false
+  },
+  {
+    "title": "Comparison of Oviposition and Adult Trapping to Monitor wMel Introgression for Wolbachia-Based Vector Control.",
+    "journal": "Am J Trop Med Hyg",
+    "year": "2026",
+    "doi": "10.4269/ajtmh.26-0050",
+    "cited": 0,
+    "type": "journal article",
+    "id": "42480515",
+    "facets": [
+      "brasil"
+    ],
+    "already_cited": false
+  },
+  {
+    "title": "Spatiotemporal macroecological patterns of Aedes aegypti and dengue fever in a subtropical region of Brazil: seasonal synchrony of larval-positive sites and limited predictive capacity of entomological surveillance.",
+    "journal": "Acta Trop",
+    "year": "2026",
+    "doi": "10.1016/j.actatropica.2026.108141",
+    "cited": 0,
+    "type": "journal article",
+    "id": "42140509",
+    "facets": [
+      "brasil"
+    ],
+    "already_cited": false
+  },
+  {
+    "title": "International Airport Wastewater as a Sentinel Site for Genomic Surveillance of Human Viruses and Bacteriophages.",
+    "journal": "Microorganisms",
+    "year": "2026",
+    "doi": "10.3390/microorganisms14071402",
+    "cited": 0,
+    "type": "journal article",
+    "id": "42513908",
+    "facets": [
+      "brasil"
+    ],
+    "already_cited": false
+  },
+  {
+    "title": "Spatial and temporal prediction of &lt;i&gt;Aedes aegypti&lt;/i&gt; populations with atmospheric and urban forms dependence.",
+    "journal": "Proc Natl Acad Sci U S A",
+    "year": "2026",
+    "doi": "10.1073/pnas.2533964123",
+    "cited": 0,
+    "type": "journal article",
+    "id": "42313935",
+    "facets": [
+      "brasil"
+    ],
+    "already_cited": false
+  },
+  {
+    "title": "Knowledge, risk perceptions and practices regarding mosquito-borne arboviral diseases among physicians in Baden-Wuerttemberg, Germany: A cross-sectional questionnaire-based analysis.",
+    "journal": "Public Health Pract (Oxf)",
+    "year": "2026",
+    "doi": "10.1016/j.puhip.2026.100776",
+    "cited": 0,
+    "type": "research-article; journal article",
+    "id": "41972018",
+    "facets": [
+      "brasil"
+    ],
+    "already_cited": false
+  },
+  {
+    "title": "Dengue hospitalizations in Brazil: Forecasting with climatic and physicians' digital search data under real-world reporting delays.",
+    "journal": "PLOS Digit Health",
+    "year": "2026",
+    "doi": "10.1371/journal.pdig.0001206",
+    "cited": 0,
+    "type": "research-article; journal article",
+    "id": "42213709",
+    "facets": [
+      "brasil"
+    ],
+    "already_cited": false
+  },
+  {
+    "title": "Dengue in Kidney Replacement Therapy: Comparison Between Chronic Dialysis and Kidney Transplant Patients.",
+    "journal": "Transplant Proc",
+    "year": "2026",
+    "doi": "10.1016/j.transproceed.2026.04.013",
+    "cited": 0,
+    "type": "journal article",
+    "id": "42161758",
+    "facets": [
+      "brasil"
+    ],
+    "already_cited": false
+  },
+  {
+    "title": "Early Warning Systems and Emergency Declarations During Brazil's Largest Dengue Outbreak.",
+    "journal": "Trop Med Int Health",
+    "year": "2026",
+    "doi": "10.1111/tmi.70153",
+    "cited": 0,
+    "type": "journal article",
+    "id": "42114973",
+    "facets": [
+      "brasil"
+    ],
+    "already_cited": false
+  },
+  {
+    "title": "Global Prediction of Dengue Incidence Using an Explainable Artificial Intelligence-Driven ConvLSTM Integrating Environmental, Health, and Socio-Economic Determinants.",
+    "journal": "Health Sci Rep",
+    "year": "2026",
+    "doi": "10.1002/hsr2.72280",
+    "cited": 0,
+    "type": "research-article; journal article",
+    "id": "41953901",
+    "facets": [
+      "brasil"
+    ],
+    "already_cited": false
+  },
+  {
+    "title": "Ambient PM&lt;sub&gt;2&lt;/sub&gt;.&lt;sub&gt;5&lt;/sub&gt; exposure and increased dengue case fatality: a global multi-country analysis.",
+    "journal": "Environ Pollut",
+    "year": "2026",
+    "doi": "10.1016/j.envpol.2026.127731",
+    "cited": 0,
+    "type": "journal article",
+    "id": "41617048",
+    "facets": [
+      "brasil"
+    ],
+    "already_cited": false
+  },
+  {
+    "title": "Reframing West Nile Virus in Latin America: From Enzootic Evidence to Human Risk-Surveillance Gaps and One Health Actions.",
+    "journal": "Viruses",
+    "year": "2026",
+    "doi": "10.3390/v18030281",
+    "cited": 0,
+    "type": "review-article; review; journal article",
+    "id": "41902189",
+    "facets": [
+      "brasil"
+    ],
+    "already_cited": false
+  },
+  {
+    "title": "Time series analysis (2015-2022): dengue risk scenario in Goiás, Brazil.",
+    "journal": "Rev Bras Epidemiol",
+    "year": "2026",
+    "doi": "10.1590/1980-549720260010",
+    "cited": 0,
+    "type": "research-article; journal article",
+    "id": "41983817",
+    "facets": [
+      "brasil"
+    ],
+    "already_cited": false
+  },
+  {
+    "title": "Forecasting and Early Warning Systems for Dengue Outbreaks: Updated Narrative Review.",
+    "journal": "Rev Soc Bras Med Trop",
+    "year": "2026",
+    "doi": "10.1590/0037-8682-0429-2025",
+    "cited": 0,
+    "type": "review-article; review; journal article",
+    "id": "41563269",
+    "facets": [
+      "brasil"
+    ],
+    "already_cited": false
+  },
+  {
+    "title": "Managing and controlling diseases transmitted by Aedes mosquitoes: a review on best practices.",
+    "journal": "Trop Med Health",
+    "year": "2026",
+    "doi": "10.1186/s41182-025-00890-7",
+    "cited": 0,
+    "type": "review-article; review; journal article",
+    "id": "41514311",
+    "facets": [
+      "brasil"
+    ],
+    "already_cited": false
+  },
+  {
+    "title": "A novel approach for dengue outbreak prediction using evolutionary sampling with prediction framework.",
+    "journal": "J Vector Borne Dis",
+    "year": "2026",
+    "doi": "10.4103/jvbd.jvbd_62_25",
+    "cited": 0,
+    "type": "journal article",
+    "id": "40817800",
+    "facets": [
+      "brasil"
+    ],
+    "already_cited": false
+  },
+  {
+    "title": "Pre-training Epidemic Time Series Forecasters with Compartmental Prototypes.",
+    "journal": "KDD",
+    "year": "2026",
+    "doi": "10.1145/3770855.3818928",
+    "cited": 0,
+    "type": "journal article",
+    "id": "42592558",
+    "facets": [
+      "foundation"
+    ],
+    "already_cited": false
+  },
+  {
+    "title": "Fine-tuned large language models enhance influenza forecasting.",
+    "journal": "Cell Rep Methods",
+    "year": "2026",
+    "doi": "10.1016/j.crmeth.2026.101535",
+    "cited": 0,
+    "type": "journal article",
+    "id": "42492523",
+    "facets": [
+      "foundation"
+    ],
+    "already_cited": false
+  },
+  {
+    "title": "The Role of Artificial Intelligence and Machine Learning in Predictive Virology: Forecasting, Tracking, and Combating Viral Threats.",
+    "journal": "Vector Borne Zoonotic Dis",
+    "year": "2026",
+    "doi": "10.1177/15303667261469037",
+    "cited": 0,
+    "type": "review; journal article",
+    "id": "42461270",
+    "facets": [
+      "foundation"
+    ],
+    "already_cited": false
+  },
+  {
+    "title": "CIST: A clade-informed sequence transformer framework for predicting influenza virus antigenicity.",
+    "journal": "Sci Rep",
+    "year": "2026",
+    "doi": "10.1038/s41598-026-58573-0",
+    "cited": 0,
+    "type": "journal article",
+    "id": "42365024",
+    "facets": [
+      "foundation"
+    ],
+    "already_cited": false
+  },
+  {
+    "title": "AI-guided multi-omics analysis identifies NPC1-modulated susceptibility to SARS-CoV-2 infection under PM&lt;sub&gt;2.5&lt;/sub&gt; exposure.",
+    "journal": "Nat Commun",
+    "year": "2026",
+    "doi": "10.1038/s41467-026-71196-3",
+    "cited": 0,
+    "type": "research-article; journal article",
+    "id": "41912520",
+    "facets": [
+      "foundation"
+    ],
+    "already_cited": false
+  },
+  {
+    "title": "Toward AI foundation models for epidemics: Promise, challenges, and paths forward.",
+    "journal": "Proc Natl Acad Sci U S A",
+    "year": "2026",
+    "doi": "10.1073/pnas.2526192123",
+    "cited": 0,
+    "type": "research-article; journal article",
+    "id": "41824492",
+    "facets": [
+      "foundation"
+    ],
+    "already_cited": false
+  },
+  {
+    "title": "Benchmarking large language models for pathogen-disease classification in post-acute infection syndromes.",
+    "journal": "Brief Bioinform",
+    "year": "2026",
+    "doi": "10.1093/bib/bbag089",
+    "cited": 0,
+    "type": "research-article; journal article",
+    "id": "41789566",
+    "facets": [
+      "foundation"
+    ],
+    "already_cited": false
+  },
+  {
+    "title": "A Search‑Free Foundation Model for Symbolic Regression of Physical Laws",
+    "journal": "Research Square",
+    "year": "2026",
+    "doi": "10.21203/rs.3.rs-10495716/v1",
+    "cited": 0,
+    "type": "preprint",
+    "id": "PPR1287110",
+    "facets": [
+      "foundation"
+    ],
+    "already_cited": false
+  },
+  {
+    "title": "Language Model Embedding Classifiers Enable Identification of Multiple Sclerosis-Associated BCRs and Repertoires",
+    "journal": "bioRxiv",
+    "year": "2026",
+    "doi": "10.64898/2026.07.07.735316",
+    "cited": 0,
+    "type": "preprint",
+    "id": "PPR1278223",
+    "facets": [
+      "foundation"
+    ],
+    "already_cited": false
+  },
+  {
+    "title": "Generative embedding of sparse data with a tabular foundation model for dengue anticipatory action: a machine learning approach",
+    "journal": "medRxiv",
+    "year": "2026",
+    "doi": "10.64898/2026.07.03.26357228",
+    "cited": 0,
+    "type": "preprint",
+    "id": "PPR1271949",
+    "facets": [
+      "foundation"
+    ],
+    "already_cited": false
+  },
+  {
+    "title": "From naive to foundation: benchmarking models for epidemic forecasting",
+    "journal": "medRxiv",
+    "year": "2026",
+    "doi": "10.64898/2026.05.11.26352889",
+    "cited": 0,
+    "type": "preprint",
+    "id": "PPR1264887",
+    "facets": [
+      "foundation"
+    ],
+    "already_cited": false
+  },
+  {
+    "title": "Simulating population compliance with pandemic interventions using large language models",
+    "journal": "medRxiv",
+    "year": "2026",
+    "doi": "10.64898/2026.05.12.26352942",
+    "cited": 0,
+    "type": "preprint",
+    "id": "PPR1264788",
+    "facets": [
+      "foundation"
+    ],
+    "already_cited": false
+  },
+  {
+    "title": "RNAquarium: an archive-scale atlas of zebrafish gene expression coupled with pan-taxonomic profiling reveals diverse viral drivers of transcriptomic states",
+    "journal": "bioRxiv",
+    "year": "2026",
+    "doi": "10.64898/2026.06.17.732950",
+    "cited": 0,
+    "type": "preprint",
+    "id": "PPR1256087",
+    "facets": [
+      "foundation"
+    ],
+    "already_cited": false
+  },
+  {
+    "title": "A sequence-based proactive intelligence for influenza antigenic profiling improves vaccine strain selection",
+    "journal": "bioRxiv",
+    "year": "2026",
+    "doi": "10.64898/2026.04.18.719333",
+    "cited": 0,
+    "type": "preprint",
+    "id": "PPR1213934",
+    "facets": [
+      "foundation"
+    ],
+    "already_cited": false
+  },
+  {
+    "title": "A foundation model for multivariate time series forecasting",
+    "journal": "Research Square",
+    "year": "2026",
+    "doi": "10.21203/rs.3.rs-9096522/v1",
+    "cited": 0,
+    "type": "preprint",
+    "id": "PPR1173764",
+    "facets": [
+      "foundation"
+    ],
+    "already_cited": false
+  },
+  {
+    "title": "Climate variability and COVID-19 non-pharmaceutical interventions shaped dengue transmission in Guangdong: an integrated modeling study.",
+    "journal": "Sci Rep",
+    "year": "2026",
+    "doi": "10.1038/s41598-026-59584-7",
+    "cited": 0,
+    "type": "journal article",
+    "id": "42380422",
+    "facets": [
+      "probabilistic"
+    ],
+    "already_cited": false
+  },
+  {
+    "title": "Multicenter validation of a simple clinical risk score for early prediction of severe dengue among adults in Thailand.",
+    "journal": "BMC Infect Dis",
+    "year": "2026",
+    "doi": "10.1186/s12879-026-13719-3",
+    "cited": 0,
+    "type": "validation study; multicenter study; journal article",
+    "id": "42243707",
+    "facets": [
+      "probabilistic"
+    ],
+    "already_cited": false
+  },
+  {
+    "title": "ModiCal: A Targeted Calibration Workflow for Site-Specific m&lt;sup&gt;5&lt;/sup&gt;C Validation by Nanopore Direct RNA Sequencing.",
+    "journal": "ACS Chem Biol",
+    "year": "2026",
+    "doi": "10.1021/acschembio.6c00009",
+    "cited": 0,
+    "type": "research-article; journal article",
+    "id": "42153371",
+    "facets": [
+      "probabilistic"
+    ],
+    "already_cited": false
+  },
+  {
+    "title": "Climate variability and dengue incidence in southern Ecuador: an ecological analysis in two contrasting climatic settings (2019-2024).",
+    "journal": "BMC Infect Dis",
+    "year": "2026",
+    "doi": "10.1186/s12879-026-13643-6",
+    "cited": 0,
+    "type": "journal article",
+    "id": "42174478",
+    "facets": [
+      "probabilistic"
+    ],
+    "already_cited": false
+  },
+  {
+    "title": "A climate-informed dengue transmission model with Bayesian decision support.",
+    "journal": "Acta Trop",
+    "year": "2026",
+    "doi": "10.1016/j.actatropica.2026.108037",
+    "cited": 0,
+    "type": "journal article",
+    "id": "41763466",
+    "facets": [
+      "probabilistic"
+    ],
+    "already_cited": false
+  },
+  {
+    "title": "Impact of projected climate and socioeconomic scenarios on state-wise annual dengue incidence in India using ensemble models.",
+    "journal": "PLoS Negl Trop Dis",
+    "year": "2026",
+    "doi": "10.1371/journal.pntd.0014159",
+    "cited": 0,
+    "type": "research-article; journal article",
+    "id": "41915702",
+    "facets": [
+      "probabilistic"
+    ],
+    "already_cited": false
+  },
+  {
+    "title": "Evaluating the Reliability of Data-Driven Compartmental Model (SIR or VH) on Dengue Fever for the Ongoing Outbreak in America.",
+    "journal": "Acta Biotheor",
+    "year": "2026",
+    "doi": "10.1007/s10441-026-09520-z",
+    "cited": 0,
+    "type": "journal article",
+    "id": "41840088",
+    "facets": [
+      "probabilistic"
+    ],
+    "already_cited": false
+  },
+  {
+    "title": "Eco-epidemiological clustering and cluster-wise forecasting of dengue in Mexico, 2020-2025.",
+    "journal": "Acta Trop",
+    "year": "2026",
+    "doi": "10.1016/j.actatropica.2026.107993",
+    "cited": 0,
+    "type": "journal article",
+    "id": "41616993",
+    "facets": [
+      "probabilistic"
+    ],
+    "already_cited": false
+  },
+  {
+    "title": "Comparing conditional autoregressive models for Bayesian spatial mapping of dengue cases in Indonesia.",
+    "journal": "Geospat Health",
+    "year": "2026",
+    "doi": "10.4081/gh.2026.1443",
+    "cited": 0,
+    "type": "comparative study; journal article",
+    "id": "42312467",
+    "facets": [
+      "probabilistic"
+    ],
+    "already_cited": false
+  },
+  {
+    "title": "Alignment-Free Machine Learning Serotype Classification of the Dengue Virus.",
+    "journal": "Viruses",
+    "year": "2026",
+    "doi": "10.3390/v18030280",
+    "cited": 0,
+    "type": "research-article; journal article",
+    "id": "41902188",
+    "facets": [
+      "probabilistic"
+    ],
+    "already_cited": false
+  },
+  {
+    "title": "Early individualized risk prediction using clinical data for children during the febrile phase of dengue in outpatient settings in Vietnam and Thailand.",
+    "journal": "PLOS Digit Health",
+    "year": "2026",
+    "doi": "10.1371/journal.pdig.0001171",
+    "cited": 0,
+    "type": "research-article; journal article",
+    "id": "41662365",
+    "facets": [
+      "probabilistic"
+    ],
+    "already_cited": false
+  },
+  {
+    "title": "Probabilistic forecasting of monthly dengue cases using epidemiological and climate signals: A BiLSTM-Negative Binomial Model versus Mechanistic and Count-Model Baselines.",
+    "journal": "PLOS Glob Public Health",
+    "year": "2026",
+    "doi": "10.1371/journal.pgph.0005404",
+    "cited": 0,
+    "type": "research-article; journal article",
+    "id": "41894525",
+    "facets": [
+      "probabilistic"
+    ],
+    "already_cited": false
+  },
+  {
+    "title": "Performance evaluation of an operational dengue forecasting system (D-MOSS) in Vietnam.",
+    "journal": "PLOS Glob Public Health",
+    "year": "2026",
+    "doi": "10.1371/journal.pgph.0005867",
+    "cited": 0,
+    "type": "research-article; journal article",
+    "id": "41790614",
+    "facets": [
+      "probabilistic"
+    ],
+    "already_cited": false
+  },
+  {
+    "title": "Neural parameter calibration for dengue outbreak forecasting.",
+    "journal": "PLoS One",
+    "year": "2026",
+    "doi": "10.1371/journal.pone.0339398",
+    "cited": 0,
+    "type": "research-article; journal article",
+    "id": "41739821",
+    "facets": [
+      "probabilistic"
+    ],
+    "already_cited": false
+  },
+  {
+    "title": "Dynamic spatiotemporal graph attention networks for cross-regional multi-disease forecasting and intervention optimization.",
+    "journal": "Front Public Health",
+    "year": "2026",
+    "doi": "10.3389/fpubh.2026.1720620",
+    "cited": 0,
+    "type": "research-article; journal article",
+    "id": "41717604",
+    "facets": [
+      "probabilistic"
+    ],
+    "already_cited": false
+  },
+  {
+    "title": "Predicting dengue where surveillance is weak: A case for climate- and search-based machine learning in Somalia.",
+    "journal": "New Microbes New Infect",
+    "year": "2026",
+    "doi": "10.1016/j.nmni.2026.101817",
+    "cited": 0,
+    "type": "letter",
+    "id": "42541258",
+    "facets": [
+      "benchmark"
+    ],
+    "already_cited": false
+  },
+  {
+    "title": "Global performance of predictive models for dengue severity, hospitalization and mortality: A systematic review and meta-analysis of 146 studies.",
+    "journal": "Int J Infect Dis",
+    "year": "2026",
+    "doi": "10.1016/j.ijid.2026.108879",
+    "cited": 0,
+    "type": "meta-analysis; systematic review; journal article",
+    "id": "42303089",
+    "facets": [
+      "benchmark"
+    ],
+    "already_cited": false
+  },
+  {
+    "title": "Detection and structural characterization of bat-associated dengue virus serotype 2: A country-level first detection in Pakistan.",
+    "journal": "Gene",
+    "year": "2026",
+    "doi": "10.1016/j.gene.2026.150356",
+    "cited": 0,
+    "type": "journal article",
+    "id": "42600670",
+    "facets": [
+      "benchmark"
+    ],
+    "already_cited": false
+  },
+  {
+    "title": "Comparative Performance of Mechanistic, Statistical, and Hybrid Models of Forecasting Dengue Fever Incidence in Somalia. A Retrospective Time Series Analysis.",
+    "journal": "Health Sci Rep",
+    "year": "2026",
+    "doi": "10.1002/hsr2.72822",
+    "cited": 0,
+    "type": "journal article",
+    "id": "42504217",
+    "facets": [
+      "benchmark"
+    ],
+    "already_cited": false
+  },
+  {
+    "title": "Bridging two hosts: how intracellular environments shape flaviviral infection.",
+    "journal": "mBio",
+    "year": "2026",
+    "doi": "10.1128/mbio.01305-26",
+    "cited": 0,
+    "type": "review; journal article",
+    "id": "42397178",
+    "facets": [
+      "benchmark"
+    ],
+    "already_cited": false
+  },
+  {
+    "title": "Machine learning reveals temperature as a key predictor of dengue risk across Thailand's provinces: A 20-year analysis.",
+    "journal": "PLoS Negl Trop Dis",
+    "year": "2026",
+    "doi": "10.1371/journal.pntd.0014590",
+    "cited": 0,
+    "type": "journal article",
+    "id": "42520067",
+    "facets": [
+      "benchmark"
+    ],
+    "already_cited": false
+  },
+  {
+    "title": "Advanced next-generation vaccines for dengue and other flaviviral infections.",
+    "journal": "J Vector Borne Dis",
+    "year": "2026",
+    "doi": "10.4103/jvbd.jvbd_319_25",
+    "cited": 0,
+    "type": "journal article",
+    "id": "42507508",
+    "facets": [
+      "benchmark"
+    ],
+    "already_cited": false
+  },
+  {
+    "title": "Advancing outbreak detection: Hybridizing machine learning with wavelets for weekly dengue case forecasting.",
+    "journal": "PLoS Negl Trop Dis",
+    "year": "2026",
+    "doi": "10.1371/journal.pntd.0014444",
+    "cited": 0,
+    "type": "journal article",
+    "id": "42424306",
+    "facets": [
+      "benchmark"
+    ],
+    "already_cited": false
+  },
+  {
+    "title": "A 13-year cohort study using clinical machine learning to differentiate bacterial and viral infections in young infants in a dengue hyperendemic region.",
+    "journal": "J Trop Pediatr",
+    "year": "2026",
+    "doi": "10.1093/tropej/fmag050",
+    "cited": 0,
+    "type": "journal article",
+    "id": "42483819",
+    "facets": [
+      "benchmark"
+    ],
+    "already_cited": false
+  },
+  {
+    "title": "Explainable Machine Learning for Predicting Dengue Recovery Duration: Insights from Multi-Center Clinical Data.",
+    "journal": "Healthcare (Basel)",
+    "year": "2026",
+    "doi": "10.3390/healthcare14131881",
+    "cited": 0,
+    "type": "journal article",
+    "id": "42450891",
+    "facets": [
+      "benchmark"
+    ],
+    "already_cited": false
+  },
+  {
+    "title": "Anti-Dengue IgG Seroprevalence and Exposure-Related Risk in Italian Military Personnel Deployed on Overseas Missions: A Cross-Sectional Study.",
+    "journal": "Trop Med Infect Dis",
+    "year": "2026",
+    "doi": "10.3390/tropicalmed11060167",
+    "cited": 0,
+    "type": "journal article",
+    "id": "42347552",
+    "facets": [
+      "benchmark"
+    ],
+    "already_cited": false
+  },
+  {
+    "title": "Unveiling the molecular mechanism of Qingwen Baidu decoction against dengue fever: an integrated study of bioinformatic analysis, machine learning and network pharmacology.",
+    "journal": "Funct Integr Genomics",
+    "year": "2026",
+    "doi": "10.1007/s10142-026-01905-0",
+    "cited": 0,
+    "type": "journal article",
+    "id": "42332327",
+    "facets": [
+      "benchmark"
+    ],
+    "already_cited": false
+  },
+  {
+    "title": "Life-history divergence in Aedes aegypti (Diptera: Culicidae) aligns with Kenya's dengue landscape.",
+    "journal": "J Med Entomol",
+    "year": "2026",
+    "doi": "10.1093/jme/tjag083",
+    "cited": 0,
+    "type": "journal article",
+    "id": "42323913",
+    "facets": [
+      "benchmark"
+    ],
+    "already_cited": false
+  },
+  {
+    "title": "Lagged and non-linear effects of Aedes surveillance indices on dengue incidence in Malaysia: evidence from sentinel-site data.",
+    "journal": "Trop Med Health",
+    "year": "2026",
+    "doi": "10.1186/s41182-026-00974-y",
+    "cited": 0,
+    "type": "research-article; journal article",
+    "id": "42310808",
+    "facets": [
+      "benchmark"
+    ],
+    "already_cited": false
+  },
+  {
+    "title": "Entomological Surveillance and Arbovirus Screening in Mosquitoes from Central Morocco: First Detection of West Nile Virus in Culex pipiens from the Marrakech-Safi Region.",
+    "journal": "Acta Parasitol",
+    "year": "2026",
+    "doi": "10.1007/s11686-026-01320-2",
+    "cited": 0,
+    "type": "journal article",
+    "id": "42283928",
+    "facets": [
+      "benchmark"
+    ],
+    "already_cited": false
+  },
+  {
+    "title": "Advances in mosquito-borne disease surveillance using machine learning.",
+    "journal": "New Microbes New Infect",
+    "year": "2026",
+    "doi": "10.1016/j.nmni.2026.101757",
+    "cited": 0,
+    "type": "research-article; journal article",
+    "id": "42164981",
+    "facets": [
+      "benchmark"
+    ],
+    "already_cited": false
+  },
+  {
+    "title": "Comparison of Colorimetric (Enzyme-Linked Immunosorbent Assay (ELISA)) and Chemiluminescent Immunoassay (CLIA) Methods for Detection of Dengue Nonstructural Protein 1 (NS1) Antigen in Acute Dengue Infection.",
+    "journal": "Cureus",
+    "year": "2026",
+    "doi": "10.7759/cureus.109055",
+    "cited": 0,
+    "type": "research-article; journal article",
+    "id": "42317899",
+    "facets": [
+      "benchmark"
+    ],
+    "already_cited": false
+  },
+  {
+    "title": "High-resolution automated mapping of potential Aedes larval container habitats using drone imagery and supervised machine learning in Dar es Salaam, Tanzania.",
+    "journal": "PLoS Negl Trop Dis",
+    "year": "2026",
+    "doi": "10.1371/journal.pntd.0014361",
+    "cited": 0,
+    "type": "research-article; journal article",
+    "id": "42189914",
+    "facets": [
+      "benchmark"
+    ],
+    "already_cited": false
+  },
+  {
+    "title": "Bridging ensemble model and public health practice: an approach for refining understanding of seasonal dengue transmission patterns in Bangladesh.",
+    "journal": "BMC Infect Dis",
+    "year": "2026",
+    "doi": "10.1186/s12879-026-13573-3",
+    "cited": 0,
+    "type": "journal article",
+    "id": "42163122",
+    "facets": [
+      "benchmark"
+    ],
+    "already_cited": false
+  },
+  {
+    "title": "Exploring anti-dengue activity with atomic-weighted vectors, class balancing and machine learning.",
+    "journal": "Mol Divers",
+    "year": "2026",
+    "doi": "10.1007/s11030-026-11575-6",
+    "cited": 0,
+    "type": "journal article",
+    "id": "42105140",
+    "facets": [
+      "benchmark"
+    ],
+    "already_cited": false
+  },
+  {
+    "title": "Automated leucocyte VCS parameter profiling for differentiating SARS-CoV-2 and dengue infections: A comparative exploratory study.",
+    "journal": "Indian J Med Microbiol",
+    "year": "2026",
+    "doi": "10.1016/j.ijmmb.2026.101122",
+    "cited": 0,
+    "type": "comparative study; research support, non-u.s. gov't; journal article",
+    "id": "42009198",
+    "facets": [
+      "benchmark"
+    ],
+    "already_cited": false
+  },
+  {
+    "title": "Temporal Machine Learning Models for Classifying Suspected Dengue Cases in Mexico Using Surveillance Data from 2025.",
+    "journal": "Diseases",
+    "year": "2026",
+    "doi": "10.3390/diseases14050155",
+    "cited": 0,
+    "type": "research-article; journal article",
+    "id": "42187867",
+    "facets": [
+      "benchmark"
+    ],
+    "already_cited": false
+  },
+  {
+    "title": "Impact of flooding events on waterborne and vector-borne infections: a systematic review.",
+    "journal": "BMC Infect Dis",
+    "year": "2026",
+    "doi": "10.1186/s12879-026-13442-z",
+    "cited": 0,
+    "type": "systematic review; review-article; journal article",
+    "id": "42050456",
+    "facets": [
+      "benchmark"
+    ],
+    "already_cited": false
+  },
+  {
+    "title": "Metadata harmonization from biological datasets with language models.",
+    "journal": "Bioinform Adv",
+    "year": "2025",
+    "doi": "10.1093/bioadv/vbaf241",
+    "cited": 3,
+    "type": "research-article; journal article",
+    "id": "41425653",
+    "facets": [
+      "foundation"
+    ],
+    "already_cited": false
+  },
+  {
+    "title": "Multi-model approach to understand and predict past and future dengue epidemic dynamics.",
+    "journal": "R Soc Open Sci",
+    "year": "2025",
+    "doi": "10.1098/rsos.241870",
+    "cited": 3,
+    "type": "research-article; journal article",
+    "id": "41200242",
+    "facets": [
+      "probabilistic"
+    ],
+    "already_cited": false
+  },
+  {
+    "title": "Metadata Harmonization from Biological Datasets with Language Models",
+    "journal": "bioRxiv",
+    "year": "2025",
+    "doi": "10.1101/2025.01.15.633281",
+    "cited": 1,
+    "type": "preprint",
+    "id": "PPR968187",
+    "facets": [
+      "foundation"
+    ],
+    "already_cited": false
+  },
+  {
+    "title": "Bibliometric Analysis of the Evolution and Distribution of Research on Analytical Methods for Climate-Sensitive Infectious Diseases in Latin America and the Caribbean.",
+    "journal": "Int J Environ Res Public Health",
+    "year": "2025",
+    "doi": "10.3390/ijerph22121834",
+    "cited": 0,
+    "type": "review-article; review; journal article",
+    "id": "41464467",
+    "facets": [
+      "brasil"
+    ],
+    "already_cited": false
+  },
+  {
+    "title": "Hospitalization and Mortality in Cancer Patients with Dengue Fever: A Cohort Study from a Brazilian Cancer Center.",
+    "journal": "Am J Trop Med Hyg",
+    "year": "2025",
+    "doi": "10.4269/ajtmh.25-0157",
+    "cited": 0,
+    "type": "journal article; observational study",
+    "id": "41086803",
+    "facets": [
+      "brasil"
+    ],
+    "already_cited": false
+  },
+  {
+    "title": "Dengue dynamics: A holistic predictive model considering epidemic, vaccination, and environmental factors.",
+    "journal": "Glob Public Health",
+    "year": "2025",
+    "doi": "10.1080/17441692.2025.2555660",
+    "cited": 0,
+    "type": "research support, non-u.s. gov't; journal article",
+    "id": "41020736",
+    "facets": [
+      "brasil"
+    ],
+    "already_cited": false
+  },
+  {
+    "title": "Risk factors predicting dengue hospitalization and disease severity in children and adolescents living in an endemic area of arbovirus transmission in Northeast Brazil (2017-2020).",
+    "journal": "BMC Public Health",
+    "year": "2025",
+    "doi": "10.1186/s12889-025-24822-6",
+    "cited": 0,
+    "type": "research-article; journal article",
+    "id": "41152786",
+    "facets": [
+      "brasil"
+    ],
+    "already_cited": false
+  },
+  {
+    "title": "Caregivers' attitudes toward school-based vaccination programs: A comparison of COVID-19, HPV, influenza, and dengue vaccines in Brazil.",
+    "journal": "Vaccine",
+    "year": "2025",
+    "doi": "10.1016/j.vaccine.2025.127709",
+    "cited": 0,
+    "type": "comparative study; journal article",
+    "id": "40930042",
+    "facets": [
+      "brasil"
+    ],
+    "already_cited": false
+  },
+  {
+    "title": "[Progress of application of artificial intelligence foundation models in epidemiological research].",
+    "journal": "Zhonghua Liu Xing Bing Xue Za Zhi",
+    "year": "2025",
+    "doi": "10.3760/cma.j.cn112338-20250714-00488",
+    "cited": 0,
+    "type": "review; journal article; english abstract",
+    "id": "41443677",
+    "facets": [
+      "foundation"
+    ],
+    "already_cited": false
+  },
+  {
+    "title": "A comparative study of time series foundation models for hand, foot, and mouth disease forecasting: TimesFM, Moirai, and traditional approaches.",
+    "journal": "Front Public Health",
+    "year": "2025",
+    "doi": "10.3389/fpubh.2025.1634138",
+    "cited": 0,
+    "type": "comparative study; research-article; journal article",
+    "id": "41080839",
+    "facets": [
+      "foundation"
+    ],
+    "already_cited": false
+  },
+  {
+    "title": "Computational Discovery of CRISPR-Cas13b Guide RNAs for Broad-Spectrum Dengue Virus Targeting",
+    "journal": "bioRxiv",
+    "year": "2025",
+    "doi": "10.64898/2025.12.31.697158",
+    "cited": 0,
+    "type": "preprint",
+    "id": "PPR1225698",
+    "facets": [
+      "foundation"
+    ],
+    "already_cited": false
+  },
+  {
+    "title": "Discovery of Novel Anticancer Agents and Influenza Potential Biomarkers Through a Mass Spectrometry Foundation Model",
+    "journal": "Research Square",
+    "year": "2025",
+    "doi": "10.21203/rs.3.rs-7883708/v1",
+    "cited": 0,
+    "type": "preprint",
+    "id": "PPR1109388",
+    "facets": [
+      "foundation"
+    ],
+    "already_cited": false
+  },
+  {
+    "title": "Benchmarking Large Language Models for Pathogen–Disease Classification in Post-Acute Infection Syndromes",
+    "journal": "bioRxiv",
+    "year": "2025",
+    "doi": "10.1101/2025.06.30.662395",
+    "cited": 0,
+    "type": "preprint",
+    "id": "PPR1045546",
+    "facets": [
+      "foundation"
+    ],
+    "already_cited": false
+  },
+  {
+    "title": "Fine-tuned large language models enhance influenza forecasting",
+    "journal": "medRxiv",
+    "year": "2025",
+    "doi": "10.1101/2025.03.27.25324747",
+    "cited": 0,
+    "type": "preprint",
+    "id": "PPR997361",
+    "facets": [
+      "foundation"
+    ],
+    "already_cited": false
+  },
+  {
+    "title": "Foundation time series models for forecasting and policy evaluation in infectious disease epidemics",
+    "journal": "medRxiv",
+    "year": "2025",
+    "doi": "10.1101/2025.02.24.25322795",
+    "cited": 0,
+    "type": "preprint",
+    "id": "PPR982460",
+    "facets": [
+      "foundation"
+    ],
+    "already_cited": false
+  },
+  {
+    "title": "Accurate identification of broadly neutralizing antibodies against dengue virus based on deep stacking strategy with multi-perspective features.",
+    "journal": "Sci Rep",
+    "year": "2025",
+    "doi": "10.1038/s41598-025-31332-3",
+    "cited": 0,
+    "type": "research-article; journal article",
+    "id": "41372420",
+    "facets": [
+      "probabilistic"
+    ],
+    "already_cited": false
+  },
+  {
+    "title": "Harnessing artificial intelligence for dengue forecasting in climate-vulnerable regions: A narrative review with insights from Ba Ria-Vung Tau, Vietnam.",
+    "journal": "Acta Trop",
+    "year": "2025",
+    "doi": "10.1016/j.actatropica.2025.107909",
+    "cited": 0,
+    "type": "systematic review; journal article",
+    "id": "41232742",
+    "facets": [
+      "probabilistic"
+    ],
+    "already_cited": false
+  }
+]

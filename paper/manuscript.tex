@@ -688,6 +688,33 @@ both find that model choice is unstable and that 2024 defeated every approach. T
 convergence is a stronger result than either study alone, and it argues against
 single-model deployment more forcefully than our benchmark does on its own.
 
+A second study overlaps more narrowly but more sharply. Bannoud and colleagues forecast
+dengue in S\~ao Paulo with fourteen machine learning algorithms, urban incident predictors
+and a virtual data augmentation scheme, training on 2014 to 2022 and testing on 2023
+through mid-2025 \citep{Bannoud2026augment}. Their best performers, AdaBoost and CatBoost,
+place a gradient boosting method at the top in the same city where CatBoost is our best
+purpose-trained model, so the two studies agree on the supervised ranking where they can
+be compared.
+
+They differ in what each was built to answer. Theirs is one city with informative
+covariates and a single chronological split; ours is eight cities with no covariates and
+119 rolling origins, which trades depth in one setting for a repeated estimate across
+several. Neither design dominates: a single split yields one realisation of the test
+period and cannot separate model skill from the particular months it happened to cover,
+while a rolling origin cannot tell how a model would behave with information it was never
+given.
+
+The more important difference runs the other way, and it is a limitation of the present
+work rather than of theirs. We document that every model failed in 2024 and that interval
+coverage collapsed there, and we stop at documenting it. They target exactly that failure,
+reporting that augmenting the training data with synthetic extremes reduced error
+substantially when test values exceeded the training maximum. That is a candidate remedy
+for the central weakness we identify and did not attempt, and it should be evaluated
+against the multi-city, zero-shot setting benchmarked here before any of these models is
+considered for prospective use. We note that their abstract does not report prediction
+intervals, so whether augmentation repairs calibration during an epidemic, as opposed to
+point accuracy, remains open.
+
 Where the two diverge is on the remedy. The Sprint found that aggregation delivered the
 stability no single entry achieved, and the resulting ensembles were adopted by Brazilian
 health authorities. We tested four combinations and found that none beats the best
@@ -717,7 +744,7 @@ model, but that design was not tested here and we make no claim about its perfor
 
 \subsection{Limitations}
 
-Seven limitations bound these conclusions.
+Nine limitations bound these conclusions.
 
 First, the outcome is notified cases, which under-represent true infections
 \citep{Siqueira2022}. What is forecast is the behaviour of the surveillance system,
@@ -754,7 +781,14 @@ for other foundation models \citep{Ansari2024chronos,Woo2024moirai}, other check
 or the smaller municipalities with shorter and more irregular reporting histories that
 make up most of Brazil, is untested.
 
-Eighth, the combinations tested here are unweighted or linear in the members'
+Eighth, we did not attempt any remedy for the distribution shift that defeated every
+model in 2024. Training-set augmentation with synthetic extremes has been reported to cut
+error substantially in exactly this situation for S\~ao Paulo
+\citep{Bannoud2026augment}, and adaptive conformal methods \citep{Gibbs2021adaptive}
+address the interval side of the same problem. Both are untested here, and a benchmark
+that identifies a failure without testing the available fixes for it is incomplete.
+
+Ninth, the combinations tested here are unweighted or linear in the members'
 predictions, and all members share the same 24 lagged inputs. That shared input is the
 most likely reason combining did not help: models trained on identical features capture
 similar structure, so a combination averages correlated errors rather than adding

@@ -68,7 +68,7 @@ Brazilian health system, and municipal forecasts are used to plan vector control
 procurement and hospital capacity. Operational forecasting tools rely on models that
 must be trained and periodically retrained for each city, which limits how widely they
 can be deployed. Whether a pre-trained time-series foundation model can substitute for
-that per-city pipeline has not been tested on Brazilian dengue data.
+that per-city pipeline has not, to our knowledge, been evaluated on Brazilian dengue data.
 
 \noindent\textbf{Methods.} We benchmarked seven forecasting models on monthly notified
 dengue counts from InfoDengue for eight Brazilian state capitals covering January 2010
@@ -149,7 +149,11 @@ training \citep{Das2024timesfm,Ansari2024chronos,Woo2024moirai}. If such a model
 comparably to purpose-trained alternatives on dengue series, the marginal cost of
 extending forecasting to an additional municipality falls to the cost of running
 inference. Whether that transfers to dengue counts, which are volatile, strongly seasonal
-and punctuated by epidemics an order of magnitude above baseline, has not been tested.
+and punctuated by epidemics an order of magnitude above baseline, has not to our knowledge
+been evaluated. The recent Dengue Forecasting Sprint benchmarked six teams on Brazilian
+dengue using machine learning and classical statistical approaches
+\citep{Araujo2026sprint}; the entries are described at that level of generality, and we
+did not identify a zero-shot foundation model among them.
 
 This study therefore aimed to: (i) describe the evolution of dengue incidence across
 eight Brazilian state capitals over 15 years; and (ii) benchmark a zero-shot foundation
@@ -601,6 +605,33 @@ Brazil, need substantial per-city history and degrade under distribution shift
 though it introduces a different dependency: performance rests on how well the
 pre-training corpus covers epidemic-like dynamics, which is not inspectable.
 
+The most directly comparable work is the 2024 Dengue Forecasting Sprint, in which six
+international teams produced probabilistic forecasts for five Brazilian states using
+machine learning and classical statistical models with climate covariates
+\citep{Araujo2026sprint}. Three differences bound what the present study adds. Their
+design is prospective, ours retrospective, and a prospective challenge is the stronger
+evidence for the question of which model to deploy; we make no claim to have tested
+models under real forecasting conditions. Their unit is the state and ours the
+municipality, which matters because the per-city pipeline burden that motivates a
+zero-shot model scales with the number of units, and Brazil has 27 states against 5{,}570
+municipalities. And they supplied climate covariates while we deliberately withheld them,
+so the two studies answer different questions: theirs how well dengue can be forecast
+with the information available, ours how forecasting architectures compare when the
+information is held equal.
+
+Where the two studies overlap they agree, and the agreement is worth stating plainly
+because it concerns our least comfortable findings. The Sprint concluded that no single
+model consistently excelled, particularly during the unprecedented 2024 season, and that
+ensembles were needed to obtain stable performance. We reach the same place from a
+different direction: the model ranking here depends on which accuracy metric is chosen in
+half the cities (Section~\ref{sec:disagreement}), the probabilistic ranking reverses
+between two defensible interval constructions, and interval coverage collapses in 2024.
+Two independent evaluations of Brazilian dengue forecasting, one prospective with
+covariates at state level and one retrospective without covariates at municipal level,
+both find that model choice is unstable and that 2024 defeated every approach. That
+convergence is a stronger result than either study alone, and it argues against
+single-model deployment more forcefully than our benchmark does on its own.
+
 The 12-month horizon here is considerably longer than the 4 to 8 weeks typical of
 published dengue benchmarks. That makes these results relevant to annual planning cycles
 and correspondingly less relevant to short-term outbreak response, and it also makes the
@@ -654,6 +685,16 @@ Seventh, one TimesFM checkpoint was evaluated on eight capitals. Whether the res
 for other foundation models \citep{Ansari2024chronos,Woo2024moirai}, other checkpoints,
 or the smaller municipalities with shorter and more irregular reporting histories that
 make up most of Brazil, is untested.
+
+Eighth, no ensemble was evaluated. This is the most consequential omission given the
+external evidence: the 2024 Dengue Forecasting Sprint found that combining models was
+what produced stable performance across locations and years, and the resulting ensembles
+were adopted by Brazilian health authorities \citep{Araujo2026sprint}. Our own results
+point the same way, since no single model wins under every metric and the probabilistic
+ranking is unstable. A benchmark that identifies instability and then recommends a single
+model is arguing against itself; testing whether an ensemble of the models evaluated here,
+including the zero-shot forecasts, is more stable than any of its members is the
+immediate next step.
 
 \subsection{Conclusion}
 

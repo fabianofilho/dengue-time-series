@@ -25,23 +25,37 @@ is about cost: the best supervised model is a different model in each city, so a
 programme would need per-city selection and monitoring, whereas one unmodified foundation
 model would not.
 
-We report three results that qualify that finding rather than support it, and we consider
-them the more useful contribution to your readership. First, the three accuracy metrics
-select different models in half the cities, and in two of them each metric names a
-different winner, so a single-metric benchmark would have reached a different conclusion.
-Second, conformal prediction intervals were close to calibrated across the study period
-but coverage fell to 69.2% during the 2024 epidemic, meaning the intervals fail precisely
-when a surveillance system would rely on them. Third, combining the models did not beat
-the best single model in seven of eight cities. Taken together these argue against
-deploying any single model on the strength of a benchmark, and they converge with the
-conclusion of the 2024 Dengue Forecasting Sprint, reached prospectively and at state
-level with climate covariates, that no model excelled consistently and that 2024 defeated
-every approach.
+We want to be explicit about what this manuscript does not claim, because 2025 and 2026
+have been productive years for this question in Brazil. Comparative machine learning
+evaluation across Brazilian capitals now exists at four-week horizons with climatic and
+socioeconomic covariates, Bayesian probabilistic epidemic bands now exist for 118 health
+districts, and a prospective multi-team forecasting challenge has been run across five
+states. We cite all three and position against them in the Discussion rather than around
+them. What remains open, and what this manuscript addresses, is narrower: a 12-month
+horizon suited to annual planning rather than outbreak response, a deliberate absence of
+covariates so that forecasting architectures are compared on equal information, the first
+evaluation of a zero-shot foundation model on Brazilian dengue that we are aware of, and
+an audit of whether stated interval coverage actually holds.
+
+That audit produced the results we consider most useful to your readership, and all three
+qualify the headline rather than support it. The three accuracy metrics select different
+models in half the cities, and in two of them each metric names a different winner, so a
+single-metric benchmark would have reached a different conclusion. Conformal prediction
+intervals were close to calibrated across the study period but coverage fell to 69.2%
+during the 2024 epidemic, meaning the intervals fail precisely when a surveillance system
+would rely on them. Combining the models did not beat the best single model in seven of
+eight cities. Taken together these argue against deploying any single model on the
+strength of a benchmark, and they converge with the conclusion of the 2024 Dengue
+Forecasting Sprint, reached prospectively and at state level with covariates, that no
+model excelled consistently and that 2024 defeated every approach. Two independent
+evaluations with opposite designs reaching the same verdict is a stronger signal than
+either alone.
 
 The manuscript suits this journal because its readership works on the diseases and the
-surveillance system the study analyses. The Revista has recently published a review of
-dengue forecasting and early warning systems covering InfoDengue, and this manuscript
-supplies the standardised municipal benchmark that such reviews report as missing.
+surveillance system the study analyses, and because the Revista has recently published a
+review of dengue forecasting and early warning systems covering InfoDengue. A benchmark
+that reports where these models fail, and not only where they rank, speaks directly to
+readers who would have to act on the forecasts.
 
 The study used exclusively publicly available aggregate surveillance data with no
 individual-level records, so ethics committee review was not required. All analysis code,

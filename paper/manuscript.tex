@@ -163,10 +163,23 @@ rolling-origin validation design.
 
 Reporting follows the TRIPOD+AI statement for the development and evaluation of
 prediction models using regression or machine learning methods
-\citep{Collins2024tripod}. All data are publicly available aggregate surveillance records
-with no individual-level information, so ethics committee review was not required.
-Analysis code, processed data and every result file underlying the tables and figures are
-openly available at \url{https://github.com/fabianofilho/dengue-time-series}.
+\citep{Collins2024tripod}. Analysis code, processed data and every result file underlying
+the tables and figures are openly available at
+\url{https://github.com/fabianofilho/dengue-time-series}.
+
+\subsection{Ethical Considerations}
+
+This study used exclusively publicly available aggregate surveillance records obtained
+from the InfoDengue open application programming interface. The data are counts of
+notified dengue cases per municipality per epidemiological week, contain no
+individual-level information, and cannot be used to identify any person. Under Brazilian
+National Health Council Resolution CNS 510/2016, Article 1, sole paragraph, such research
+is not subject to registration or evaluation by the CEP/CONEP research ethics committee
+system: item II covers research using publicly accessible information, and item V covers
+research with databases whose information is aggregated with no possibility of individual
+identification. Both apply here. Approval by an
+Institutional Ethics Committee was therefore not required, and none was sought. No human
+participants were recruited and no informed consent was applicable.
 
 \subsection{Study setting and data source}
 
@@ -852,9 +865,6 @@ outbreak warnings.
 % =============================================================================
 \section*{Declarations}
 
-\paragraph{Ethics approval.} Not required. The study used publicly available aggregate
-surveillance data containing no individual-level records.
-
 \paragraph{Data and code availability.} Monthly case data are publicly available through
 the InfoDengue API (\url{https://info.dengue.mat.br/api/}). All analysis code, processed
 data, result files and the scripts that generate every table and figure in this
@@ -874,11 +884,13 @@ Writing: review and editing.
 Writing: review and editing.
 All authors read and approved the final manuscript.
 
-\paragraph{Use of artificial intelligence.} The authors used a large language model based
-assistant to support literature organisation, drafting and the generation of analysis and
-figure code. The tool is not an author. The authors reviewed and verified all content,
-including every reported number against the underlying analysis output, and take full
-responsibility for the integrity and accuracy of the work.
+\paragraph{Declaration of the use of generative AI and AI-assisted technologies in the
+writing process.} During the preparation of this work the authors used a large language
+model based assistant to support literature organisation, drafting, and the generation of
+analysis and figure code. After using this tool the authors reviewed and edited the
+content as needed, verified every reported number against the underlying analysis output,
+and take full responsibility for the content of the publication. The tool is not an
+author and does not meet authorship criteria.
 
 \paragraph{Acknowledgements.} Surveillance data were obtained from InfoDengue
 (Fiocruz/FGV). TimesFM was developed by Google DeepMind and distributed through

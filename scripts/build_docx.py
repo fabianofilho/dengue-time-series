@@ -340,6 +340,22 @@ def methods(doc: Document, v: dict) -> None:
         "openly available at https://github.com/fabianofilho/dengue-time-series."
     ))
 
+    heading(doc, "Ethical Considerations", 2)
+    body(doc, (
+        "This study used exclusively publicly available aggregate surveillance records "
+        "obtained from the InfoDengue open application programming interface. The data are "
+        "counts of notified dengue cases per municipality per epidemiological week, contain "
+        "no individual-level information, and cannot be used to identify any person. Under "
+        "Brazilian National Health Council Resolution CNS 510/2016, Article 1, sole "
+        "paragraph, such research is not subject to registration or evaluation by the "
+        "CEP/CONEP research ethics committee system: item II covers research using publicly "
+        "accessible information, and item V covers research with databases whose information "
+        "is aggregated with no possibility of individual identification. Both apply here. "
+        "Approval by an Institutional Ethics Committee was therefore not required, and none "
+        "was sought. No human participants were recruited and no informed consent was "
+        "applicable."
+    ))
+
     heading(doc, "Study setting and data source", 2)
     body(doc, (
         "Eight Brazilian state capitals were studied: Sao Paulo (SP), Rio de Janeiro (RJ), "
@@ -682,20 +698,20 @@ def discussion(doc: Document, v: dict) -> None:
 def declarations(doc: Document) -> None:
     heading(doc, "DECLARATIONS")
     for lead, text in [
-        ("Ethics approval. ", "Not required. The study used publicly available aggregate "
-         "surveillance data containing no individual-level records."),
         ("Data and code availability. ", "Monthly case data are publicly available through "
          "the InfoDengue API. All analysis code, processed data, result files and the "
          "scripts that generate every table and figure in this manuscript are available at "
          "https://github.com/fabianofilho/dengue-time-series."),
         ("Funding. ", "No external funding was received."),
         ("Conflicts of interest. ", "The authors declare no conflicts of interest."),
-        ("Use of artificial intelligence. ", "The authors used a large language model based "
-         "assistant to support literature organisation, drafting and the generation of "
-         "analysis and figure code. The tool is not an author. The authors reviewed and "
-         "verified all content, including every reported number against the underlying "
-         "analysis output, and take full responsibility for the integrity and accuracy of "
-         "the work."),
+        ("Declaration of the use of generative AI and AI-assisted technologies in the writing "
+         "process. ",
+         "During the preparation of this work the authors used a large language model based "
+         "assistant to support literature organisation, drafting, and the generation of "
+         "analysis and figure code. After using this tool the authors reviewed and edited "
+         "the content as needed, verified every reported number against the underlying "
+         "analysis output, and take full responsibility for the content of the publication. "
+         "The tool is not an author and does not meet authorship criteria."),
         ("Acknowledgements. ", "Surveillance data were obtained from InfoDengue "
          "(Fiocruz/FGV). TimesFM was developed by Google DeepMind."),
     ]:

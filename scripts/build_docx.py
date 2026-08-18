@@ -514,6 +514,30 @@ def results(doc: Document, v: dict) -> None:
                "with 95% bootstrap intervals. The label above each orange bar names which "
                "supervised model achieved it, and it is not the same across cities.")
 
+    heading(doc, "Absolute error", 2)
+    body(doc, (
+        "MAE and RMSE are reported on the original case-count scale and are therefore not "
+        "comparable across cities. The gap between the two within a city quantifies how "
+        "much of the total error sits in a few months: where RMSE greatly exceeds MAE, the "
+        "error is concentrated in epidemic peaks rather than spread across the series."
+    ))
+    rows, bold = [], set()
+    ri = 0
+    for c in CITY_ORDER:
+        maes = [pc[c][m]["MAE"] for m in MODELS]
+        rmses = [pc[c][m]["RMSE"] for m in MODELS]
+        bold.add((ri, 2 + maes.index(min(maes))))
+        rows.append([c, "MAE"] + [f"{x:,.0f}" for x in maes])
+        ri += 1
+        bold.add((ri, 2 + rmses.index(min(rmses))))
+        rows.append(["", "RMSE"] + [f"{x:,.0f}" for x in rmses])
+        ri += 1
+    add_table(doc, ["City", "Metric"] + [LABEL[m] for m in MODELS], rows,
+              "Table 3.",
+              "Forecasting accuracy by model and city: mean absolute error (MAE) and root "
+              "mean squared error (RMSE), in notified cases per month. Bold marks the best "
+              "value in each row.", bold)
+
     heading(doc, "The metrics disagree", 2)
     agree = sum(1 for r in v["metric_disagreement"]
                 if r["smape"] == r["mae"] == r["rmse"])
@@ -529,7 +553,7 @@ def results(doc: Document, v: dict) -> None:
               [[r["city"], LABEL[r["smape"]], LABEL[r["mae"]], LABEL[r["rmse"]],
                 "Yes" if r["smape"] == r["mae"] == r["rmse"] else "No"]
                for r in v["metric_disagreement"]],
-              "Table 3.",
+              "Table 4.",
               "Best-performing model per city under each accuracy metric.")
     add_figure(doc, "fig4_metric_disagreement", "Figure 4.",
                "Number of cities in which each model ranks first, under each metric.")
@@ -569,7 +593,7 @@ def results(doc: Document, v: dict) -> None:
     add_table(doc,
               ["Construction", "Model", "Cov. 50%", "Cov. 80%", "Cov. 95%",
                "rWIS", "Cities best"],
-              rows, "Table 6.",
+              rows, "Table 5.",
               "Calibration and sharpness of conformal prediction intervals. Coverage "
               "close to the nominal level indicates calibration. rWIS is the weighted "
               "interval score divided by the mean observed count of the city; lower is "
@@ -627,7 +651,7 @@ def ensembles(doc: Document, v: dict) -> None:
             f"{m['sMAPE']:.1f}", f"{m['MAE']:,.0f}", f"{m['RMSE']:,.0f}",
         ])
     add_table(doc, ["Approach", "sMAPE (%)", "MAE", "RMSE"], rows,
-              "Table 5.",
+              "Table 6.",
               "Individual models and model combinations on the same evaluation set, "
               "averaged over the eight cities. † marks a combination. Weights and the "
               "stacking meta-model are fitted only on folds earlier than the one being "

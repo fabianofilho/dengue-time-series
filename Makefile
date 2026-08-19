@@ -48,3 +48,10 @@ paper: paper-assets
 
 paper-clean:
 	rm -rf build paper/tables paper/figures paper/verified_numbers.json
+
+# versao condensada para a Rev Soc Bras Med Trop, mais o suplementar
+paper-rsbmt: paper-assets
+	mkdir -p build
+	cd paper && $(TECTONIC) -X compile manuscript_rsbmt.tex --outdir ../build
+	cd paper && $(TECTONIC) -X compile supplementary.tex --outdir ../build
+	$(PYTHON) scripts/check_limits.py manuscript_rsbmt.tex

@@ -16,7 +16,8 @@ import re
 from pathlib import Path
 
 ROOT = Path(__file__).resolve().parent.parent
-TEX = ROOT / "paper" / "manuscript.tex"
+import sys
+TEX = ROOT / "paper" / (sys.argv[1] if len(sys.argv) > 1 else "manuscript_rsbmt.tex")
 
 LIMITS = {
     "resumo (palavras)": 250,

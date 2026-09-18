@@ -76,7 +76,7 @@ TRIPOD+AI.
 \noindent\textbf{Results.} TimesFM achieved the lowest sMAPE in seven of eight cities
 (mean across cities 74.6\%, range 55.6\% to 96.6\%) against 85.0\% for CatBoost, the best
 purpose-trained model, 104.3\% for Ridge, 111.2\% for SARIMAX and 113.7\% for LightGBM. By
-MAE it ranked first in seven of eight. The largest margin was in Rio de Janeiro (sMAPE
+MAE it ranked first in seven of eight. Error depended strongly on how far ahead the forecast was made: sMAPE was 38.6\% at one month, 83.0\% at six, and flat thereafter, so the pooled figure describes neither regime. The largest margin was in Rio de Janeiro (sMAPE
 96.1\%, 95\% CI 93.3 to 98.7, versus 123.0\%, 120.1 to 126.0, for XGBoost). In S\~ao Paulo
 the two leading models were closer and their intervals overlapped (75.5\%, 72.8 to 78.3,
 versus 80.1\%, 77.3 to 82.9, for CatBoost). The three accuracy metrics selected the same
@@ -463,6 +463,45 @@ cities, whereas TimesFM is a single unmodified model throughout.}
 \label{fig:vsbest}
 \end{figure}
 
+\subsection{The pooled figure hides two different regimes}
+\label{sec:horizon}
+
+Every accuracy figure reported so far pools the twelve horizon steps of each fold. That
+pooling conceals a gradient large enough to change what the benchmark means.
+Table~\ref{tab:horizon} and Figure~\ref{fig:horizon} break the same predictions down by
+how far ahead they were made.
+
+One month ahead, TimesFM reaches sMAPE 38.6\%, against 47.7\% for the best supervised
+model at that step. By three months the figure is 67.0\%, by six months 83.0\%, and by
+twelve months 83.5\%. The pooled 74.6\% reported above therefore describes neither end: it
+is an average over a usable regime and an unusable one.
+
+The shape of the curve is as informative as its level. Error rises steeply through the
+first six steps and then stops: 99\% of the total degradation between one and twelve
+months has already occurred by month six, and from month seven onward no step changes the
+error by as much as two percentage points. A forecast that stops deteriorating has stopped
+learning from the data, and what remains is a climatological baseline. On these series,
+and with autoregressive history alone, roughly six months is where the information in the
+past is exhausted.
+
+TimesFM leads at every horizon, and its margin is widest where the forecast is actually
+usable: 9.1 percentage points at one month against 9.5 at twelve, but on a much smaller
+base, so the relative advantage at one month is considerably larger. It ranks first in
+seven of eight cities at horizons one through five, and in five to six of eight from six
+months onward.
+
+\input{tables/table7_horizon}
+
+\begin{figure}[htbp]
+\centering
+\includegraphics[width=\textwidth]{fig9_horizon.pdf}
+\caption{Forecast error by horizon step, averaged over the eight cities. Left: all seven
+models. Right: the zero-shot model against the best supervised model at each step, with
+the shaded area showing the advantage and the dotted line marking where error stops
+growing.}
+\label{fig:horizon}
+\end{figure}
+
 \subsection{Absolute error}
 
 Table~\ref{tab:mae-rmse} reports MAE and RMSE on the case-count scale. By MAE, TimesFM
@@ -661,6 +700,16 @@ selection, retraining and monitoring, and the selection itself consumes data tha
 otherwise be used for fitting. A single unmodified foundation model removes that
 overhead, which is what makes extension to municipalities without modelling capacity
 plausible.
+
+The horizon decomposition changes what should be taken from this benchmark. Reported as a
+single pooled number, monthly dengue forecasting looks uniformly poor. Decomposed, it
+separates into a regime that could support decisions and one that cannot: at one month
+ahead the error is roughly half what it is at six, and beyond six months the forecast adds
+nothing to a climatological expectation. The practical recommendation is therefore
+narrower and more useful than the pooled figure suggests, namely that autoregressive
+forecasting of municipal dengue is worth doing at one to three months and is not worth
+doing at twelve. It also explains why the short-horizon literature
+\citep{Silva2026capitals,Araujo2026sprint} concentrates where it does.
 
 That said, the accuracy in absolute terms is poor everywhere. A mean sMAPE of 75\% is not
 a small error, and no model anticipated the 2024 epidemic in any city. The honest

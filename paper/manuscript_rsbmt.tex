@@ -63,16 +63,19 @@ empirical coverage. Reporting follows TRIPOD+AI.
 
 \noindent\textbf{Results.} TimesFM achieved the lowest sMAPE in seven of eight cities
 (mean 74.6\%) against 85.0\% for CatBoost, the best purpose-trained model, and 111.2\%
-for SARIMAX. Three findings qualify this. The three accuracy metrics selected different
+for SARIMAX. Error depended strongly on horizon: sMAPE was 38.6\% one month ahead and
+83.0\% at six, flat thereafter, so the pooled figure describes neither regime. Three
+further findings qualify it. The three accuracy metrics selected different
 models in half the cities. Interval coverage at the nominal 95\% level was 93.6\% before
 2024 and fell to 69.2\% during the 2024 epidemic. Combining the seven models did not beat
 the best single model in seven of eight cities.
 
 \noindent\textbf{Conclusions.} A zero-shot foundation model matched purpose-trained
 models without local training, lowering the cost of extending forecasting to
-municipalities lacking modelling capacity. Because model ranking is metric-dependent and
-interval coverage fails during epidemics, these forecasts suit planning baselines rather
-than outbreak triggers.
+municipalities lacking modelling capacity. Autoregressive forecasting of municipal dengue
+is worth doing at one to three months and not at twelve. Because model ranking is
+metric-dependent and interval coverage fails during epidemics, these forecasts suit
+planning baselines rather than outbreak triggers.
 
 \vspace{0.6em}
 \noindent\textbf{Keywords:} dengue; forecasting; foundation model; machine learning;
@@ -210,19 +213,32 @@ treated as established. Belo Horizonte is the one city where a supervised model 
 the primary metric, with XGBoost at 87.5\% (84.1 to 90.7).
 
 The best purpose-trained model is not the same model in every city: CatBoost leads in
-three, XGBoost in three, Ridge in Manaus and Random Forest in Salvador
-(Figure~\ref{fig:vsbest}). A per-city pipeline therefore requires per-city model selection
-and monitoring, which a single unmodified foundation model does not.
+three, XGBoost in three, Ridge in Manaus and Random Forest in Salvador. A per-city pipeline
+therefore requires per-city model selection and monitoring, which a single unmodified
+foundation model does not.
+
+Those figures pool the twelve horizon steps of each fold, and that pooling conceals a
+gradient large enough to change what the benchmark means
+(Figure~\ref{fig:horizon}). One month ahead TimesFM reaches sMAPE 38.6\%, against 47.7\%
+for the best supervised model at that step; by three months it is 67.0\%, by six months
+83.0\%, and by twelve 83.5\%. Error rises steeply through the first six steps and then
+stops: 99\% of the total degradation between one and twelve months has already occurred by
+month six, and no later step changes the error by as much as two percentage points. A
+forecast that stops deteriorating has stopped learning from the data, and what remains is
+a climatological baseline. With autoregressive history alone, roughly six months is where
+the information in the past is exhausted, and the pooled 74.6\% describes neither the
+usable regime nor the exhausted one.
 
 \input{tables/table2_smape}
 
 \begin{figure}[htbp]
 \centering
-\includegraphics[width=\textwidth]{fig3_timesfm_vs_best.pdf}
-\caption{Zero-shot TimesFM against the best purpose-trained model in each city, with 95\%
-bootstrap intervals. The label above each orange bar names which supervised model achieved
-it, and it is not the same model across cities.}
-\label{fig:vsbest}
+\includegraphics[width=\textwidth]{fig9_horizon.pdf}
+\caption{Forecast error by horizon step, averaged over the eight cities. Left: all seven
+models. Right: the zero-shot model against the best supervised model at each step, with
+the shaded area showing the advantage and the dotted line marking where error stops
+growing. Per-city comparison at the pooled horizon is given in the supplementary material.}
+\label{fig:horizon}
 \end{figure}
 
 \subsection{The ranking depends on the metric}

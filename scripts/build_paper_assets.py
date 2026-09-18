@@ -973,6 +973,157 @@ def fig8_ensembles(ens: pd.DataFrame) -> None:
     fig.tight_layout()
     save(fig, "fig8_ensembles")
 
+
+# --------------------------------------------------------------------------- #
+# Horizonte: acuracia por passo, que a media sobre 12 meses escondia
+# --------------------------------------------------------------------------- #
+def horizon_metrics(preds: dict[str, pd.DataFrame]) -> pd.DataFrame:
+    """sMAPE por modelo, cidade e passo de horizonte.
+
+    O passo e recuperado da ordem das linhas pelo mesmo metodo usado nos
+    intervalos conformais: o backtest grava os 12 alvos de cada fold em
+    sequencia.
+    """
+    from dengue_forecast.intervals import add_fold_index
+
+    rows = []
+    for city, df in preds.items():
+        d = add_fold_index(df)
+        for (model, h), g in d.groupby(["model", "h"]):
+            rows.append({
+                "city": city,
+                "model": model,
+                "h": int(h),
+                "sMAPE": smape(g["y_true"].to_numpy(float), g["y_pred"].to_numpy(float)),
+                "MAE": mae(g["y_true"].to_numpy(float), g["y_pred"].to_numpy(float)),
+            })
+    return pd.DataFrame(rows)
+
+
+def table7(hor: pd.DataFrame) -> tuple[str, dict]:
+    piv = hor.groupby(["model", "h"])["sMAPE"].mean().unstack()
+    order = sorted(MODELS, key=lambda m: piv.loc[m].mean())
+    shown = [1, 2, 3, 4, 6, 9, 12]
+
+    body_rows = []
+    for m in order:
+        vals = [piv.loc[m, h] for h in shown]
+        cells = bold_min(vals, lambda v: f"{v:.1f}")
+        body_rows.append(rf"{MODEL_LABEL[m]} & " + " & ".join(cells) + r" \\")
+
+    wins = []
+    for h in shown:
+        sub = hor[hor["h"] == h]
+        w = sub.loc[sub.groupby("city")["sMAPE"].idxmin()]["model"].value_counts()
+        wins.append(f"{int(w.get('timesfm', 0))}/8")
+
+    t = piv.loc["timesfm"]
+    summary = {
+        "smape_by_h": {int(h): round(float(t[h]), 2) for h in piv.columns},
+        "best_supervised_by_h": {
+            int(h): round(float(min(piv.loc[m, h] for m in MODELS if m != "timesfm")), 2)
+            for h in piv.columns
+        },
+        "h1": round(float(t[1]), 1),
+        "h3": round(float(t[3]), 1),
+        "h6": round(float(t[6]), 1),
+        "h12": round(float(t[12]), 1),
+        "degradation_h1_h12": round(float(t[12] - t[1]), 1),
+        "share_of_degradation_by_h6": round(float((t[6] - t[1]) / (t[12] - t[1]) * 100)),
+        "plateau_from_h": int(
+            min(h for h in range(2, 13) if all(abs(t[k] - t[k - 1]) < 2.0
+                                               for k in range(h, 13)))
+        ),
+    }
+
+    head = " & ".join(rf"$h={h}$" for h in shown)
+    tex = (
+        "% gerado por scripts/build_paper_assets.py -- nao editar a mao\n"
+        r"""\begin{table}[htbp]
+\centering
+\small
+\caption{Forecast error by horizon step: sMAPE (\%) averaged over the eight cities, at
+selected months ahead.}
+\label{tab:horizon}
+\begin{tabular}{lccccccc}
+\toprule
+Model & """ + head + r""" \\
+\midrule
+"""
+        + "\n".join(body_rows)
+        + r"""
+\midrule
+TimesFM ranked first & """ + " & ".join(wins) + r""" \\
+\bottomrule
+\end{tabular}
+
+\vspace{0.5em}
+\begin{minipage}{\textwidth}
+\footnotesize
+Bold indicates the lowest sMAPE in each column. Each cell pools the predictions made at
+that horizon step across all rolling-origin folds and all eight cities. The pooled figure
+reported elsewhere in this manuscript averages over all twelve steps and therefore
+describes neither the short-horizon regime nor the long one.
+\end{minipage}
+\end{table}
+"""
+    )
+    return tex, summary
+
+
+def fig9_horizon(hor: pd.DataFrame) -> None:
+    """Degradacao com o horizonte, e o plato a partir do qual nao ha ganho."""
+    piv = hor.groupby(["model", "h"])["sMAPE"].mean().unstack()
+    hs = list(piv.columns)
+
+    fig, axes = plt.subplots(1, 2, figsize=(7.2, 3.4))
+
+    ax = axes[0]
+    for m in sorted(MODELS, key=lambda m: piv.loc[m].mean()):
+        lw = 2.0 if m == "timesfm" else 1.0
+        z = 5 if m == "timesfm" else 2
+        ax.plot(hs, [piv.loc[m, h] for h in hs], marker="o", ms=3,
+                lw=lw, zorder=z, label=MODEL_LABEL[m],
+                alpha=1.0 if m == "timesfm" else 0.75)
+    ax.set_xticks([1, 3, 6, 9, 12])
+    ax.set_xlabel("Forecast horizon (months ahead)")
+    ax.set_ylabel("sMAPE (%)")
+    ax.set_title("Error grows with horizon, then stops", loc="left", fontweight="bold")
+    ax.legend(fontsize=6.5, ncol=2, loc="lower right")
+
+    ax = axes[1]
+    t = piv.loc["timesfm"]
+    best_sup = [min(piv.loc[m, h] for m in MODELS if m != "timesfm") for h in hs]
+    ax.fill_between(hs, [t[h] for h in hs], best_sup, color="#1565c0", alpha=0.16,
+                    lw=0, label="TimesFM advantage")
+    ax.plot(hs, [t[h] for h in hs], marker="o", ms=3.4, lw=1.8, color="#1565c0",
+            label="TimesFM (zero-shot)")
+    ax.plot(hs, best_sup, marker="s", ms=3.4, lw=1.3, color="#ef6c00",
+            label="Best supervised model")
+    plateau = int(min(h for h in range(2, 13)
+                      if all(abs(t[k] - t[k - 1]) < 2.0 for k in range(h, 13))))
+    ax.axvline(plateau, color="0.35", ls=":", lw=1.1)
+    ax.annotate(
+        f"no gain beyond\n${plateau - 1}$ months",
+        xy=(plateau + 0.35, t[plateau + 1]),
+        xytext=(plateau + 0.9, t[1] + 27),
+        fontsize=6.8, color="0.25", va="center", ha="left",
+        arrowprops=dict(arrowstyle="->", lw=0.8, color="0.45"),
+    )
+    ax.set_xticks([1, 3, 6, 9, 12])
+    ax.set_xlabel("Forecast horizon (months ahead)")
+    ax.set_ylabel("sMAPE (%)")
+    ax.set_title("Zero-shot versus best supervised", loc="left", fontweight="bold")
+    ax.set_ylim(top=max(max(t), max(best_sup)) + 4)
+    ax.legend(fontsize=6.5, loc="lower right")
+
+    fig.suptitle(
+        "The pooled 12-month figure hides both a usable regime and a useless one",
+        fontweight="bold", y=0.997, fontsize=9.5,
+    )
+    fig.tight_layout(rect=(0, 0, 1, 0.962))
+    save(fig, "fig9_horizon")
+
 # --------------------------------------------------------------------------- #
 def main() -> None:
     print("Carregando dados...")
@@ -999,6 +1150,10 @@ def main() -> None:
     ens = load_ensembles()
     t6, ensemble_summary = table6(ens)
     write(TABLES / "table6_ensembles.tex", t6)
+    hor = horizon_metrics(preds)
+    hor.to_csv(RESULTS / "comparisons" / "metrics_by_horizon.csv", index=False)
+    t7, horizon_summary = table7(hor)
+    write(TABLES / "table7_horizon.tex", t7)
 
     print("Gerando figuras...")
     setup_style()
@@ -1010,6 +1165,7 @@ def main() -> None:
     fig6_calibration(cal, ipred)
     fig7_fan(ipred)
     fig8_ensembles(ens)
+    fig9_horizon(hor)
 
     # numeros citados no corpo do texto, para conferencia
     tf = met[met["model"] == "timesfm"]
@@ -1060,6 +1216,7 @@ def main() -> None:
         "bootstrap": {"replicates": BOOT_N, "seed": BOOT_SEED, "method": "percentile"},
         "intervals": interval_summary,
         "ensembles": ensemble_summary,
+        "horizon": horizon_summary,
     }
     (PAPER / "verified_numbers.json").write_text(
         json.dumps(verified, indent=2, ensure_ascii=False), encoding="utf-8"

@@ -132,6 +132,23 @@ the band is far wider than the series through the inter-epidemic period.}
 \end{figure}
 
 % =============================================================================
+\section{Per-city comparison at the pooled horizon}
+
+Figure~\ref{fig:vsbest} compares the zero-shot model with the best purpose-trained model
+in each city, pooling all twelve horizon steps. The label above each bar names which
+supervised model achieved that value, and it is not the same model across cities, which is
+the per-city selection burden discussed in the main text.
+
+\begin{figure}[htbp]
+\centering
+\includegraphics[width=\textwidth]{fig3_timesfm_vs_best.pdf}
+\caption{Zero-shot TimesFM against the best purpose-trained model in each city, with 95\%
+bootstrap intervals. The label above each orange bar names which supervised model achieved
+it.}
+\label{fig:vsbest}
+\end{figure}
+
+% =============================================================================
 \section{Model combinations by city}
 
 Figure~\ref{fig:ensembles} gives the per-city outcome summarised in the main text: the

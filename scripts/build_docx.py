@@ -14,7 +14,7 @@ Formato: Times New Roman 12, espacamento duplo, numeracao de linha continua,
 numero de pagina. E o que a maioria dos journals biomedicos pede.
 
 Uso:
-    python scripts/build_docx.py [--out build/manuscript.docx]
+    python scripts/build_docx.py [--out build/manuscript_review.docx]
 """
 from __future__ import annotations
 
@@ -662,20 +662,140 @@ def ensembles(doc: Document, v: dict) -> None:
                "model, by city. Positive values mean the combination wins.")
 
 
+def baseline_e_globais(doc: Document, v: dict) -> None:
+    """Tabelas 7, 8 e 9 e Figuras 9 e 10.
+
+    Existe para o .docx nao divergir do PDF. A checagem de numeracao de
+    check_artifacts.py acusou que o Word estava sem a Figura 9 e a Tabela 7
+    desde a decomposicao por horizonte, alem das tres novas.
+    """
+    b = v["baseline"]
+    g = v["global_models"]
+    c = b["criterion"]
+    h = v["horizon"]
+    rel_lo, rel_hi = b["relmae_range"]
+
+    heading(doc, "Forecast error by horizon", 2)
+    body(doc, (
+        f"Every figure above pools the twelve horizon steps of each fold. Decomposed, "
+        f"sMAPE is {h['h1']:.1f}% one month ahead, {h['h3']:.1f}% at three, "
+        f"{h['h6']:.1f}% at six and {h['h12']:.1f}% at twelve. "
+        f"{h['share_of_degradation_by_h6']}% of the total degradation between one and "
+        f"twelve months has already occurred by month six, after which no step changes "
+        f"the error by as much as two percentage points. A forecast that stops "
+        f"deteriorating has stopped learning from the data."
+    ))
+    rows = [[f"h = {k}", f"{h['smape_by_h'][k]:.1f}",
+             f"{h['best_supervised_by_h'][k]:.1f}"]
+            for k in sorted(h["smape_by_h"], key=int)]
+    add_table(doc, ["Horizon", "TimesFM sMAPE (%)", "Best supervised sMAPE (%)"], rows,
+              "Table 7.",
+              "Forecast error by horizon step, averaged over the eight cities.")
+    add_figure(doc, "fig9_horizon", "Figure 9.",
+               "Forecast error by horizon step, averaged over the eight cities. Left: all "
+               "seven models. Right: the zero-shot model against the best supervised "
+               "model at each step.")
+
+    heading(doc, "No model beats a seasonal naive baseline", 2)
+    body(doc, (
+        f"Every comparison above is between models. The seasonal naive forecast repeats "
+        f"the value observed in the same month of the previous year and estimates "
+        f"nothing. Under a rule registered before the comparison was run, no model beats "
+        f"it in any of the {b['cities_total']} cities. The point estimates favour the "
+        f"models everywhere, with the best model in each city reaching a relative MAE "
+        f"between {rel_lo} and {rel_hi}, and the bootstrap interval excludes zero in most "
+        f"cities, but the Diebold-Mariano test rejects equal accuracy at no more than "
+        f"{b['max_dm_horizons']} of the {c['n_horizontes']} horizons, against the "
+        f"{c['min_horizontes']} the rule requires."
+    ))
+    body(doc, (
+        f"In {', '.join(b['cities_where_baseline_wins_smape'])} the baseline is better "
+        f"than every model on the primary metric of this study, while on absolute error "
+        f"the same comparison runs the other way. It is the clearest single illustration "
+        f"of why a ranking among models does not by itself justify any of them."
+    ))
+    rows = []
+    for city, d in b["by_city"].items():
+        rows.append([city, LABEL.get(d["best"], d["best"]), f"{d['relmae']:.3f}",
+                     d["dm"], "Yes" if d["beats"] else "No"])
+    add_table(doc, ["City", "Best model", "RelMAE", "DM horizons", "Beats baseline"],
+              rows, "Table 8.",
+              "Best model in each city against the seasonal naive baseline. RelMAE is the "
+              "MAE of the model divided by that of the baseline; below one means the model "
+              "erred less. DM counts the horizon steps at which a Diebold-Mariano test "
+              f"rejected equal accuracy at alpha = {c['alpha']}. The rule requires the "
+              f"bootstrap interval to exclude zero and the test to reject at no fewer than "
+              f"{c['min_horizontes']} of {c['n_horizontes']} horizons.")
+    add_figure(doc, "fig10_baseline", "Figure 10.",
+               "Model accuracy relative to the seasonal naive baseline. Left: RelMAE of "
+               "every model in every city; the line at one is the baseline. Right: the "
+               "best model per city with its 95% bootstrap interval and the number of "
+               "horizons at which the Diebold-Mariano test rejected.")
+
+    heading(doc, "Pooling the cities into a single model", 2)
+    body(doc, (
+        f"Training one model per city assumes there is nothing to learn from one city "
+        f"that helps in another. Five estimators were also fitted globally, on all eight "
+        f"series at once. Pooling helped in {g['grouping_helps']} of the {g['n_pairs']} "
+        f"city-estimator pairs and harmed in {g['grouping_hurts']}; in the remaining "
+        f"{g['n_undetermined']} the test did not distinguish the two forms. No global "
+        f"model beat the baseline in any city."
+    ))
+    body(doc, (
+        f"The global models do change the model ranking. With them in the comparison, "
+        f"TimesFM holds the lowest sMAPE in {g['timesfm_wins_with_global_pool']} of "
+        f"{g['n_cities']} cities rather than {g['timesfm_wins_published_pool']}. None of "
+        f"those reversals satisfies the registered rule, so we do not claim a global "
+        f"model beats TimesFM. A count of cities won is a statement about the set of "
+        f"models compared, and it moves when a family the study did not originally "
+        f"include is added."
+    ))
+    rows = []
+    for t in g["leader_changes"]:
+        rows.append([t["city"], LABEL.get(t["was"], t["was"]), f"{t['smape_was']:.2f}",
+                     LABEL.get(t["now"], t["now"]), f"{t['smape_now']:.2f}"])
+    add_table(doc,
+              ["City", "Leader among the seven", "sMAPE (%)",
+               "Leader with global models", "sMAPE (%)"],
+              rows, "Table 9.",
+              "Cities in which adding the global models changes which model has the "
+              "lowest sMAPE. None of these reversals satisfies the pre-registered rule.")
+
+
 def discussion(doc: Document, v: dict) -> None:
     ms = v["mean_smape_by_model"]
     wins = v["cities_ranked_first_by_model"]
     heading(doc, "DISCUSSION")
+    b = v["baseline"]
+    g = v["global_models"]
     body(doc, (
-        f"Across eight Brazilian state capitals, a foundation model applied with no local "
-        f"training matched or exceeded six purpose-trained models at a 12-month horizon. "
-        f"It ranked first by sMAPE in {wins['timesfm']} of {v['n_cities']} cities and by "
-        f"MAE in all {v['n_cities']}. The comparison is asymmetric in its disfavour: the "
-        f"supervised models were refitted on each city at every fold, while TimesFM saw "
-        f"the series only as context at inference."
+        f"The result that governs how everything else should be read is that no model in "
+        f"this benchmark beat a forecast that repeats last year's month, by a margin this "
+        f"design can establish. Point estimates favoured the models in every city, and we "
+        f"are not claiming the baseline is superior; we are reporting that the advantage "
+        f"did not survive a rule fixed in advance, and that in "
+        f"{', '.join(b['cities_where_baseline_wins_smape'])} the baseline was better than "
+        f"every model on the primary metric. A benchmark that had omitted the floor would "
+        f"have reported the same seven models in the same order and implied something the "
+        f"data do not support."
     ))
     body(doc, (
-        "The operational consequence is about cost rather than accuracy. The best "
+        f"Within that boundary, the model comparison still carries information. A "
+        f"foundation model applied with no local training matched or exceeded six "
+        f"purpose-trained models at a 12-month horizon. It ranked first by sMAPE in "
+        f"{wins['timesfm']} of {v['n_cities']} cities and by MAE in all {v['n_cities']}. "
+        f"The comparison is asymmetric in its disfavour: the supervised models were "
+        f"refitted on each city at every fold, while TimesFM saw the series only as "
+        f"context at inference. That count is nonetheless a statement about the set of "
+        f"models compared: adding five global models moved it from "
+        f"{g['timesfm_wins_published_pool']} of {g['n_cities']} to "
+        f"{g['timesfm_wins_with_global_pool']} of {g['n_cities']} without any published "
+        f"number changing."
+    ))
+    body(doc, (
+        "The operational consequence that remains is about cost rather than accuracy, "
+        "and it is conditional on a decision to forecast at all having been taken on "
+        "other grounds. The best "
         "supervised model is not the same model in every city, so a per-city pipeline "
         "requires per-city model selection, retraining and monitoring. A single unmodified "
         "foundation model removes that overhead, which is what makes extension to "
@@ -684,8 +804,10 @@ def discussion(doc: Document, v: dict) -> None:
     body(doc, (
         f"Accuracy in absolute terms is nonetheless poor everywhere. A mean sMAPE of "
         f"{ms['timesfm']:.0f}% is not a small error, and no model anticipated the 2024 "
-        "epidemic in any city. These models provide a reasonable baseline expectation for "
-        "planning under ordinary conditions and are not outbreak detectors."
+        "epidemic in any city. Combined with the baseline result, the honest reading is "
+        "narrower than the one the model comparison alone would give: at twelve months "
+        "these forecasts are not established to improve on a seasonal rule of thumb, and "
+        "they are certainly not outbreak detectors."
     ))
 
     heading(doc, "Limitations", 2)
@@ -753,7 +875,12 @@ def declarations(doc: Document) -> None:
 
 def main() -> None:
     ap = argparse.ArgumentParser(description="Gera o manuscrito em .docx para revisao")
-    ap.add_argument("--out", default=str(ROOT / "build" / "manuscript.docx"))
+    # Mesmo nome que scripts/check_artifacts.py le. Enquanto os dois divergiram,
+    # o checker comparava o PDF novo contra um .docx de semanas antes e dizia
+    # que estava tudo certo nos numeros.
+    ap.add_argument(
+        "--out", default=str(ROOT / "build" / "manuscript_review.docx")
+    )
     args = ap.parse_args()
 
     v = load()
@@ -768,6 +895,7 @@ def main() -> None:
     methods(doc, v)
     results(doc, v)
     ensembles(doc, v)
+    baseline_e_globais(doc, v)
     discussion(doc, v)
     declarations(doc)
 

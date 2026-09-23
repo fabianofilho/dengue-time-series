@@ -48,34 +48,32 @@ Forecasting in Eight Brazilian State Capitals (2010 to 2024)}
 % =============================================================================
 \begin{abstract}
 \noindent\textbf{Background.} Municipal dengue forecasting in Brazil relies on models
-trained and retrained city by city, which does not scale to 5{,}570 municipalities. We
-tested whether a pre-trained time-series foundation model can substitute for that
-pipeline.
+trained city by city, which does not scale to 5{,}570 municipalities. We tested whether a
+pre-trained foundation model can substitute for that pipeline, and whether any model
+here is worth running at all.
 
 \noindent\textbf{Methods.} Seven models were benchmarked on monthly InfoDengue counts for
-eight state capitals, February 2010 to November 2024. Six were trained per city (SARIMAX,
-Ridge, LightGBM, XGBoost, CatBoost, Random Forest); TimesFM 2.5 was applied zero-shot. No
-exogenous covariates were used, so architectures were compared on equal information.
-Rolling-origin cross-validation (48-month minimum training window, 12-month horizon)
-produced 119 folds and 79{,}968 predictions. The pre-specified primary metric was sMAPE.
-Split conformal prediction intervals, calibrated only on earlier folds, were assessed for
-empirical coverage. Reporting follows TRIPOD+AI.
+eight state capitals, February 2010 to November 2024. Six were trained per city; TimesFM
+2.5 was applied zero-shot, with no exogenous covariates. Rolling-origin cross-validation
+(48-month minimum training, 12-month horizon) produced 119 folds and 79{,}968 predictions,
+with sMAPE pre-specified. All models were also compared against a seasonal naive baseline
+and five global models, under a rule registered beforehand: a paired bootstrap
+excluding zero and a Diebold--Mariano test rejecting at six of twelve horizons.
+Reporting follows TRIPOD+AI.
 
-\noindent\textbf{Results.} TimesFM achieved the lowest sMAPE in seven of eight cities
-(mean 74.6\%) against 85.0\% for CatBoost, the best purpose-trained model, and 111.2\%
-for SARIMAX. Error depended strongly on horizon: sMAPE was 38.6\% one month ahead and
-83.0\% at six, flat thereafter, so the pooled figure describes neither regime. Three
-further findings qualify it. The three accuracy metrics selected different
-models in half the cities. Interval coverage at the nominal 95\% level was 93.6\% before
-2024 and fell to 69.2\% during the 2024 epidemic. Combining the seven models did not beat
-the best single model in seven of eight cities.
+\noindent\textbf{Results.} No model beat the baseline in any city. Point estimates
+favoured the models (relative MAE 0.665 to 0.961), but Diebold--Mariano rejected at no
+more than three of twelve horizons. In Belo Horizonte the
+baseline beat every model on sMAPE (78.5\% against 96.6\%). TimesFM had the lowest sMAPE
+in seven of eight cities (mean 74.6\%) against 85.0\% for CatBoost; the global models
+reduced that to five of eight. Error rose from 38.6\% at one month to 83.0\% at six, and
+95\% coverage fell from 93.6\% before 2024 to 69.2\% during the epidemic.
 
-\noindent\textbf{Conclusions.} A zero-shot foundation model matched purpose-trained
-models without local training, lowering the cost of extending forecasting to
-municipalities lacking modelling capacity. Autoregressive forecasting of municipal dengue
-is worth doing at one to three months and not at twelve. Because model ranking is
-metric-dependent and interval coverage fails during epidemics, these forecasts suit
-planning baselines rather than outbreak triggers.
+\noindent\textbf{Conclusions.} A zero-shot foundation model matched purpose-trained models
+without local training, but none beat repeating last year's month by a margin this design
+establishes, and the ranking moves with the metric, the horizon and the set compared. We
+report a reference benchmark, not support for deployment, and recommend that dengue
+forecasting studies include a trivial baseline and a pre-registered rule.
 
 \vspace{0.6em}
 \noindent\textbf{Keywords:} dengue; forecasting; foundation model; machine learning;
@@ -241,6 +239,33 @@ growing. Per-city comparison at the pooled horizon is given in the supplementary
 \label{fig:horizon}
 \end{figure}
 
+\subsection{No model beats a seasonal naive baseline}
+
+Table~\ref{tab:baseline} compares the best model in each city with a forecast that repeats
+the value observed in the same month of the previous year and estimates nothing. Under the
+rule registered before the comparison ran, no model beats it anywhere. The point estimates
+favour the models in every city, with RelMAE between 0.665 in Recife and 0.961 in S\~ao
+Paulo, and the bootstrap interval excludes zero in most of them, but the Diebold--Mariano
+test rejects at three of twelve horizons at most, against the six required. The two tests
+disagree because the bootstrap pools the twelve horizons while the Diebold--Mariano test
+examines each one against the overlap between windows; the conservative one is the one
+that fails.
+
+In Belo Horizonte the disagreement is between metrics rather than between tests: the
+baseline records sMAPE 78.5\% against 96.6\% for the best model, so on the primary metric
+of this study the floor is better than anything we fitted, while on absolute error the
+comparison runs the other way.
+
+Pooling the eight cities into a single global model helped in 6 of 40 city-estimator pairs
+and harmed in 1, and no global model beat the baseline either. Adding them to the
+comparison moves TimesFM from the lowest sMAPE in seven of eight cities to five of eight,
+losing Belo Horizonte and Manaus to a global Random Forest and Bras\'ilia to a global
+CatBoost. None of those reversals satisfies the registered rule, so we do not claim a
+global model beats TimesFM; we report that a count of cities won depends on which models
+are in the comparison.
+
+\input{tables/table8_baseline}
+
 \subsection{The ranking depends on the metric}
 
 sMAPE, MAE and RMSE select the same model in only four of the eight cities
@@ -295,7 +320,7 @@ collapse in 2024.}
 \subsection{Combining models does not rescue the ranking}
 
 The best of four combinations failed to beat the best single model of that city in seven
-of eight cities (Table~\ref{tab:ensembles}). The exception is S\~ao Paulo, where the
+of eight cities (Table~S6 in the supplementary material). The exception is S\~ao Paulo, where the
 median ensemble improves on the best member by 1.3 sMAPE points; elsewhere the shortfall
 reaches 12.7 points in Rio de Janeiro. The median ensemble is the best combination at
 79.0\% mean sMAPE, ahead of every individual model except TimesFM, because it resists
@@ -303,18 +328,32 @@ members that diverge. The metric dependence reappears and reverses the conclusio
 sMAPE and MAE the best approach overall is a single model, TimesFM, while on RMSE it is
 the stacked ensemble at 10{,}532 against 10{,}862.
 
-\input{tables/table6_ensembles}
+% A tabela de combinacoes foi para o material suplementar (Tabela S6) para
+% abrir espaco, dentro do limite de 5 ilustracoes da revista, para a Tabela 8,
+% que carrega o resultado principal.
 
 % =============================================================================
 \section{Discussion}
 
-A foundation model applied with no local training matched or exceeded six purpose-trained
-models at a 12-month horizon, ranking first by sMAPE and by MAE in seven of eight cities.
-The comparison is asymmetric in its disfavour: the supervised models were refitted on each
-city at each of 119 folds, while TimesFM saw the series only as context at inference. The
-operational consequence is about cost rather than accuracy, since a single unmodified
-model removes the per-city selection and retraining that a national programme would
-otherwise carry.
+The result that governs the rest is that no model in this benchmark beat a forecast that
+repeats last year's month, by a margin the design can establish. Point estimates favoured
+the models everywhere, sometimes by a third of the error, so we are not claiming the
+baseline is superior; we are reporting that the advantage did not survive a rule fixed
+before the comparison, and that in one city the baseline was better than every model on
+the primary metric. A benchmark without that floor would have reported the same seven
+models in the same order and implied something these data do not support.
+
+Within that boundary the comparison still carries information. A foundation model applied
+with no local training matched or exceeded six purpose-trained models at a 12-month
+horizon, ranking first by sMAPE and by MAE in seven of eight cities. The comparison is
+asymmetric in its disfavour: the supervised models were refitted on each city at each of
+119 folds, while TimesFM saw the series only as context at inference. The operational
+consequence is about cost rather than accuracy, since a single unmodified model removes
+the per-city selection and retraining that a national programme would otherwise carry, and
+it is conditional on a decision to forecast having been taken on other grounds. That count
+is also a statement about the set compared: five global models, a standard approach this
+study did not originally include, move it from seven of eight to five of eight without any
+other number changing.
 
 Three results bound that conclusion, and we consider them the more useful contribution.
 The model ranking depends on which accuracy metric is chosen in half the cities. Interval

@@ -1,0 +1,40 @@
+% gerado por scripts/build_paper_assets.py -- nao editar a mao
+\begin{table}[htbp]
+\centering
+\footnotesize
+\setlength{\tabcolsep}{4pt}
+\caption{Best model in each city against the seasonal naive baseline, under the
+pre-registered decision rule.}
+\label{tab:baseline}
+\begin{tabular}{llrrrrrcc}
+\toprule
+ & & \multicolumn{2}{c}{Best model} & \multicolumn{2}{c}{Seasonal naive} & & & \\
+\cmidrule(lr){3-4} \cmidrule(lr){5-6}
+City & Best model & sMAPE & MAE & sMAPE & MAE & RelMAE & DM & Beats \\
+\midrule
+Sao Paulo & TimesFM & 75.5 & 8,759 & 77.3 & 9,113 & 0.961 & 1/12 & No \\
+Rio de Janeiro & TimesFM & 96.1 & 1,899 & 104.4 & 2,232 & 0.851 & 3/12 & No \\
+Belo Horizonte & TimesFM & 96.6 & 6,177 & 78.5 & 8,129 & 0.760 & 1/12 & No \\
+Brasilia & CatBoost & 73.4 & 3,668 & 73.7 & 4,154 & 0.883 & 1/12 & No \\
+Fortaleza & TimesFM & 63.1 & 1,417 & 69.5 & 1,686 & 0.841 & 1/12 & No \\
+Recife & TimesFM & 69.3 & 755 & 83.1 & 1,134 & 0.665 & 3/12 & No \\
+Manaus & Random Forest (global) & 53.9 & 235 & 56.5 & 284 & 0.830 & 3/12 & No \\
+Salvador & TimesFM & 67.6 & 416 & 86.7 & 595 & 0.699 & 3/12 & No \\
+\bottomrule
+\end{tabular}
+
+\vspace{0.5em}
+\begin{minipage}{\textwidth}
+\footnotesize
+The seasonal naive forecast repeats the value observed in the same month of the previous
+year. RelMAE is the mean absolute error of the best model divided by that of the seasonal
+naive forecast in the same city, over the same folds and horizons; a value below one means
+the model erred less than the baseline. DM gives the number of the twelve horizon steps at
+which a Diebold--Mariano test with the Harvey correction rejected equal predictive accuracy
+at $\alpha = 0.05$. Under the rule registered before the test was run, a model
+beats the baseline only if the 95\% bootstrap interval for the paired difference excludes
+zero {\itshape and} the Diebold--Mariano test rejects at no fewer than
+6 of the 12 horizons. The point estimate favours the
+model in every city, and no city satisfies the rule.
+\end{minipage}
+\end{table}

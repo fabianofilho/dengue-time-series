@@ -1,0 +1,40 @@
+% gerado por scripts/build_paper_assets.py -- nao editar a mao
+\begin{table}[htbp]
+\centering
+\small
+\setlength{\tabcolsep}{5pt}
+\caption{Effect of pooling the eight cities into a single model: difference in RelMAE
+between the global and the per-city form of the same estimator.}
+\label{tab:global}
+\begin{tabular}{lccccc}
+\toprule
+City & CatBoost & LightGBM & Random Forest & Ridge & XGBoost \\
+\midrule
+Sao Paulo & +0.03 & -0.03 & -0.05 & -0.25 & -0.09 \\
+Rio de Janeiro & +0.39 & +0.46 & -1.51 & -0.26 & -1.94 \\
+Belo Horizonte & -0.02 & -0.88$^{\ast}$ & -0.27 & -0.06 & -0.25 \\
+Brasilia & +0.02 & -0.12 & -0.06 & -0.05 & -0.07 \\
+Fortaleza & -0.14 & -0.62 & -0.97$^{\ast}$ & -0.22$^{\ast}$ & -0.85$^{\ast}$ \\
+Recife & -0.24 & -0.49$^{\ast}$ & +0.20 & -0.16 & +0.25 \\
+Manaus & -0.05 & +0.81 & -0.25$^{\ast}$ & +0.76$^{\ast}$ & -0.09 \\
+Salvador & +0.04 & +0.04 & +0.08 & -0.09 & +0.01 \\
+\bottomrule
+\end{tabular}
+
+\vspace{0.5em}
+\begin{minipage}{\textwidth}
+\footnotesize
+Each cell is the RelMAE of the global model minus the RelMAE of the per-city model fitted
+with the same estimator, so a negative value means that pooling the eight series helped.
+Global models were fitted on all eight cities jointly with per-series standardisation and
+the city identity entered as an indicator. Comparing a global model of one estimator with
+a per-city model of another would confound pooling with the choice of learner, so every
+comparison is within an estimator. An asterisk marks the pairs that satisfy the same
+pre-registered decision rule applied to the baseline comparison, which is defined in the
+Methods. This table is reproduced in both the main text and the supplementary material, so
+it does not cross-reference a table number that exists in only one of them. Pooling helped in 6 of the
+40 city-estimator pairs and harmed in 1; in the remaining
+33 the test did not distinguish the two forms. No global model
+beat the seasonal naive baseline in any city.
+\end{minipage}
+\end{table}

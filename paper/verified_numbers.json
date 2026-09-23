@@ -1109,6 +1109,121 @@
         "global_ridge": 0.7837,
         "global_xgboost": 0.8777
       }
+    },
+    "baseline": "seasonal_naive",
+    "cities_beating_baseline": 0,
+    "n_cities": 8,
+    "relmae_range": [
+      0.665,
+      0.961
+    ],
+    "relmae_best_city": "Recife",
+    "relmae_worst_city": "Sao Paulo",
+    "max_dm_horizons": 3,
+    "cities_where_baseline_wins_smape": [
+      "Belo Horizonte"
+    ],
+    "by_city": {
+      "Sao Paulo": {
+        "best": "timesfm",
+        "relmae": 0.961,
+        "dm": "1/12",
+        "beats": false
+      },
+      "Rio de Janeiro": {
+        "best": "timesfm",
+        "relmae": 0.851,
+        "dm": "3/12",
+        "beats": false
+      },
+      "Belo Horizonte": {
+        "best": "timesfm",
+        "relmae": 0.76,
+        "dm": "1/12",
+        "beats": false
+      },
+      "Brasilia": {
+        "best": "catboost",
+        "relmae": 0.883,
+        "dm": "1/12",
+        "beats": false
+      },
+      "Fortaleza": {
+        "best": "timesfm",
+        "relmae": 0.841,
+        "dm": "1/12",
+        "beats": false
+      },
+      "Recife": {
+        "best": "timesfm",
+        "relmae": 0.665,
+        "dm": "3/12",
+        "beats": false
+      },
+      "Manaus": {
+        "best": "global_randomforest",
+        "relmae": 0.83,
+        "dm": "3/12",
+        "beats": false
+      },
+      "Salvador": {
+        "best": "timesfm",
+        "relmae": 0.699,
+        "dm": "3/12",
+        "beats": false
+      }
     }
+  },
+  "global_models": {
+    "grouping_helps": 6,
+    "grouping_hurts": 1,
+    "n_pairs": 40,
+    "n_undetermined": 33,
+    "leader_published_pool": {
+      "Sao Paulo": "timesfm",
+      "Rio de Janeiro": "timesfm",
+      "Belo Horizonte": "xgboost",
+      "Brasilia": "timesfm",
+      "Fortaleza": "timesfm",
+      "Recife": "timesfm",
+      "Manaus": "timesfm",
+      "Salvador": "timesfm"
+    },
+    "leader_with_global_pool": {
+      "Sao Paulo": "timesfm",
+      "Rio de Janeiro": "timesfm",
+      "Belo Horizonte": "global_randomforest",
+      "Brasilia": "global_catboost",
+      "Fortaleza": "timesfm",
+      "Recife": "timesfm",
+      "Manaus": "global_randomforest",
+      "Salvador": "timesfm"
+    },
+    "timesfm_wins_published_pool": 7,
+    "timesfm_wins_with_global_pool": 5,
+    "n_cities": 8,
+    "leader_changes": [
+      {
+        "city": "Belo Horizonte",
+        "was": "xgboost",
+        "now": "global_randomforest",
+        "smape_was": 87.48,
+        "smape_now": 82.97
+      },
+      {
+        "city": "Brasilia",
+        "was": "timesfm",
+        "now": "global_catboost",
+        "smape_was": 72.64,
+        "smape_now": 69.01
+      },
+      {
+        "city": "Manaus",
+        "was": "timesfm",
+        "now": "global_randomforest",
+        "smape_was": 55.62,
+        "smape_now": 53.91
+      }
+    ]
   }
 }

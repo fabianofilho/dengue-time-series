@@ -58,8 +58,14 @@ RESULT_SLUG = {
 # Desenho do rolling origin, o mesmo de scripts/run_benchmark.py.
 HORIZON = 12
 MIN_TRAIN = 48
+# Espelha dengue_forecast.intervals.MIN_CALIB_FOLDS. Importado, nao copiado,
+# para nao virar mais um numero digitado que envelhece sozinho.
+from dengue_forecast.intervals import MIN_CALIB_FOLDS as MIN_CALIB
 
 MODELS = ["timesfm", "catboost", "xgboost", "randomforest", "sarimax", "ridge", "lgbm"]
+BASELINE = "seasonal_naive"
+GLOBAL_ESTIMATORS = ["catboost", "lgbm", "randomforest", "ridge", "xgboost"]
+
 MODEL_LABEL = {
     "timesfm": "TimesFM",
     "catboost": "CatBoost",
@@ -70,6 +76,10 @@ MODEL_LABEL = {
     "lgbm": "LightGBM",
 }
 SUPERVISED = [m for m in MODELS if m != "timesfm"]
+
+MODEL_LABEL["seasonal_naive"] = "Seasonal naive"
+for _e in GLOBAL_ESTIMATORS:
+    MODEL_LABEL[f"global_{_e}"] = MODEL_LABEL[_e] + " (global)"
 
 BOOT_N = 2000
 BOOT_SEED = 42
@@ -269,6 +279,41 @@ def load_interval_predictions() -> pd.DataFrame:
     )
 
 
+def load_criterion() -> dict:
+    return json.loads((RESULTS / "criterion.json").read_text(encoding="utf-8"))
+
+
+def load_baseline_summary() -> dict:
+    caminho = RESULTS / "criterion_summary.json"
+    if not caminho.exists():
+        raise FileNotFoundError(
+            f"{caminho} ausente. Rode scripts/run_uncertainty.py: o veredito contra o "
+            "baseline entra em tabela do manuscrito e nao pode ser digitado."
+        )
+    return json.loads(caminho.read_text(encoding="utf-8"))
+
+
+def load_city_bootstrap() -> pd.DataFrame:
+    """Metricas com IC por bootstrap, uma linha por cidade, modelo e metrica."""
+    frames = []
+    for slug, (name, _, _) in CITIES.items():
+        f = RESULTS / f"uncertainty_{RESULT_SLUG[slug]}_bootstrap_metrics.csv"
+        if not f.exists():
+            raise FileNotFoundError(f"{f} ausente. Rode scripts/run_uncertainty.py.")
+        d = pd.read_csv(f)
+        d["city_name"] = name
+        frames.append(d)
+    return pd.concat(frames, ignore_index=True)
+
+
+def load_city_verdicts() -> dict:
+    out = {}
+    for slug, (name, _, _) in CITIES.items():
+        f = RESULTS / f"criterion_verdict_{RESULT_SLUG[slug]}.json"
+        out[name] = json.loads(f.read_text(encoding="utf-8"))
+    return out
+
+
 def load_predictions() -> dict[str, pd.DataFrame]:
     out = {}
     for slug, (name, _, _) in CITIES.items():
@@ -334,6 +379,12 @@ def write(path: Path, content: str) -> None:
 def table1(
     series: dict[str, pd.Series], pop: dict[str, pd.Series]
 ) -> tuple[str, list[dict]]:
+    # Medidos da propria serie. Digitados, estes tres viraram "180 observacoes"
+    # e "January 2010 to December 2024" e sobreviveram a correcao da agregacao.
+    qualquer = next(iter(series.values()))
+    n_meses = len(qualquer)
+    ini = qualquer.index.min().strftime("%B %Y")
+    fim = qualquer.index.max().strftime("%B %Y")
     rows = []
     for name, (city, uf, region) in ((v[0], v) for v in CITIES.values()):
         s = series[city]
@@ -369,8 +420,8 @@ def table1(
 \centering
 \footnotesize
 \setlength{{\tabcolsep}}{{4pt}}
-\caption{{Notified dengue burden in eight Brazilian state capitals, January 2010 to
-December 2024: monthly case counts and population-standardised incidence.}}
+\caption{{Notified dengue burden in eight Brazilian state capitals, {ini} to
+{fim}: monthly case counts and population-standardised incidence.}}
 \label{{tab:descriptive}}
 \begin{{tabular}}{{llrrrrrrrr}}
 \toprule
@@ -387,7 +438,7 @@ City & Region & (millions) & Total & Median & Max & CV (\%)
 \vspace{{0.5em}}
 \begin{{minipage}}{{\textwidth}}
 \footnotesize
-Each city contributed 180 monthly observations. CV: coefficient of variation of the
+Each city contributed {n_meses} monthly observations. CV: coefficient of variation of the
 monthly case count (standard deviation divided by the mean, as a percentage). Incidence
 columns are notified cases per 100{{,}}000 inhabitants; Annual is the mean monthly
 incidence multiplied by twelve, Median and Max are monthly values. Rows are sorted by
@@ -404,6 +455,8 @@ Censuses (see Methods). Case source: InfoDengue (Fiocruz/FGV); population source
 # Tabela 2: sMAPE com IC95
 # --------------------------------------------------------------------------- #
 def table2(met: pd.DataFrame) -> str:
+    n_pred = int(met["n"].iloc[0])
+    n_pred_tex = f"{n_pred:,}".replace(",", "{,}")
     order = [v[0] for v in CITIES.values()]
     lines = []
     for city in order:
@@ -438,7 +491,7 @@ def table2(met: pd.DataFrame) -> str:
 \setlength{{\tabcolsep}}{{2.5pt}}
 \caption{{Forecasting accuracy by model and city: sMAPE (\%) with 95\% bootstrap
 percentile confidence intervals. Rolling-origin cross-validation, 12-month horizon,
-1{{,}}452 pooled predictions per model per city.}}
+{n_pred_tex} pooled predictions per model per city.}}
 \label{{tab:smape}}
 \begin{{tabular}}{{lccccccc}}
 \toprule
@@ -455,7 +508,7 @@ Cities ranked first & {" & ".join(win_cells)} \\
 \begin{{minipage}}{{\textwidth}}
 \footnotesize
 Bold indicates the lowest sMAPE in each row. Confidence intervals were obtained by
-resampling the 1{{,}}452 paired predictions with replacement ({BOOT_N} replicates,
+resampling the {n_pred_tex} paired predictions with replacement ({BOOT_N} replicates,
 percentile method). Because predictions from the same rolling-origin fold are not
 independent, these intervals understate the true uncertainty and should be read as a
 lower bound on the spread. TimesFM was applied zero-shot, with no city-specific
@@ -580,6 +633,24 @@ def table5(cal: pd.DataFrame, pred: pd.DataFrame) -> tuple[str, dict]:
     if faltando:
         raise ValueError(f"Modelos do artigo ausentes na calibracao: {faltando}")
     cal = cal[cal["model"].isin(MODELS)].copy()
+    # n_total e o total de previsoes por modelo por cidade, e n_aval e quantas
+    # delas recebem intervalo. As linhas do aquecimento ESTAO em pred, com o
+    # intervalo nulo, entao o total e o proprio tamanho do grupo: somar
+    # MIN_CALIB de novo contaria o aquecimento duas vezes, e foi o que gerou
+    # o "1.668" que nao existe.
+    n_aval = int(cal["n_evaluated"].iloc[0])
+    tamanhos = pred.groupby(["city", "model", "scale"]).size().unique()
+    if len(tamanhos) != 1:
+        raise ValueError(f"Grupos de tamanhos diferentes em pred: {sorted(tamanhos)}")
+    n_total = int(tamanhos[0])
+    com_intervalo = pred.dropna(subset=["lo_95"]).groupby(
+        ["city", "model", "scale"]
+    ).size().unique()
+    if len(com_intervalo) != 1 or int(com_intervalo[0]) != n_aval:
+        raise ValueError(
+            f"n_evaluated diz {n_aval}, mas as linhas com intervalo sao "
+            f"{sorted(int(x) for x in com_intervalo)}"
+        )
     pred = pred[pred["model"].isin(MODELS)]
     scale_by_city = pred.groupby("city")["y_true"].mean()
     cal["rWIS"] = [r.WIS / scale_by_city[r.city] for r in cal.itertuples()]
@@ -640,8 +711,8 @@ Coverage is the percentage of observations falling inside the interval; a value 
 the nominal level indicates calibration. rWIS is the weighted interval score divided by
 the city's mean observed count, which makes it comparable across cities; lower is better.
 Cities best counts the cities in which a model achieved the lowest rWIS. Intervals are
-calibrated only on residuals from earlier folds, so the first 20 folds of each series
-carry no interval and 1{,}212 of the 1{,}452 predictions per model per city are
+calibrated only on residuals from earlier folds, so the first @MINCAL@ folds of each
+series carry no interval and @NAVAL@ of the @NTOT@ predictions per model per city are
 evaluated. The two blocks differ solely in the scale on which residuals are calibrated.
 The ordering by rWIS is not preserved between them, and that is why both are reported and
 no probabilistic ranking of the models is claimed.
@@ -649,7 +720,300 @@ no probabilistic ranking of the models is claimed.
 \end{table}
 """
     )
+    tex = (
+        tex.replace("@MINCAL@", str(MIN_CALIB))
+        .replace("@NAVAL@", f"{n_aval:,}".replace(",", "{,}"))
+        .replace("@NTOT@", f"{n_total:,}".replace(",", "{,}"))
+    )
     return tex, summary
+
+
+# --------------------------------------------------------------------------- #
+# Tabela 8: veredito contra o piso sazonal
+# --------------------------------------------------------------------------- #
+def table8(boot: pd.DataFrame, verdicts: dict, crit: dict) -> tuple[str, dict]:
+    """Uma linha por cidade: melhor modelo, o piso, a razao e o veredito."""
+    c = crit["criterio"]
+    order = [v[0] for v in CITIES.values()]
+    rows, summary = [], {}
+
+    for city in order:
+        v = verdicts[city]
+        sub = boot[boot["city_name"] == city]
+        ponto = sub.set_index(["model", "metric"])["point"]
+        melhor = v["melhor_por_relmae"]
+
+        item = next(
+            x for x in v["veredito"]["contra_baseline"] if x["modelo"] == melhor
+        )
+        n_sig = int(item["dm_abaixo_alpha"].split("/")[0])
+        rows.append(
+            {
+                "city": city,
+                "best": melhor,
+                "smape_best": float(ponto[(melhor, "smape")]),
+                "mae_best": float(ponto[(melhor, "mae")]),
+                "smape_base": float(ponto[(BASELINE, "smape")]),
+                "mae_base": float(ponto[(BASELINE, "mae")]),
+                "relmae": float(ponto[(melhor, "relmae")]),
+                "ci": item["ic95_modelo_menos_baseline"],
+                "dm": item["dm_abaixo_alpha"],
+                "n_sig": n_sig,
+                "beats": bool(item["bate_o_baseline"]),
+            }
+        )
+
+    n_beats = sum(r["beats"] for r in rows)
+    pior = max(rows, key=lambda r: r["relmae"])
+    melhor_razao = min(rows, key=lambda r: r["relmae"])
+    smape_pior = [r for r in rows if r["smape_best"] > r["smape_base"]]
+
+    summary = {
+        "baseline": BASELINE,
+        "criterion": c,
+        "cities_beating_baseline": n_beats,
+        "n_cities": len(rows),
+        "relmae_range": [round(melhor_razao["relmae"], 3), round(pior["relmae"], 3)],
+        "relmae_best_city": melhor_razao["city"],
+        "relmae_worst_city": pior["city"],
+        "max_dm_horizons": max(r["n_sig"] for r in rows),
+        "cities_where_baseline_wins_smape": [r["city"] for r in smape_pior],
+        "by_city": {
+            r["city"]: {
+                "best": r["best"],
+                "relmae": round(r["relmae"], 3),
+                "dm": r["dm"],
+                "beats": r["beats"],
+            }
+            for r in rows
+        },
+    }
+
+    body = "\n".join(
+        rf"{tex_escape(r['city'])} & {MODEL_LABEL[r['best']]} & {r['smape_best']:.1f} & "
+        rf"{r['mae_best']:,.0f} & {r['smape_base']:.1f} & {r['mae_base']:,.0f} & "
+        rf"{r['relmae']:.3f} & {r['dm']} & {'Yes' if r['beats'] else 'No'} \\"
+        for r in rows
+    )
+
+    tex = rf"""% gerado por scripts/build_paper_assets.py -- nao editar a mao
+\begin{{table}}[htbp]
+\centering
+\footnotesize
+\setlength{{\tabcolsep}}{{4pt}}
+\caption{{Best model in each city against the seasonal naive baseline, under the
+pre-registered decision rule.}}
+\label{{tab:baseline}}
+\begin{{tabular}}{{llrrrrrcc}}
+\toprule
+ & & \multicolumn{{2}}{{c}}{{Best model}} & \multicolumn{{2}}{{c}}{{Seasonal naive}} & & & \\
+\cmidrule(lr){{3-4}} \cmidrule(lr){{5-6}}
+City & Best model & sMAPE & MAE & sMAPE & MAE & RelMAE & DM & Beats \\
+\midrule
+{body}
+\bottomrule
+\end{{tabular}}
+
+\vspace{{0.5em}}
+\begin{{minipage}}{{\textwidth}}
+\footnotesize
+The seasonal naive forecast repeats the value observed in the same month of the previous
+year. RelMAE is the mean absolute error of the best model divided by that of the seasonal
+naive forecast in the same city, over the same folds and horizons; a value below one means
+the model erred less than the baseline. DM gives the number of the twelve horizon steps at
+which a Diebold--Mariano test with the Harvey correction rejected equal predictive accuracy
+at $\alpha = {c['alpha']}$. Under the rule registered before the test was run, a model
+beats the baseline only if the 95\% bootstrap interval for the paired difference excludes
+zero {{\itshape and}} the Diebold--Mariano test rejects at no fewer than
+{c['min_horizontes']} of the {c['n_horizontes']} horizons. The point estimate favours the
+model in every city, and no city satisfies the rule.
+\end{{minipage}}
+\end{{table}}
+"""
+    return tex, summary
+
+
+# --------------------------------------------------------------------------- #
+# Tabela 9: um modelo por cidade contra um modelo para todas
+# --------------------------------------------------------------------------- #
+def leader_shift(boot: pd.DataFrame) -> dict:
+    """Quem lidera por sMAPE antes e depois de os globais entrarem no pool.
+
+    Medido aqui em vez de digitado no texto: e a afirmacao que mais depende de
+    quem esta no conjunto comparado, e portanto a que mais envelhece.
+    """
+    globais = [f"global_{e}" for e in GLOBAL_ESTIMATORS]
+    antes, depois, trocas = {}, {}, []
+    for city in (v[0] for v in CITIES.values()):
+        sm = boot[(boot["city_name"] == city) & (boot["metric"] == "smape")]
+        sm = sm.set_index("model")["point"]
+        a = min(MODELS, key=lambda m: sm[m])
+        d = min(MODELS + globais, key=lambda m: sm[m])
+        antes[city] = a
+        depois[city] = d
+        if a != d:
+            trocas.append(
+                {
+                    "city": city,
+                    "was": a,
+                    "now": d,
+                    "smape_was": round(float(sm[a]), 2),
+                    "smape_now": round(float(sm[d]), 2),
+                }
+            )
+    return {
+        "leader_published_pool": antes,
+        "leader_with_global_pool": depois,
+        "timesfm_wins_published_pool": sum(1 for m in antes.values() if m == "timesfm"),
+        "timesfm_wins_with_global_pool": sum(
+            1 for m in depois.values() if m == "timesfm"
+        ),
+        "n_cities": len(antes),
+        "leader_changes": trocas,
+    }
+
+
+def table9(summary_json: dict) -> tuple[str, dict]:
+    order_slug = {v[0]: RESULT_SLUG[k] for k, v in CITIES.items()}
+    por_cidade = {c["cidade"]: c for c in summary_json["cidades"]}
+
+    linhas, ajuda, atrapalha = [], 0, 0
+    for city in (v[0] for v in CITIES.values()):
+        lg = por_cidade[order_slug[city]]["local_vs_global"]
+        cel = []
+        for e in GLOBAL_ESTIMATORS:
+            x = lg[e]
+            d = x["diferenca_global_menos_local"]
+            if x["agrupar_ajuda"]:
+                ajuda += 1
+            if x["agrupar_atrapalha"]:
+                atrapalha += 1
+            marca = r"$^{\ast}$" if x["confirmado"] else ""
+            cel.append(rf"{d:+.2f}{marca}")
+        linhas.append(rf"{tex_escape(city)} & " + " & ".join(cel) + r" \\")
+
+    body = "\n".join(linhas)
+    header = " & ".join(MODEL_LABEL[e] for e in GLOBAL_ESTIMATORS)
+    total = len(GLOBAL_ESTIMATORS) * len(CITIES)
+    resumo = {
+        "grouping_helps": ajuda,
+        "grouping_hurts": atrapalha,
+        "n_pairs": total,
+        "n_undetermined": total - ajuda - atrapalha,
+    }
+
+    tex = rf"""% gerado por scripts/build_paper_assets.py -- nao editar a mao
+\begin{{table}}[htbp]
+\centering
+\small
+\setlength{{\tabcolsep}}{{5pt}}
+\caption{{Effect of pooling the eight cities into a single model: difference in RelMAE
+between the global and the per-city form of the same estimator.}}
+\label{{tab:global}}
+\begin{{tabular}}{{lccccc}}
+\toprule
+City & {header} \\
+\midrule
+{body}
+\bottomrule
+\end{{tabular}}
+
+\vspace{{0.5em}}
+\begin{{minipage}}{{\textwidth}}
+\footnotesize
+Each cell is the RelMAE of the global model minus the RelMAE of the per-city model fitted
+with the same estimator, so a negative value means that pooling the eight series helped.
+Global models were fitted on all eight cities jointly with per-series standardisation and
+the city identity entered as an indicator. Comparing a global model of one estimator with
+a per-city model of another would confound pooling with the choice of learner, so every
+comparison is within an estimator. An asterisk marks the pairs that satisfy the same
+pre-registered decision rule applied to the baseline comparison, which is defined in the
+Methods. This table is reproduced in both the main text and the supplementary material, so
+it does not cross-reference a table number that exists in only one of them. Pooling helped in {ajuda} of the
+{total} city-estimator pairs and harmed in {atrapalha}; in the remaining
+{total - ajuda - atrapalha} the test did not distinguish the two forms. No global model
+beat the seasonal naive baseline in any city.
+\end{{minipage}}
+\end{{table}}
+"""
+    return tex, resumo
+
+
+def fig10_baseline(boot: pd.DataFrame, verdicts: dict, crit: dict) -> None:
+    """Esquerda: RelMAE de todo modelo em toda cidade. Direita: o melhor de cada
+    cidade com IC95, e quantos horizontes o DM rejeita."""
+    order = sorted(
+        (v[0] for v in CITIES.values()),
+        key=lambda c: verdicts[c]["relmae_do_melhor"],
+    )
+    min_h = crit["criterio"]["min_horizontes"]
+    n_h = crit["criterio"]["n_horizontes"]
+
+    fig, axes = plt.subplots(1, 2, figsize=(7.2, 3.9),
+                             gridspec_kw={"width_ratios": [1.25, 1]})
+
+    ax = axes[0]
+    modelos = [m for m in MODELS] + [f"global_{e}" for e in GLOBAL_ESTIMATORS]
+    ypos = {m: i for i, m in enumerate(modelos)}
+    cores = plt.cm.viridis(np.linspace(0.08, 0.92, len(order)))
+    handles = []
+    for k, city in enumerate(order):
+        sub = boot[(boot["city_name"] == city) & (boot["metric"] == "relmae")]
+        v = sub.set_index("model")["point"]
+        for m in modelos:
+            if m in v.index:
+                ax.scatter(min(v[m], 3.05), ypos[m], s=17, color=cores[k],
+                           alpha=0.85, zorder=3,
+                           marker="o" if v[m] <= 3.05 else ">")
+        handles.append(plt.Line2D([], [], marker="o", ls="", ms=4.2,
+                                  color=cores[k], label=city))
+    ax.axvline(1.0, color="#c62828", lw=1.3, zorder=2)
+    ax.text(1.04, -0.42, "seasonal naive", color="#c62828", fontsize=7, va="center")
+    ax.set_yticks(list(ypos.values()))
+    ax.set_yticklabels([MODEL_LABEL[m] for m in modelos], fontsize=7.5)
+    ax.set_ylim(len(modelos) - 0.5, -0.6)
+    ax.set_xlim(0.5, 3.2)
+    ax.set_xlabel("RelMAE (model / seasonal naive)")
+    ax.set_title("Every model, every city", loc="left", fontweight="bold")
+
+    ax = axes[1]
+    y = np.arange(len(order))
+    for i, city in enumerate(order):
+        v = verdicts[city]
+        item = next(x for x in v["veredito"]["contra_baseline"]
+                    if x["modelo"] == v["melhor_por_relmae"])
+        lo, hi = (float(x) for x in
+                  item["ic95_modelo_menos_baseline"].strip("[]").split(","))
+        rel = v["relmae_do_melhor"]
+        # lo e hi sao o IC da DIFERENCA modelo menos baseline. Como o RelMAE do
+        # baseline vale 1 por construcao, o IC do proprio RelMAE e [1+lo, 1+hi].
+        if not (1 + lo) <= rel <= (1 + hi):
+            raise ValueError(
+                f"{city}: RelMAE {rel:.4f} fora do proprio IC [{1 + lo:.4f}, {1 + hi:.4f}]"
+            )
+        ax.errorbar(rel, i, xerr=[[rel - (1 + lo)], [(1 + hi) - rel]],
+                    fmt="o", ms=5, color="#1565c0", ecolor="0.35",
+                    elinewidth=1.1, capsize=2.6, zorder=3)
+        n_sig = int(item["dm_abaixo_alpha"].split("/")[0])
+        ax.text(1.055, i, f"DM {n_sig}/{n_h}", fontsize=7,
+                va="center", color="0.3")
+    ax.axvline(1.0, color="#c62828", lw=1.3, zorder=2)
+    ax.set_yticks(y)
+    ax.set_yticklabels(order, fontsize=7.5)
+    ax.set_ylim(len(order) - 0.5, -0.6)
+    ax.set_xlim(0.55, 1.22)
+    ax.set_xlabel("RelMAE of the best model")
+    ax.set_title(f"Best model per city (rule: DM at $\\geq${min_h}/{n_h})",
+                 loc="left", fontweight="bold")
+
+    fig.legend(handles=handles, loc="lower center", ncol=4, fontsize=6.6,
+               handletextpad=0.3, columnspacing=1.3, borderaxespad=0.2)
+    fig.suptitle(
+        "Point estimates favour the models; the pre-registered test confirms none of them",
+        fontweight="bold", y=0.998, fontsize=9.5,
+    )
+    fig.tight_layout(rect=(0, 0.085, 1, 0.94))
+    save(fig, "fig10_baseline")
 
 
 # --------------------------------------------------------------------------- #
@@ -1294,6 +1658,13 @@ def main() -> None:
     hor.to_csv(RESULTS / "comparisons" / "metrics_by_horizon.csv", index=False)
     t7, horizon_summary = table7(hor)
     write(TABLES / "table7_horizon.tex", t7)
+    crit = load_criterion()
+    boot_city = load_city_bootstrap()
+    verdicts = load_city_verdicts()
+    t8, baseline_summary = table8(boot_city, verdicts, crit)
+    write(TABLES / "table8_baseline.tex", t8)
+    t9, global_summary = table9(load_baseline_summary())
+    write(TABLES / "table9_global.tex", t9)
 
     print("Gerando figuras...")
     setup_style()
@@ -1306,6 +1677,7 @@ def main() -> None:
     fig7_fan(ipred)
     fig8_ensembles(ens)
     fig9_horizon(hor)
+    fig10_baseline(boot_city, verdicts, crit)
 
     # numeros citados no corpo do texto, para conferencia. Medidos dos dados,
     # nao digitados: ver cohort_facts e baseline_facts.
@@ -1363,6 +1735,8 @@ def main() -> None:
         "horizon": horizon_summary,
     }
     verified["baseline"] = baseline_facts()
+    verified["baseline"].update(baseline_summary)
+    verified["global_models"] = {**global_summary, **leader_shift(boot_city)}
     (PAPER / "verified_numbers.json").write_text(
         json.dumps(verified, indent=2, ensure_ascii=False), encoding="utf-8"
     )

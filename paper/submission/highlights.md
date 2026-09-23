@@ -1,7 +1,7 @@
 # Highlights (max 85 chars each)
 
-- TimesFM ranked first in 7 of 8 Brazilian state capitals by sMAPE
-- Zero-shot model: no city-specific training, fine-tuning, or retraining
-- Bootstrap CIs confirm advantage is reliable in 6 of 7 comparable cities
-- Belo Horizonte exception: atypical local pattern favors supervised models
-- 14-year rolling benchmark; 81,312 total predictions across 7 models
+- No model beat a seasonal naive baseline in any of the 8 Brazilian capitals
+- Decision rule was registered before the comparison ran, and is in the repo
+- TimesFM led 7 of 8 cities among the 7 models, but 5 of 8 once global models enter
+- Belo Horizonte: the naive baseline beat every model on the primary metric
+- 15-year rolling-origin benchmark; 79,968 predictions across 7 models and 8 cities

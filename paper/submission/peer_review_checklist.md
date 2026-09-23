@@ -8,7 +8,9 @@ Data: 2026-05-03
 ## Rigor metodologico
 
 - [x] Reporting guideline aplicada: TRIPOD+AI 2024 (Collins et al., BMJ 2024, doi:10.1136/bmj-2023-078378) — declarado na abertura de Methods
-- [x] Sample size: 180 observacoes por cidade, 121 folds, 1.452 previsoes por modelo por cidade — justificado na secao 2.4
+- [x] Sample size: 178 observacoes por cidade, 119 folds, 1.428 previsoes por modelo por cidade, 79.968 no total — justificado na secao de Evaluation design
+- [x] Baseline trivial: naive sazonal incluido, e o veredito contra ele e reportado como resultado principal (nenhum modelo o bate em 0 de 8 cidades)
+- [x] Regra de decisao pre-declarada: results/criterion.json, commitado antes da primeira execucao do teste; a ordem dos commits e verificavel no historico publico
 - [x] Missing data: interpolacao linear para semanas faltantes (<0.5%) declarado na secao 2.1
 - [x] Multiple comparisons: 7 modelos comparados; nao foi feito teste de significancia estatistica (benchmarks descritivos) — limitacao aceitavel para este tipo de estudo, pode ser mencionada
 - [x] IC 95%: AUSENTE nas metricas. **ACAO NECESSARIA:** calcular IC 95% por bootstrap para MAE, RMSE, sMAPE em pelo menos uma cidade representativa

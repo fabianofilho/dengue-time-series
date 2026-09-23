@@ -34,11 +34,21 @@ TEXS = ["manuscript.tex", "manuscript_rsbmt.tex", "supplementary.tex"]
 # Numeros de coorte que circularam e estao errados. Nenhum pode reaparecer.
 LITERAIS_PROIBIDOS = {
     "1{,}452": "previsoes por modelo por cidade; o correto e 1.428",
+    "1,452": "previsoes por modelo por cidade; o correto e 1.428",
     "1{,}212": "previsoes com intervalo; o correto e 1.188",
     "81{,}312": "previsoes no total; o correto e 79.968",
+    "81,312": "previsoes no total; o correto e 79.968",
     "121 folds": "folds por cidade; o correto e 119",
     "180 monthly": "meses por cidade; o correto e 178",
+    "14-year": "duracao da serie; fevereiro de 2010 a novembro de 2024 sao 15 anos",
+    "14 years": "duracao da serie; fevereiro de 2010 a novembro de 2024 sao 15 anos",
+    "Bozza": "sobrenome errado do primeiro autor; e Barcellos-Filho",
 }
+
+# O pacote de submissao repete as afirmacoes do manuscrito em prosa livre, e foi
+# onde "81,312 total predictions" e "14-year benchmark" sobreviveram mais tempo:
+# nenhuma checagem olhava para ca.
+SUBMISSAO = "submission"
 
 
 EXTENSO = {
@@ -126,16 +136,47 @@ def checa_literais(problemas: list[str]) -> None:
             if literal in texto:
                 problemas.append(f"[literal] {nome} contem '{literal}': {porque}")
                 achados += 1
-    for tabela in sorted((PAPER / "tables").glob("*.tex")):
-        texto = tabela.read_text(encoding="utf-8")
+    outros = sorted((PAPER / "tables").glob("*.tex")) + sorted(
+        (PAPER / SUBMISSAO).glob("*.md")
+    )
+    for arquivo in outros:
+        texto = arquivo.read_text(encoding="utf-8")
+        pasta = arquivo.parent.name
         for literal, porque in LITERAIS_PROIBIDOS.items():
             if literal in texto:
                 problemas.append(
-                    f"[literal] tables/{tabela.name} contem '{literal}': {porque}"
+                    f"[literal] {pasta}/{arquivo.name} contem '{literal}': {porque}"
                 )
                 achados += 1
     if not achados:
         print(f"  literais: nenhum dos {len(LITERAIS_PROIBIDOS)} numeros antigos reapareceu")
+
+
+def checa_cover_letter(v: dict, problemas: list[str]) -> None:
+    """A carta repete os numeros do manuscrito em prosa. Confere os que mudam."""
+    alvo = PAPER / SUBMISSAO / "cover_letter_rsbmt.md"
+    if not alvo.exists():
+        problemas.append(f"[carta] {alvo.name} ausente")
+        return
+    texto = alvo.read_text(encoding="utf-8")
+    b = v["baseline"]
+    g = v["global_models"]
+    rel_lo, rel_hi = b["relmae_range"]
+    exigidos = [
+        (f"{rel_lo}", "RelMAE minimo"),
+        (f"{rel_hi}", "RelMAE maximo"),
+        (f"{v['mean_smape_by_model']['timesfm']:.1f}", "sMAPE medio do TimesFM"),
+        (f"{v['n_folds_per_city']} folds", "folds por cidade"),
+        (f"{n_de(g['timesfm_wins_with_global_pool'])[1]} of eight",
+         "vitorias com os globais"),
+    ]
+    faltando = [rotulo for alvo_txt, rotulo in exigidos if alvo_txt not in texto]
+    if faltando:
+        problemas.append(
+            f"[carta] cover_letter_rsbmt.md nao traz: {', '.join(faltando)}"
+        )
+    else:
+        print(f"  carta: {len(exigidos)} numeros conferidos contra verified_numbers")
 
 
 def checa_afirmacoes(v: dict, problemas: list[str]) -> None:
@@ -165,6 +206,7 @@ def main() -> int:
     checa_citacoes(problemas)
     checa_literais(problemas)
     checa_afirmacoes(v, problemas)
+    checa_cover_letter(v, problemas)
 
     if problemas:
         print()

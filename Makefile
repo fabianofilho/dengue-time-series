@@ -1,4 +1,6 @@
-PYTHON ?= /opt/miniconda3/envs/dsc/bin/python
+# Caminho absoluto de uma maquina so torna o alvo nao executavel em qualquer
+# outra. Sobrescreva com `make PYTHON=.venv/Scripts/python.exe` se precisar.
+PYTHON ?= python
 UV ?= $(HOME)/.local/bin/uv
 
 TECTONIC ?= tectonic
@@ -16,6 +18,13 @@ fetch-data:
 process-data: fetch-data
 	$(PYTHON) scripts/process_data.py --input-dir data/raw --output-dir data/processed
 
+# Pares arquivo:prefixo. O nome do CSV de entrada e o nome do resultado nao
+# coincidem em duas cidades (sao/sao_paulo e belo/belo_horizonte), entao
+# derivar um do outro com sed criava arquivos novos em vez de regravar os de
+# results/, e `make benchmark-all` nao reproduzia o que esta publicado.
+CITIES = sao:sao_paulo rio:rio belo:belo_horizonte brasilia:brasilia \
+         fortaleza:fortaleza recife:recife manaus:manaus salvador:salvador
+
 benchmark-sp:
 	PYTHONPATH=src $(PYTHON) scripts/run_benchmark.py \
 		--input-csv data/processed/dengue_monthly_sao.csv \
@@ -25,14 +34,14 @@ benchmark-sp:
 
 benchmark-all:
 	@echo "Running benchmark for all cities..."
-	@for city_csv in data/processed/dengue_monthly_*.csv; do \
-		city_name=$$(basename $$city_csv .csv | sed 's/dengue_monthly_//'); \
-		echo "--> Running for $$city_name"; \
+	@for pair in $(CITIES); do \
+		src_name=$${pair%%:*}; out_name=$${pair##*:}; \
+		echo "--> Running for $$out_name"; \
 		PYTHONPATH=src $(PYTHON) scripts/run_benchmark.py \
-			--input-csv $$city_csv \
-			--output-prefix results/benchmark_$$city_name \
+			--input-csv data/processed/dengue_monthly_$$src_name.csv \
+			--output-prefix results/benchmark_$$out_name \
 			--horizon 12 \
-			--min-train-size 48; \
+			--min-train-size 48 || exit 1; \
 	done
 
 # --- manuscrito -------------------------------------------------------------

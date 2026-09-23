@@ -13,7 +13,7 @@ from pathlib import Path
 
 import pandas as pd
 
-from dengue_forecast.evaluate import run_backtest
+from dengue_forecast.evaluate import rolling_origin_splits, run_backtest
 from dengue_forecast.models import (
     ProphetForecaster,
     SarimaxForecaster,
@@ -35,8 +35,12 @@ def parse_args() -> argparse.Namespace:
     parser.add_argument("--min-train-size", type=int, default=48, help="Janela mínima de treino (meses)")
     parser.add_argument(
         "--models",
-        default="sarimax,prophet,lgbm,xgboost,catboost,randomforest,ridge,timesfm",
-        help="Lista de modelos para rodar (separados por vírgula)",
+        default="sarimax,lgbm,xgboost,catboost,randomforest,ridge,timesfm",
+        help=(
+            "Lista de modelos para rodar (separados por vírgula). O default é o "
+            "conjunto de 7 modelos publicado. Prophet continua disponível por nome, "
+            "mas exige requirements-optional.txt instalado."
+        ),
     )
     parser.add_argument("--output-prefix", required=True, help="Prefixo para os arquivos de saída")
     parser.add_argument("--lags", type=int, default=24, help="Número de lags para modelos de ML")
@@ -90,17 +94,27 @@ def main() -> None:
 
     models = build_models(args.models.split(","), lags=args.lags)
 
+    n_folds = sum(
+        1
+        for _ in rolling_origin_splits(
+            series, horizon=args.horizon, min_train_size=args.min_train_size
+        )
+    )
+
     metrics_rows = []
     preds_frames = []
+    incompletos: dict[str, list[int]] = {}
 
-    print(f"[INFO] Iniciando benchmark para {args.input_csv}...")
+    print(f"[INFO] Iniciando benchmark para {args.input_csv} ({n_folds} janelas)...")
     for model in models:
-        metric_row, pred_df = run_backtest(
+        metric_row, pred_df, skipped = run_backtest(
             series=series,
             model=model,
             horizon=args.horizon,
             min_train_size=args.min_train_size,
         )
+        if skipped:
+            incompletos[model.name] = skipped
         if metric_row is not None:
             metrics_rows.append(metric_row)
         if not pred_df.empty:
@@ -138,6 +152,20 @@ def main() -> None:
         preds_df["date"] = pd.to_datetime(preds_df["date"]).dt.strftime("%Y-%m-%d")
         preds_df.to_csv(preds_path, index=False)
         print(f"[INFO] Previsões salvas em: {preds_path}")
+
+    # A execução só termina em sucesso se todo modelo cobriu todas as janelas.
+    # Sem isto um modelo pode sumir do CSV sem que nada falhe, que foi
+    # exatamente o que aconteceu com o Prophet: ele estava no default, não
+    # estava instalado, e o benchmark terminou com código zero mesmo assim.
+    if incompletos:
+        print()
+        print("[ERRO] Modelos com janelas faltando:")
+        for nome, janelas in sorted(incompletos.items()):
+            faltando = len(janelas)
+            amostra = ", ".join(str(j) for j in janelas[:10])
+            reticencia = " ..." if faltando > 10 else ""
+            print(f"  {nome}: {faltando} de {n_folds} janelas perdidas ({amostra}{reticencia})")
+        raise SystemExit(1)
 
 
 if __name__ == "__main__":

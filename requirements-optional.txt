@@ -1,0 +1,16 @@
+# Dependências que o default de scripts/run_benchmark.py não exige.
+#
+# Os 7 modelos publicados no artigo rodam só com requirements.txt. Prophet e
+# TimesFM saíram dali por motivos opostos: o Prophet porque foi especificado e
+# falhou em 7 das 8 cidades, e não entra em nenhum número publicado; o TimesFM
+# porque a instalação vem do GitHub e não do PyPI.
+#
+# Sem TimesFM instalado o benchmark com o default termina com código diferente
+# de zero, porque todas as janelas do modelo são descartadas. Isso é o
+# comportamento correto: o resultado publicado inclui o TimesFM.
+
+prophet>=1.1.0
+
+# TimesFM 2.5 (Google), foundation model zero-shot. Python>=3.10.
+# Pode exigir libomp no macOS.
+# uv pip install "timesfm[torch] @ git+https://github.com/google-research/timesfm.git"

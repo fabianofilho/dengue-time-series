@@ -55,6 +55,10 @@ RESULT_SLUG = {
     "salvador": "salvador",
 }
 
+# Desenho do rolling origin, o mesmo de scripts/run_benchmark.py.
+HORIZON = 12
+MIN_TRAIN = 48
+
 MODELS = ["timesfm", "catboost", "xgboost", "randomforest", "sarimax", "ridge", "lgbm"]
 MODEL_LABEL = {
     "timesfm": "TimesFM",
@@ -110,6 +114,80 @@ def boot_ci(y_true: np.ndarray, y_pred: np.ndarray, seed: int = BOOT_SEED):
 # --------------------------------------------------------------------------- #
 # carga
 # --------------------------------------------------------------------------- #
+def cohort_facts(series: dict, preds: dict) -> dict:
+    """Mede o tamanho da coorte a partir dos dados, em vez de digitar o numero.
+
+    Estes tres valores ja estiveram errados no verified_numbers.json (180 meses,
+    121 folds, 2010-01 a 2024-12) enquanto o .tex trazia os certos, porque eram
+    literais escritos a mao e nao acompanharam a correcao da agregacao mensal.
+    Um numero conferido a mao envelhece; um numero medido, nao.
+    """
+    tamanhos = {c: len(s) for c, s in series.items()}
+    if len(set(tamanhos.values())) != 1:
+        raise ValueError(f"Cidades com numero de meses diferente: {tamanhos}")
+    n_months = next(iter(tamanhos.values()))
+
+    inicios = {c.strftime("%Y-%m") for c in (s.index.min() for s in series.values())}
+    fins = {c.strftime("%Y-%m") for c in (s.index.max() for s in series.values())}
+    if len(inicios) != 1 or len(fins) != 1:
+        raise ValueError(f"Cidades com periodo diferente: {inicios} a {fins}")
+
+    folds = {c: int(df["window"].max()) for c, df in preds.items()}
+    if len(set(folds.values())) != 1:
+        raise ValueError(f"Cidades com numero de folds diferente: {folds}")
+    n_folds = next(iter(folds.values()))
+
+    # Confere a contagem medida contra a formula do desenho. Se divergirem, um
+    # dos dois esta errado e nao da para saber qual sem olhar.
+    esperado = n_months - HORIZON - MIN_TRAIN + 1
+    if n_folds != esperado:
+        raise ValueError(
+            f"{n_folds} folds no CSV, mas o desenho ({n_months} meses, horizonte "
+            f"{HORIZON}, treino minimo {MIN_TRAIN}) preve {esperado}"
+        )
+
+    return {
+        "n_months_per_city": n_months,
+        "n_folds_per_city": n_folds,
+        "study_period": f"{next(iter(inicios))} to {next(iter(fins))}",
+        "horizon": HORIZON,
+        "min_train_size": MIN_TRAIN,
+    }
+
+
+def baseline_facts() -> dict:
+    """Veredito contra o piso sazonal, lido de results/, nunca digitado aqui."""
+    caminho = RESULTS / "criterion_summary.json"
+    if not caminho.exists():
+        raise FileNotFoundError(
+            f"{caminho} ausente. Rode scripts/run_uncertainty.py antes de gerar "
+            "os ativos do paper: o veredito contra o baseline entra no "
+            "verified_numbers.json e nao pode ser preenchido a mao."
+        )
+    resumo = json.loads(caminho.read_text(encoding="utf-8"))
+    return {
+        "baseline_model": "seasonal_naive",
+        "criterion": resumo["criterio"],
+        "bootstrap": resumo["bootstrap"],
+        "relmae_best_by_city": {
+            c["cidade"]: c["relmae_do_melhor"] for c in resumo["cidades"]
+        },
+        "best_model_by_relmae_by_city": {
+            c["cidade"]: c["melhor_por_relmae"] for c in resumo["cidades"]
+        },
+        "confirmed_pairs_by_city": {
+            c["cidade"]: c["pares_confirmados"] for c in resumo["cidades"]
+        },
+        "models_beating_baseline_by_city": {
+            c["cidade"]: c["batem_o_baseline"] for c in resumo["cidades"]
+        },
+        "cities_where_any_model_beats_baseline": resumo["resposta"][
+            "cidades_em_que_algum_modelo_bate_o_baseline"
+        ],
+        "cities_total": resumo["resposta"]["de_um_total_de"],
+    }
+
+
 def load_series() -> dict[str, pd.Series]:
     out = {}
     for slug, (name, _, _) in CITIES.items():
@@ -990,6 +1068,12 @@ def horizon_metrics(preds: dict[str, pd.DataFrame]) -> pd.DataFrame:
     for city, df in preds.items():
         d = add_fold_index(df)
         for (model, h), g in d.groupby(["model", "h"]):
+            # Restrito aos 7 modelos do artigo. O CSV agora traz tambem o
+            # seasonal_naive, e deixa-lo entrar aqui mudaria a linha "TimesFM
+            # ranked first" da Tabela 7, que e numero publicado. A comparacao
+            # contra o piso sai em results/criterion_summary.json, nao aqui.
+            if model not in MODELS:
+                continue
             rows.append({
                 "city": city,
                 "model": model,
@@ -1167,7 +1251,9 @@ def main() -> None:
     fig8_ensembles(ens)
     fig9_horizon(hor)
 
-    # numeros citados no corpo do texto, para conferencia
+    # numeros citados no corpo do texto, para conferencia. Medidos dos dados,
+    # nao digitados: ver cohort_facts e baseline_facts.
+    coorte = cohort_facts(series, preds)
     tf = met[met["model"] == "timesfm"]
     wins = {
         m: sum(
@@ -1180,11 +1266,13 @@ def main() -> None:
     verified = {
         "n_cities": len(CITIES),
         "n_models": len(MODELS),
-        "n_months_per_city": 180,
-        "n_folds_per_city": 121,
+        "n_months_per_city": coorte["n_months_per_city"],
+        "n_folds_per_city": coorte["n_folds_per_city"],
+        "horizon_months": coorte["horizon"],
+        "min_train_size": coorte["min_train_size"],
         "n_predictions_per_model_city": int(met["n"].iloc[0]),
         "n_predictions_total": int(met["n"].sum()),
-        "study_period": "2010-01 to 2024-12",
+        "study_period": coorte["study_period"],
         "mean_smape_by_model": {
             m: round(met[met["model"] == m]["sMAPE"].mean(), 2) for m in MODELS
         },
@@ -1218,6 +1306,7 @@ def main() -> None:
         "ensembles": ensemble_summary,
         "horizon": horizon_summary,
     }
+    verified["baseline"] = baseline_facts()
     (PAPER / "verified_numbers.json").write_text(
         json.dumps(verified, indent=2, ensure_ascii=False), encoding="utf-8"
     )

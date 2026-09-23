@@ -1,11 +1,13 @@
 {
   "n_cities": 8,
   "n_models": 7,
-  "n_months_per_city": 180,
-  "n_folds_per_city": 121,
+  "n_months_per_city": 178,
+  "n_folds_per_city": 119,
+  "horizon_months": 12,
+  "min_train_size": 48,
   "n_predictions_per_model_city": 1428,
   "n_predictions_total": 79968,
-  "study_period": "2010-01 to 2024-12",
+  "study_period": "2010-02 to 2024-11",
   "mean_smape_by_model": {
     "timesfm": 74.56,
     "catboost": 84.99,
@@ -944,5 +946,64 @@
     "degradation_h1_h12": 44.9,
     "share_of_degradation_by_h6": 99,
     "plateau_from_h": 7
+  },
+  "baseline": {
+    "baseline_model": "seasonal_naive",
+    "criterion": {
+      "alpha": 0.05,
+      "min_horizontes": 6,
+      "n_horizontes": 12,
+      "metrica_bootstrap": "relmae",
+      "definicao_confirmado": "o par conta como confirmado quando o IC95% da diferenca pareada por bootstrap exclui zero E o teste de Diebold-Mariano com correcao de Harvey tem p < alpha em pelo menos min_horizontes dos n_horizontes passos"
+    },
+    "bootstrap": {
+      "B": 10000,
+      "seed": 20260817,
+      "unidade_de_reamostragem": "janela inteira, com os 12 horizontes juntos",
+      "por_que": "as janelas do rolling origin se sobrepoem e, dentro de cada uma, os 12 horizontes compartilham a mesma origem de treino. Reamostrar previsao a previsao trataria 1.428 observacoes dependentes como independentes e daria IC falsamente estreito.",
+      "pareado": "o mesmo sorteio de janelas e reusado por todos os modelos e todas as metricas, em todas as cidades"
+    },
+    "relmae_best_by_city": {
+      "sao_paulo": 0.9612,
+      "rio": 0.8509,
+      "belo_horizonte": 0.7598,
+      "brasilia": 0.8831,
+      "fortaleza": 0.8406,
+      "recife": 0.6654,
+      "manaus": 0.9659,
+      "salvador": 0.6993
+    },
+    "best_model_by_relmae_by_city": {
+      "sao_paulo": "timesfm",
+      "rio": "timesfm",
+      "belo_horizonte": "timesfm",
+      "brasilia": "catboost",
+      "fortaleza": "timesfm",
+      "recife": "timesfm",
+      "manaus": "timesfm",
+      "salvador": "timesfm"
+    },
+    "confirmed_pairs_by_city": {
+      "sao_paulo": "7/28",
+      "rio": "8/28",
+      "belo_horizonte": "11/28",
+      "brasilia": "7/28",
+      "fortaleza": "17/28",
+      "recife": "7/28",
+      "manaus": "9/28",
+      "salvador": "1/28"
+    },
+    "models_beating_baseline_by_city": {
+      "sao_paulo": [],
+      "rio": [],
+      "belo_horizonte": [],
+      "brasilia": [],
+      "fortaleza": [],
+      "recife": [],
+      "manaus": [],
+      "salvador": []
+    },
+    "cities_where_any_model_beats_baseline": 0,
+    "cities_total": 8
   }
 }

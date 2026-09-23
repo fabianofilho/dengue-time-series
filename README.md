@@ -1,83 +1,106 @@
-# Predição de Casos de Dengue no Brasil com Skforecast
+# Previsão de dengue em oito capitais brasileiras
 
-Análise de séries temporais de casos de dengue em diversas capitais brasileiras, utilizando dados do **[InfoDengue](https://info.dengue.mat.br/)** e modelos de machine learning com a biblioteca **[skforecast](https://skforecast.org/)**.
+Benchmark de modelos de forecasting para casos mensais de dengue, com dados do
+**[InfoDengue](https://info.dengue.mat.br/)** (Fiocruz/FGV) e backtesting por rolling
+origin. Compara um foundation model zero-shot (TimesFM 2.5) com modelos treinados para a
+tarefa, e mede os dois contra um piso: o naive sazonal.
 
-## Objetivo
+Os números deste README são gerados por `scripts/build_readme.py` a partir de
+`paper/verified_numbers.json` e `results/criterion_summary.json`. Não edite as tabelas à
+mão; rode o script.
 
-Avaliar a capacidade de diferentes modelos de forecasting em prever o número mensal de casos de dengue, utilizando uma metodologia de backtesting com **rolling origin** para uma avaliação robusta e sem vazamento de dados.
+## Resultado principal
 
-Modelos comparados:
+**Nenhum dos sete modelos do artigo bate o naive sazonal pelo critério pré-declarado, em
+nenhuma das oito cidades.** O ponto estimado favorece os modelos, e em várias cidades o
+intervalo de confiança da diferença exclui zero, mas o teste de Diebold-Mariano por
+horizonte não sustenta isso. Os detalhes estão na seção "Comparação contra o piso".
 
-1. **SARIMAX** — baseline estatístico com sazonalidade multiplicativa
-2. **LightGBM** — gradient boosting de alta performance
-3. **XGBoost** — implementação otimizada de gradient boosting
-4. **CatBoost** — gradient boosting com tratamento nativo de features categóricas
-5. **RandomForest** — ensemble de árvores de decisão
-6. **Ridge** — regressão linear com regularização L2
+Isto não contradiz que o TimesFM lidere entre os sete modelos comparados. Contradiz a
+leitura de que liderar entre eles seja suficiente para recomendar qualquer um deles.
 
-## Dados
+## Coorte e desenho
 
-- **Fonte**: [InfoDengue](https://info.dengue.mat.br/) — Sistema de Alerta de Arboviroses (Fiocruz/FGV)
-- **Período**: Janeiro/2010 a Dezembro/2024 (dados semanais agregados mensalmente)
-- **Cidades**: São Paulo (SP), Rio de Janeiro (RJ), Belo Horizonte (MG), Brasília (DF), Fortaleza (CE), Recife (PE), Manaus (AM), Salvador (BA)
-- **Extração**: Via API pública do InfoDengue
+<!-- BEGIN COORTE (gerado por scripts/build_readme.py, nao editar a mao) -->
+- **Período**: fevereiro/2010 a novembro/2024 (178 meses por cidade)
+- **Cidades**: 8
+- **Modelos**: 7 do artigo, mais o naive sazonal como piso
+- **Backtesting**: rolling origin com janela expansiva, horizonte 12 meses, treino mínimo 48 meses, passo 1 mês
+- **Folds por cidade**: 119
+- **Previsões por modelo por cidade**: 1.428
+- **Previsões no total** (7 modelos x 8 cidades): 79.968
+- **Métricas**: MAE, RMSE e sMAPE
+<!-- END COORTE -->
 
-### Resumo dos Dados
+- **Fonte**: [InfoDengue](https://info.dengue.mat.br/), via API pública
+- **Cidades**: São Paulo (SP), Rio de Janeiro (RJ), Belo Horizonte (MG), Brasília (DF),
+  Fortaleza (CE), Recife (PE), Manaus (AM), Salvador (BA)
+- **Agregação**: os dados chegam por semana epidemiológica. Cada semana é distribuída
+  uniformemente pelos seus 7 dias e depois somada por mês do calendário; meses cobertos só
+  em parte são descartados. É por isso que a série começa em fevereiro e termina em
+  novembro, e não em janeiro e dezembro.
 
-| Cidade | Total de Casos (2010–2024) | Média Mensal |
-|---|---:|---:|
-| São Paulo | 1.711.689 | ~9.500 |
-| Belo Horizonte | 1.086.158 | ~6.000 |
-| Brasília | 724.545 | ~4.000 |
-| Rio de Janeiro | 638.433 | ~3.500 |
-| Fortaleza | 382.040 | ~2.100 |
-| Recife | 185.593 | ~1.000 |
-| Manaus | 132.282 | ~730 |
-| Salvador | 116.817 | ~650 |
+## Modelos
 
-## Metodologia
-
-- **Backtesting**: Rolling origin cross-validation
-- **Horizonte de previsão**: 12 meses
-- **Janela mínima de treino**: 48 meses
-- **Métricas**: MAE, RMSE, sMAPE
-- **Lags para modelos de ML**: 24
-
-### Configuração dos Modelos
-
-| Modelo | Configuração Principal |
+| Modelo | Configuração |
 |---|---|
-| SARIMAX | order=(1,1,1), seasonal_order=(1,1,0,12) |
-| LightGBM | ForecasterRecursive, 24 lags, random_state=42 |
-| XGBoost | ForecasterRecursive, 24 lags, objective=reg:squarederror |
+| TimesFM 2.5 | foundation model zero-shot, `google/timesfm-2.5-200m-pytorch`, sem ajuste |
 | CatBoost | ForecasterRecursive, 24 lags, verbose=0 |
-| RandomForest | ForecasterRecursive, 24 lags, n_estimators=100 |
-| Ridge | ForecasterRecursive, 24 lags |
+| XGBoost | ForecasterRecursive, 24 lags, objective=reg:squarederror |
+| Random Forest | ForecasterRecursive, 24 lags, n_estimators=100 |
+| SARIMAX | order=(1,1,1), seasonal_order=(1,1,0,12) |
+| Ridge | ForecasterRecursive, 24 lags, StandardScaler nos lags |
+| LightGBM | ForecasterRecursive, 24 lags, random_state=42 |
+| Naive sazonal | repete o mesmo mês do ano anterior. É o piso, não um competidor. |
 
-## Resultados (São Paulo, 2010–2024)
+O Prophet foi especificado e falhou em 7 das 8 cidades. Não entra em nenhum número
+publicado, saiu do default de `--models` e vive em `requirements-optional.txt`.
 
-| Modelo | MAE | RMSE | sMAPE (%) | n_previsões |
-|---|---:|---:|---:|---:|
-| **CatBoost** | **9.892** | **43.838** | **78.7** | 1.452 |
-| XGBoost | 10.686 | 44.490 | 84.8 | 1.452 |
-| SARIMAX | 17.031 | 104.020 | 87.1 | 1.452 |
-| RandomForest | 10.727 | 43.822 | 87.3 | 1.452 |
-| Ridge | 3.862.818 | 99.332.702 | 118.5 | 1.452 |
-| LightGBM | 11.225 | 43.380 | 119.8 | 1.452 |
+### Acurácia entre os sete modelos
 
-**Observações:**
-- **CatBoost** apresentou o melhor desempenho geral (menor MAE e sMAPE).
-- Modelos de gradient boosting (CatBoost, XGBoost) superaram o baseline SARIMAX.
-- A alta variabilidade da dengue — com picos epidêmicos abruptos — representa um desafio inerente para todos os modelos.
-- Ridge e LightGBM apresentaram instabilidade neste dataset, sugerindo necessidade de ajuste de hiperparâmetros.
+<!-- BEGIN MODELOS (gerado por scripts/build_readme.py, nao editar a mao) -->
+| Modelo | sMAPE médio | sMAPE mediano | Cidades em que lidera (sMAPE) |
+|---|---:|---:|---:|
+| TimesFM | 74.56 | 70.98 | 7/8 |
+| CatBoost | 84.99 | 79.09 | 0/8 |
+| XGBoost | 86.67 | 85.13 | 1/8 |
+| Random Forest | 88.87 | 83.45 | 0/8 |
+| Ridge | 104.27 | 107.06 | 0/8 |
+| SARIMAX | 111.18 | 104.26 | 0/8 |
+| LightGBM | 113.69 | 108.34 | 0/8 |
+<!-- END MODELOS -->
 
-## Como Usar
+## Comparação contra o piso
+
+<!-- BEGIN BASELINE (gerado por scripts/build_readme.py, nao editar a mao) -->
+Critério pré-declarado em [`results/criterion.json`](results/criterion.json), gravado e commitado antes da primeira execução do teste. Um par conta como confirmado quando o IC95% da diferença pareada por bootstrap exclui zero **e** o teste de Diebold-Mariano com correção de Harvey tem p < 0.05 em pelo menos 6 dos 12 horizontes. Bootstrap pareado de janelas inteiras, B = 10.000, semente 20260817.
+
+RelMAE é o MAE do modelo dividido pelo MAE do naive sazonal da mesma cidade. Abaixo de 1 significa que o modelo erra menos que o piso. Não é o MASE do livro, cujo denominador é o erro do naive dentro da amostra de treino.
+
+| Cidade | Melhor modelo (RelMAE) | RelMAE | Melhor por sMAPE | Métricas concordam | Pares confirmados | Bate o piso |
+|---|---|---:|---|:-:|---:|---|
+| São Paulo | TimesFM | 0.961 | TimesFM | sim | 7/28 | nenhum |
+| Rio de Janeiro | TimesFM | 0.851 | TimesFM | sim | 8/28 | nenhum |
+| Belo Horizonte | TimesFM | 0.760 | XGBoost | não | 11/28 | nenhum |
+| Brasília | CatBoost | 0.883 | TimesFM | não | 7/28 | nenhum |
+| Fortaleza | TimesFM | 0.841 | TimesFM | sim | 17/28 | nenhum |
+| Recife | TimesFM | 0.665 | TimesFM | sim | 7/28 | nenhum |
+| Manaus | TimesFM | 0.966 | TimesFM | sim | 9/28 | nenhum |
+| Salvador | TimesFM | 0.699 | TimesFM | sim | 1/28 | nenhum |
+
+**Resposta: nenhum dos 7 modelos bate o naive sazonal por este critério, em 0 de 8 cidades.** O ponto estimado favorece o modelo em todas as cidades, mas o teste de Diebold-Mariano não acompanha: o melhor modelo fica bem abaixo dos 6 horizontes exigidos. A análise de sensibilidade em sMAPE, rotulada como exploratória, dá o mesmo veredito nas 8 cidades, mas troca o modelo vencedor em 2 delas.
+<!-- END BASELINE -->
+
+## Como usar
 
 ### 1. Instalar dependências
 
 ```bash
 pip install -r requirements.txt
 ```
+
+As versões de `lightgbm`, `xgboost` e `catboost` são fixas, não mínimas: as três mudam de
+resultado entre versões. Prophet e TimesFM estão em `requirements-optional.txt`.
 
 ### 2. Baixar e processar os dados
 
@@ -89,64 +112,93 @@ python scripts/process_data.py --input-dir data/raw --output-dir data/processed
 ### 3. Executar o benchmark
 
 ```bash
-# Apenas São Paulo
-PYTHONPATH=src python scripts/run_benchmark.py \
-    --input-csv data/processed/dengue_monthly_sao.csv \
-    --output-prefix results/benchmark_sao_paulo \
-    --horizon 12 \
-    --min-train-size 48
-
-# Todas as cidades
 make benchmark-all
 ```
 
-### 4. Gerar figuras
+O alvo termina com código diferente de zero se algum modelo perder alguma janela, dizendo
+qual modelo perdeu quais. Sem o TimesFM instalado ele falha, e isso é o comportamento
+correto: o resultado publicado inclui o TimesFM.
+
+### 4. Reconstruir as colunas de pareamento em CSVs antigos
 
 ```bash
-python scripts/generate_figures.py
+PYTHONPATH=src python scripts/backfill_windows.py --dry-run
 ```
 
-## Estrutura do Repositório
+### 5. Rodar o teste contra o piso
+
+```bash
+PYTHONPATH=src python scripts/run_uncertainty.py
+```
+
+Lê o critério de `results/criterion.json` e recusa rodar sem ele. Não há opção de linha de
+comando para sobrescrever o critério, de propósito.
+
+### 6. Gerar as tabelas, figuras e este README
+
+```bash
+PYTHONPATH=src python scripts/build_paper_assets.py
+python scripts/build_readme.py
+```
+
+## Estrutura do repositório
 
 ```
 .
 ├── Makefile
-├── README.md
-├── requirements.txt
+├── requirements.txt                       # os 7 modelos do artigo
+├── requirements-optional.txt              # Prophet e TimesFM
 ├── data/
-│   ├── raw/                              # Dados brutos da API InfoDengue
-│   └── processed/                        # Séries mensais processadas
-├── notebooks/
-│   ├── 01_exploratory_analysis.ipynb     # Análise exploratória
-│   ├── 02_benchmark_models.ipynb         # Benchmark dos modelos
-│   └── 03_forecast_future.ipynb          # Previsão futura com o melhor modelo
+│   ├── raw/                               # dados brutos da API InfoDengue
+│   └── processed/                         # séries mensais processadas
+├── paper/                                 # manuscrito, tabelas e figuras geradas
+│   └── verified_numbers.json              # todo número citado no texto
 ├── results/
-│   ├── comparisons/                      # Comparações entre cidades
-│   └── figures/                          # Figuras geradas
+│   ├── criterion.json                     # critério pré-declarado
+│   ├── criterion_summary.json             # veredito contra o piso
+│   ├── criterion_verdict_<cidade>.json    # detalhe por cidade
+│   ├── uncertainty_<cidade>_*.csv         # bootstrap e testes pareados
+│   └── comparisons/
 ├── scripts/
-│   ├── fetch_infodengue.py               # Coleta de dados via API
-│   ├── process_data.py                   # Processamento e agregação mensal
-│   ├── run_benchmark.py                  # Orquestração do backtesting
-│   └── generate_figures.py              # Geração de figuras
-└── src/
-    └── dengue_forecast/
-        ├── __init__.py
-        ├── data.py                       # Funções de carregamento de dados
-        ├── evaluate.py                   # Métricas e backtesting
-        └── models.py                     # Wrappers dos modelos
+│   ├── fetch_infodengue.py
+│   ├── process_data.py
+│   ├── run_benchmark.py                   # backtesting
+│   ├── backfill_windows.py                # window/horizon em CSVs antigos
+│   ├── run_uncertainty.py                 # bootstrap, Diebold-Mariano, veredito
+│   ├── build_paper_assets.py              # tabelas, figuras, verified_numbers
+│   └── build_readme.py                    # os blocos numéricos deste arquivo
+├── src/
+│   └── dengue_forecast/
+│       ├── evaluate.py                    # métricas e backtesting
+│       ├── models.py                      # wrappers dos modelos
+│       ├── uncertainty.py                 # bootstrap de janelas e DM
+│       ├── intervals.py                   # predição conformal
+│       └── ensembles.py
+└── tests/
 ```
 
-## Próximos Passos
+## Armadilhas conhecidas
 
-1. Adicionar variáveis exógenas (temperatura, umidade, índice pluviométrico) via API Mosqlimate
-2. Otimizar hiperparâmetros com `optuna` e `skforecast`
-3. Implementar previsão probabilística com intervalos de confiança
-4. Expandir o benchmark para todas as capitais
-5. Desenvolver modelo global multi-série com `ForecasterRecursiveMultiSeries`
+Estão documentadas em `CLAUDE.md`: o scaling do Ridge, a tabela de população do IBGE e a
+agregação de semana epidemiológica para mês.
+
+## Próximos passos
+
+1. Baseline de modelo global multi-série (`ForecasterRecursiveMultiSeries`), que é a lacuna
+   metodológica mais séria que resta
+2. Variáveis exógenas (temperatura, umidade, pluviometria) via API Mosqlimate
+3. Otimizar hiperparâmetros com `optuna`, medindo o custo do ajuste contra o piso
 
 ## Referências
 
-- **InfoDengue**: Sistema de Alerta de Arboviroses — Fiocruz/FGV — [info.dengue.mat.br](https://info.dengue.mat.br/)
-- **skforecast**: Biblioteca para forecasting com ML — [skforecast.org](https://skforecast.org/)
-- Codeço, C.T. et al. (2018). Estimating the effective reproduction number of dengue. *Epidemics*, 25, 101–111.
-- Bastos, L.S. et al. (2019). A modelling approach for correcting reporting delays in disease surveillance data. *Statistics in Medicine*, 38(22), 4363–4377.
+- **InfoDengue**: Sistema de Alerta de Arboviroses, Fiocruz/FGV,
+  [info.dengue.mat.br](https://info.dengue.mat.br/)
+- **skforecast**: [skforecast.org](https://skforecast.org/)
+- Codeço, C.T. et al. (2018). Estimating the effective reproduction number of dengue.
+  *Epidemics*, 25, 101–111.
+- Bastos, L.S. et al. (2019). A modelling approach for correcting reporting delays in
+  disease surveillance data. *Statistics in Medicine*, 38(22), 4363–4377.
+- Diebold, F.X. and Mariano, R.S. (1995). Comparing predictive accuracy.
+  *Journal of Business and Economic Statistics*, 13(3), 253–263.
+- Harvey, D., Leybourne, S. and Newbold, P. (1997). Testing the equality of prediction mean
+  squared errors. *International Journal of Forecasting*, 13(2), 281–291.

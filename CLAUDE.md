@@ -87,8 +87,19 @@ Manaus e Salvador.
 
 ## Validacao
 Rolling origin com janela expansiva: horizonte 12 meses, treino minimo 48 meses,
-passo 1 mes. 121 folds por cidade, 1452 previsoes por modelo por cidade,
-81.312 no total (7 modelos x 8 cidades). Metricas: MAE, RMSE e sMAPE.
+passo 1 mes. 119 folds por cidade, 1.428 previsoes por modelo por cidade,
+79.968 no total (7 modelos x 8 cidades). Metricas: MAE, RMSE e sMAPE.
+
+Serie de 178 meses, fevereiro/2010 a novembro/2024. Nao e 180 meses nem
+2010-01 a 2024-12: a agregacao por semana epidemiologica descarta os meses
+cobertos so em parte nas duas pontas. Os numeros 180, 121, 1.452 e 81.312
+circularam neste repo e estao errados; se aparecerem em algum lugar, e texto
+que nao acompanhou a correcao da agregacao.
+
+Todo numero citado sai de paper/verified_numbers.json, gerado por
+scripts/build_paper_assets.py, e os blocos numericos do README saem de
+scripts/build_readme.py. Nenhum dos dois aceita valor digitado a mao;
+`python scripts/build_readme.py --check` falha se o README divergir.
 
 ## Armadilha conhecida: scaling no Ridge
 O Ridge e o unico modelo do benchmark que nao e invariante a escala. Sem
@@ -102,10 +113,40 @@ para nao alterar os resultados ja publicados delas.
 O sMAPE nao denuncia isso: e limitado, entao absorve divergencia de qualquer
 magnitude. Ao adicionar modelo novo, sempre conferir MAE e RMSE tambem.
 
+## O piso da comparacao
+O benchmark tem um oitavo modelo, o `seasonal_naive`, que repete o mesmo mes do
+ano anterior. Ele nao e competidor, e o piso: um modelo que nao bate isso nao
+aprendeu nada que a sazonalidade sozinha ja nao diga.
+
+O criterio de decisao esta em results/criterion.json, fixado e commitado antes
+da primeira execucao do teste. scripts/run_uncertainty.py le aquele arquivo e
+nao aceita criterio por linha de comando, de proposito.
+
+Veredito atual: nenhum dos 7 modelos bate o piso, em 0 de 8 cidades. O ponto
+estimado favorece o modelo em todas elas (RelMAE de 0,665 a 0,966), mas o
+Diebold-Mariano por horizonte nao acompanha. Ao ler qualquer afirmacao de
+vitoria neste repo, checar se ela e entre os 7 modelos ou contra o piso: sao
+coisas diferentes e so a primeira se sustenta.
+
+## Armadilha conhecida: o baseline nao entra nas tabelas do artigo
+`MODELS` em build_paper_assets.py lista os 7 modelos publicados, e
+horizon_metrics filtra por ela. Sem esse filtro o seasonal_naive entra no pool
+e a linha "TimesFM ranked first" da Tabela 7 muda de 5/8 e 6/8 e 5/8 para 3/8 e
+3/8 e 1/8 nos horizontes longos. Isso nao e bug do numero publicado, e o efeito
+real de incluir o piso, e pertence ao criterion_summary, nao a Tabela 7.
+
 ## Comandos uteis
 - `python -m venv .venv && .venv/Scripts/python.exe -m pip install -r requirements.txt` - setup
-- `jupyter lab notebooks/04_all_cities_and_region_benchmark.ipynb` - benchmark das 8 cidades
+- `make benchmark-all` - benchmark das 8 cidades. Termina com exit code diferente
+  de zero se algum modelo perder alguma janela, dizendo qual perdeu quais.
+- `PYTHONPATH=src python scripts/run_uncertainty.py` - bootstrap, DM e veredito
+- `PYTHONPATH=src python scripts/build_paper_assets.py && python scripts/build_readme.py`
+- `PYTHONPATH=src python -m pytest tests/ -q` - 61 testes
 - `make` - ver alvos disponiveis
+
+Prophet e TimesFM estao em requirements-optional.txt. O Prophet saiu do default
+de --models porque falhou em 7 das 8 cidades e nao entra em nenhum numero
+publicado; a classe continua existindo.
 
 ## Armadilha conhecida: populacao do IBGE
 Nao usar a tabela de estimativas (SIDRA 6579) direto como denominador. Ela

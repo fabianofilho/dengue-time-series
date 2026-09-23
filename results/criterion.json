@@ -1,0 +1,42 @@
+{
+  "_nota": "Criterio pre-declarado. Gravado e commitado ANTES de qualquer execucao de scripts/run_uncertainty.py neste repo. Se este arquivo for alterado depois de um resultado ser visto, o resultado deixa de ser confirmatorio e passa a ser exploratorio, e o texto tem que dizer isso.",
+  "fixado_em": "2026-09-23",
+  "fixado_por": "Fabiano Barcellos-Filho",
+  "referencia": "LAB-135",
+  "criterio": {
+    "alpha": 0.05,
+    "min_horizontes": 6,
+    "n_horizontes": 12,
+    "metrica_bootstrap": "relmae",
+    "definicao_confirmado": "o par conta como confirmado quando o IC95% da diferenca pareada por bootstrap exclui zero E o teste de Diebold-Mariano com correcao de Harvey tem p < alpha em pelo menos min_horizontes dos n_horizontes passos"
+  },
+  "metrica": {
+    "nome": "relmae",
+    "definicao": "MAE do modelo dividido pelo MAE do seasonal_naive na mesma cidade, sobre as mesmas janelas e horizontes",
+    "denominador": "seasonal_naive",
+    "abaixo_de_1_significa": "o modelo erra menos que o piso sazonal",
+    "aviso_de_nomenclatura": "NAO e o MASE do livro, que usa o erro do naive dentro da amostra de treino como denominador. Aqui o denominador e o erro de previsao out-of-sample do seasonal_naive. O nome correto no texto e erro absoluto relativo (RelMAE), e e assim que tem que ser escrito no manuscrito.",
+    "por_que_nao_smape": "sMAPE e limitada, entao absorve divergencia de qualquer magnitude: foi ela que deixou a explosao do Ridge (8,7e14 casos em Salvador) aparecer como 96,3%, um valor plausivel. Em serie com surto e com 52% dos meses abaixo de 1.000 casos, ela ainda pesa o vale interepidemico tanto quanto o pico, que e o alvo da previsao.",
+    "por_que_nao_mae_puro": "MAE nao e comparavel entre as 8 cidades (Sao Paulo tem ordem de grandeza cerca de 30x a de Manaus), entao qualquer media entre cidades seria dominada por Sao Paulo e Belo Horizonte. Dentro de uma cidade o teste DM e identico ao do RelMAE, porque o denominador e constante ali; a escolha so muda a agregacao."
+  },
+  "bootstrap": {
+    "B": 10000,
+    "seed": 20260817,
+    "unidade_de_reamostragem": "janela inteira, com os 12 horizontes juntos",
+    "por_que": "as janelas do rolling origin se sobrepoem e, dentro de cada uma, os 12 horizontes compartilham a mesma origem de treino. Reamostrar previsao a previsao trataria 1.428 observacoes dependentes como independentes e daria IC falsamente estreito.",
+    "pareado": "o mesmo sorteio de janelas e reusado por todos os modelos e todas as metricas, em todas as cidades"
+  },
+  "analise_de_sensibilidade": {
+    "metrica": "smape",
+    "status": "exploratoria",
+    "regra": "a rodada com sMAPE e gerada e reportada rotulada como analise de sensibilidade. Ela NAO serve para escolher a metrica nem para substituir o veredito, que e o do RelMAE. Se as duas discordarem, a discordancia e o resultado a reportar."
+  },
+  "escopo": {
+    "cidades": ["sao_paulo", "rio", "belo_horizonte", "brasilia", "fortaleza", "recife", "manaus", "salvador"],
+    "modelos": ["seasonal_naive", "sarimax", "lgbm", "xgboost", "catboost", "randomforest", "ridge", "timesfm"],
+    "janelas_por_cidade": 119,
+    "previsoes_por_modelo_por_cidade": 1428,
+    "unidade_de_analise": "cidade. Nao ha pooling entre cidades: cada cidade recebe seu proprio bootstrap, seus proprios testes pareados e seu proprio veredito."
+  },
+  "pergunta": "Algum dos 7 modelos publicados bate o seasonal_naive por este criterio, e em quantas das 8 cidades?"
+}

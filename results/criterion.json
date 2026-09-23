@@ -32,11 +32,44 @@
     "regra": "a rodada com sMAPE e gerada e reportada rotulada como analise de sensibilidade. Ela NAO serve para escolher a metrica nem para substituir o veredito, que e o do RelMAE. Se as duas discordarem, a discordancia e o resultado a reportar."
   },
   "escopo": {
-    "cidades": ["sao_paulo", "rio", "belo_horizonte", "brasilia", "fortaleza", "recife", "manaus", "salvador"],
-    "modelos": ["seasonal_naive", "sarimax", "lgbm", "xgboost", "catboost", "randomforest", "ridge", "timesfm"],
+    "cidades": [
+      "sao_paulo",
+      "rio",
+      "belo_horizonte",
+      "brasilia",
+      "fortaleza",
+      "recife",
+      "manaus",
+      "salvador"
+    ],
+    "modelos": [
+      "seasonal_naive",
+      "sarimax",
+      "lgbm",
+      "xgboost",
+      "catboost",
+      "randomforest",
+      "ridge",
+      "timesfm",
+      "global_lgbm",
+      "global_xgboost",
+      "global_catboost",
+      "global_randomforest",
+      "global_ridge"
+    ],
     "janelas_por_cidade": 119,
     "previsoes_por_modelo_por_cidade": 1428,
-    "unidade_de_analise": "cidade. Nao ha pooling entre cidades: cada cidade recebe seu proprio bootstrap, seus proprios testes pareados e seu proprio veredito."
+    "unidade_de_analise": "cidade. Nao ha pooling entre cidades: cada cidade recebe seu proprio bootstrap, seus proprios testes pareados e seu proprio veredito.",
+    "modelos_globais": "Um unico modelo treinado nas 8 cidades ao mesmo tempo (ForecasterRecursiveMultiSeries), com padronizacao por serie e identidade da cidade como indicadora. A comparacao que interessa e entre o mesmo estimador nas duas formas: lgbm contra global_lgbm, e assim por diante. SARIMAX e TimesFM nao tem forma global aqui."
   },
-  "pergunta": "Algum dos 7 modelos publicados bate o seasonal_naive por este criterio, e em quantas das 8 cidades?"
+  "pergunta": "Algum dos 7 modelos publicados bate o seasonal_naive por este criterio, e em quantas das 8 cidades?",
+  "emendas": [
+    {
+      "data": "2026-09-23",
+      "o_que_mudou": "escopo.modelos ganhou os 5 modelos globais",
+      "o_que_nao_mudou": "a regra de decisao. alpha, min_horizontes, metrica_bootstrap, definicao_confirmado, B e semente ficaram identicos ao commit 0f7fdd6.",
+      "por_que": "O baseline global multi-serie foi registrado como a lacuna metodologica mais seria que restava ANTES de o teste rodar: esta em 'Proximos passos' do README no commit 9d6e664 e na entrega da sessao. Nao foi escolhido depois de ver resultado nenhum.",
+      "efeito_no_teste": "13 modelos em vez de 8, entao 78 pares por cidade em vez de 28. Mais pares significa mais comparacoes multiplas, e o numerador de 'pares confirmados' nao e comparavel com o da rodada anterior. O que e comparavel e o veredito contra o baseline, modelo a modelo, que nao depende de quantos outros modelos existem."
+    }
+  ]
 }

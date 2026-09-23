@@ -955,6 +955,20 @@ Section~\ref{sec:intervals-fail} has not, to our knowledge, been applied to thei
 and our finding that coverage survives a decade of ordinary years and then fails in 2024
 is a question their framework should also be asked.
 
+\citet{Palmer2026hosp} forecast dengue hospitalisations eight weeks ahead across 27
+immediate geographic regions of Brazil, combining hospital admission records with climate
+variables and the search behaviour of physicians on a clinical reference platform. Their
+design answers a question ours cannot, because it is built around the delay with which
+administrative data actually arrive: under realistic reporting delays of up to eight
+weeks, the models that used physicians' search behaviour outperformed the others in most
+regions, with the search signal compensating for hospitalisation counts that were not yet
+available. One of their results is worth setting beside ours. When the hospitalisation
+data were assumed to arrive immediately, the best performer was the simplest
+specification, using admission history alone. Their comparison was among trained models
+rather than against a trivial baseline, so it is not the same test we report in
+Section~\ref{sec:baseline}, but both studies find added complexity failing to earn its
+place once the comparison is made explicitly.
+
 A second study overlaps more narrowly but more sharply. Bannoud and colleagues forecast
 dengue in S\~ao Paulo with fourteen machine learning algorithms, urban incident predictors
 and a virtual data augmentation scheme, training on 2014 to 2022 and testing on 2023
@@ -1015,7 +1029,13 @@ Nine limitations bound these conclusions.
 
 First, the outcome is notified cases, which under-represent true infections
 \citep{Siqueira2022}. What is forecast is the behaviour of the surveillance system,
-including reporting delay and saturation during peaks, not biological incidence.
+including reporting delay and saturation during peaks, not biological incidence. We used
+the series as retrospectively consolidated, so the delay is absorbed into the target
+rather than modelled; a forecast issued in real time would see less than we gave every
+model here. \citet{Palmer2026hosp} show what that costs and how it can be offset, by
+evaluating Brazilian dengue forecasts under reporting delays of up to eight weeks and
+finding that an auxiliary real-time signal recovers much of what the delay removes.
+Neither the delay nor its mitigation is addressed by the present design.
 
 Second, no exogenous covariates were used. Models with access to rainfall, temperature
 and vector indices outperform univariate approaches for outbreak onset

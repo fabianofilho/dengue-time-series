@@ -1,0 +1,103 @@
+{
+  "criterio": {
+    "alpha": 0.05,
+    "min_horizontes": 6,
+    "n_horizontes": 12,
+    "metrica_bootstrap": "relmae",
+    "definicao_confirmado": "o par conta como confirmado quando o IC95% da diferenca pareada por bootstrap exclui zero E o teste de Diebold-Mariano com correcao de Harvey tem p < alpha em pelo menos min_horizontes dos n_horizontes passos"
+  },
+  "bootstrap": {
+    "B": 10000,
+    "seed": 20260817,
+    "unidade_de_reamostragem": "janela inteira, com os 12 horizontes juntos",
+    "por_que": "as janelas do rolling origin se sobrepoem e, dentro de cada uma, os 12 horizontes compartilham a mesma origem de treino. Reamostrar previsao a previsao trataria 1.428 observacoes dependentes como independentes e daria IC falsamente estreito.",
+    "pareado": "o mesmo sorteio de janelas e reusado por todos os modelos e todas as metricas, em todas as cidades"
+  },
+  "cidades": [
+    {
+      "cidade": "sao_paulo",
+      "melhor_por_relmae": "timesfm",
+      "relmae_do_melhor": 0.9612,
+      "melhor_por_smape": "timesfm",
+      "metrica_concorda": true,
+      "pares_confirmados": "7/28",
+      "batem_o_baseline": [],
+      "batem_o_baseline_sensibilidade_smape": []
+    },
+    {
+      "cidade": "rio",
+      "melhor_por_relmae": "timesfm",
+      "relmae_do_melhor": 0.8509,
+      "melhor_por_smape": "timesfm",
+      "metrica_concorda": true,
+      "pares_confirmados": "8/28",
+      "batem_o_baseline": [],
+      "batem_o_baseline_sensibilidade_smape": []
+    },
+    {
+      "cidade": "belo_horizonte",
+      "melhor_por_relmae": "timesfm",
+      "relmae_do_melhor": 0.7598,
+      "melhor_por_smape": "xgboost",
+      "metrica_concorda": false,
+      "pares_confirmados": "11/28",
+      "batem_o_baseline": [],
+      "batem_o_baseline_sensibilidade_smape": []
+    },
+    {
+      "cidade": "brasilia",
+      "melhor_por_relmae": "catboost",
+      "relmae_do_melhor": 0.8831,
+      "melhor_por_smape": "timesfm",
+      "metrica_concorda": false,
+      "pares_confirmados": "7/28",
+      "batem_o_baseline": [],
+      "batem_o_baseline_sensibilidade_smape": []
+    },
+    {
+      "cidade": "fortaleza",
+      "melhor_por_relmae": "timesfm",
+      "relmae_do_melhor": 0.8406,
+      "melhor_por_smape": "timesfm",
+      "metrica_concorda": true,
+      "pares_confirmados": "17/28",
+      "batem_o_baseline": [],
+      "batem_o_baseline_sensibilidade_smape": []
+    },
+    {
+      "cidade": "recife",
+      "melhor_por_relmae": "timesfm",
+      "relmae_do_melhor": 0.6654,
+      "melhor_por_smape": "timesfm",
+      "metrica_concorda": true,
+      "pares_confirmados": "7/28",
+      "batem_o_baseline": [],
+      "batem_o_baseline_sensibilidade_smape": []
+    },
+    {
+      "cidade": "manaus",
+      "melhor_por_relmae": "timesfm",
+      "relmae_do_melhor": 0.9659,
+      "melhor_por_smape": "timesfm",
+      "metrica_concorda": true,
+      "pares_confirmados": "9/28",
+      "batem_o_baseline": [],
+      "batem_o_baseline_sensibilidade_smape": []
+    },
+    {
+      "cidade": "salvador",
+      "melhor_por_relmae": "timesfm",
+      "relmae_do_melhor": 0.6993,
+      "melhor_por_smape": "timesfm",
+      "metrica_concorda": true,
+      "pares_confirmados": "1/28",
+      "batem_o_baseline": [],
+      "batem_o_baseline_sensibilidade_smape": []
+    }
+  ],
+  "resposta": {
+    "pergunta": "Algum dos 7 modelos publicados bate o seasonal_naive por este criterio, e em quantas das 8 cidades?",
+    "cidades_em_que_algum_modelo_bate_o_baseline": 0,
+    "de_um_total_de": 8
+  }
+}

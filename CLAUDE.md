@@ -166,12 +166,41 @@ e que a contagem 7/8 nao sobrevive a entrada de um baseline que o artigo nao
 tem, e que a diferenca entre os dois nao e distinguivel de ruido. Ao citar
 qualquer contagem de vitorias, dizer contra quem.
 
-## Armadilha conhecida: o baseline nao entra nas tabelas do artigo
-`MODELS` em build_paper_assets.py lista os 7 modelos publicados, e
-horizon_metrics filtra por ela. Sem esse filtro o seasonal_naive entra no pool
-e a linha "TimesFM ranked first" da Tabela 7 muda de 5/8 e 6/8 e 5/8 para 3/8 e
-3/8 e 1/8 nos horizontes longos. Isso nao e bug do numero publicado, e o efeito
-real de incluir o piso, e pertence ao criterion_summary, nao a Tabela 7.
+## Armadilha conhecida: toda contagem "por cidade" depende de quem esta no CSV
+Os CSVs de results/ tem 13 modelos: os 7 do artigo, o piso sazonal e 5 globais.
+Toda contagem de vitorias nas tabelas e figuras e feita sobre os modelos
+presentes no arquivo, entao acrescentar modelo muda numero publicado sem
+levantar excecao nenhuma. Ja aconteceu em tres lugares:
+
+- linha "TimesFM ranked first" da Tabela 7: iria de 5/8, 6/8 e 5/8 para 3/8,
+  3/8 e 1/8 nos horizontes longos
+- coluna de vitorias da Tabela 5
+- painel de cobertura ao longo do tempo da Figura 6
+
+Todas as tres estao contidas: `MODELS` e a lista publicada, horizon_metrics
+filtra por ela, e os loaders de intervalo passam por `_so_publicados`, que
+tambem levanta erro se faltar modelo do artigo. tests/test_paper_guards.py
+existe para que a proxima pessoa que acrescentar modelo veja falha em vez de
+numero diferente. Ao acrescentar consumidor novo de results/, checar se ele
+conta por cidade.
+
+## Armadilha conhecida: intervalo e por modelo, ensemble nao e
+A calibracao conformal de um modelo usa apenas os residuos passados dele
+proprio, entao run_intervals pode rodar todos os 13 modelos do CSV sem mexer no
+intervalo dos outros. Medido: divergencia maxima 3,6e-12 nas 11 colunas
+numericas dos 7 publicados ao incluir os globais.
+
+O ensemble nao tem essa propriedade. O conjunto de membros muda o resultado de
+TODA abordagem, inclusive das que nao estimam nada: a mediana de 7 previsoes
+nao e a mediana de 12. Por isso run_ensembles recebe `--members` e `--out-suffix`
+e cada variante escreve no proprio arquivo, e table6 tem guarda que recusa o
+arquivo errado em vez de gerar uma Tabela 6 diferente em silencio. O piso
+sazonal fica de fora dos dois conjuntos: ele e a regua contra a qual o ensemble
+e julgado.
+
+Resultado: com os globais no conjunto, o ensemble bate o melhor membro em 3 de
+8 cidades, contra 1 de 8 com os 7 do artigo. A mediana melhora de 78,98 para
+76,93 de sMAPE medio e ainda assim fica atras do TimesFM sozinho (74,94).
 
 ## Comandos uteis
 - `python -m venv .venv && .venv/Scripts/python.exe -m pip install -r requirements.txt` - setup
@@ -179,8 +208,11 @@ real de incluir o piso, e pertence ao criterion_summary, nao a Tabela 7.
   de zero se algum modelo perder alguma janela, dizendo qual perdeu quais.
 - `PYTHONPATH=src python scripts/run_global_benchmark.py` - modelos multi-serie
 - `PYTHONPATH=src python scripts/run_uncertainty.py` - bootstrap, DM e veredito
+- `PYTHONPATH=src python scripts/run_intervals.py` - intervalos conformais
+- `PYTHONPATH=src python scripts/run_ensembles.py` - combinacoes, 7 membros
+- `PYTHONPATH=src python scripts/run_ensembles.py --members publicados,globais --out-suffix _with_global`
 - `PYTHONPATH=src python scripts/build_paper_assets.py && python scripts/build_readme.py`
-- `PYTHONPATH=src python -m pytest tests/ -q` - 72 testes
+- `PYTHONPATH=src python -m pytest tests/ -q` - 84 testes
 - `make` - ver alvos disponiveis
 
 Prophet e TimesFM estao em requirements-optional.txt. O Prophet saiu do default

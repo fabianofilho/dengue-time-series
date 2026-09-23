@@ -4,6 +4,14 @@ backtest, nas duas construcoes (log1p e absoluta), e avalia cobertura e WIS.
 
 Nao reexecuta modelo nenhum: le results/benchmark_*_predictions.csv.
 
+Roda todo modelo que estiver no CSV. Isso e seguro porque a calibracao conformal
+de um modelo usa apenas os residuos passados dele proprio: acrescentar modelo nao
+mexe no intervalo dos outros. Verificado ao incluir os globais, com divergencia
+maxima 3,6e-12 nas 11 colunas numericas dos 7 publicados.
+
+O que NAO e por modelo e a coluna de vitorias da Tabela 5, que conta por cidade
+sobre os modelos presentes. Quem monta a tabela filtra a lista publicada.
+
 Saidas:
   results/comparisons/predictions_with_intervals.csv
   results/comparisons/interval_calibration.csv

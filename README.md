@@ -118,6 +118,27 @@ Comparar global de um estimador com local de outro misturaria o efeito de agrupa
 **Agrupar ajudou de forma confirmada em 6 de 40 pares cidade-estimador, e atrapalhou em 1.** Nos outros 33 o teste não distingue as duas formas. Nenhum modelo global bate o naive sazonal, e em várias cidades eles ficam bem acima dele: no Rio o melhor global tem RelMAE 1.79, ou seja, erra bem mais que repetir o ano anterior.
 <!-- END LOCALGLOBAL -->
 
+## Combinar modelos ajuda?
+
+<!-- BEGIN ENSEMBLES (gerado por scripts/build_readme.py, nao editar a mao) -->
+O conjunto de membros muda o resultado de toda abordagem, inclusive das que não estimam nada: a mediana de 7 previsões não é a mediana de 12. Por isso as duas variantes ficam em arquivos separados e a do artigo continua sendo a de 7 membros. O naive sazonal fica de fora das duas: ele é a régua contra a qual o ensemble é julgado.
+
+Em negrito, onde o ensemble bate o melhor membro individual daquela cidade.
+
+| Cidade | Melhor membro (7) | Ensemble (7) | Melhor membro (12) | Ensemble (12) |
+|---|---:|---:|---:|---:|
+| Belo Horizonte | 84.34 | 84.37 | 82.94 | **81.12** |
+| Brasília | 71.27 | 72.78 | 68.66 | 69.39 |
+| Fortaleza | 63.32 | 75.79 | 63.32 | 67.16 |
+| Manaus | 51.83 | 56.21 | 50.34 | **48.93** |
+| Recife | 64.03 | 74.19 | 64.03 | 76.14 |
+| Rio de Janeiro | 96.57 | 109.27 | 96.57 | 120.42 |
+| Salvador | 72.64 | 75.27 | 72.64 | 78.35 |
+| São Paulo | 75.71 | **74.39** | 75.70 | **73.52** |
+
+**Com os globais no conjunto, o ensemble passa a bater o melhor membro em 3 de 8 cidades, contra 1 de 8 com os 7 do artigo.** A mediana, que é a melhor combinação nas duas variantes, cai de 78.98 para 76.93 de sMAPE médio, e mesmo assim continua atrás do TimesFM sozinho (74.94). Combinar ajuda mais quando há modelo global no conjunto, e ainda não é suficiente para superar o melhor modelo único.
+<!-- END ENSEMBLES -->
+
 ## Como usar
 
 ### 1. Instalar dependências
@@ -172,7 +193,20 @@ PYTHONPATH=src python scripts/run_uncertainty.py
 Lê o critério de `results/criterion.json` e recusa rodar sem ele. Não há opção de linha de
 comando para sobrescrever o critério, de propósito.
 
-### 7. Gerar as tabelas, figuras e este README
+### 7. Intervalos conformais e combinações
+
+```bash
+PYTHONPATH=src python scripts/run_intervals.py
+PYTHONPATH=src python scripts/run_ensembles.py
+PYTHONPATH=src python scripts/run_ensembles.py --members publicados,globais --out-suffix _with_global
+```
+
+O de intervalos roda todo modelo do CSV, o que é seguro porque a calibração conformal de
+um modelo usa apenas os resíduos passados dele próprio. O de combinações não: o conjunto
+de membros muda toda abordagem, então ele recebe o conjunto como argumento e cada
+variante escreve no próprio arquivo.
+
+### 8. Gerar as tabelas, figuras e este README
 
 ```bash
 PYTHONPATH=src python scripts/build_paper_assets.py
@@ -204,6 +238,8 @@ python scripts/build_readme.py
 │   ├── run_global_benchmark.py            # backtesting multi-serie
 │   ├── backfill_windows.py                # window/horizon em CSVs antigos
 │   ├── run_uncertainty.py                 # bootstrap, Diebold-Mariano, veredito
+│   ├── run_intervals.py                   # predicao conformal
+│   ├── run_ensembles.py                   # combinacoes de modelos
 │   ├── build_paper_assets.py              # tabelas, figuras, verified_numbers
 │   └── build_readme.py                    # os blocos numéricos deste arquivo
 ├── src/

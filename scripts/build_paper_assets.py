@@ -237,14 +237,35 @@ def load_population() -> dict[str, pd.Series]:
     return out
 
 
+def _so_publicados(df: pd.DataFrame, origem: str) -> pd.DataFrame:
+    """Restringe aos 7 modelos do artigo.
+
+    run_intervals roda todo modelo do CSV, o que hoje inclui o seasonal_naive e
+    os cinco globais. Filtrar aqui, na carga, em vez de em cada consumidor: o
+    painel de cobertura ao longo do tempo da fig6 media sobre os modelos
+    presentes e mudou de numero publicado quando o filtro estava so na table5.
+    """
+    faltando = sorted(set(MODELS) - set(df["model"].unique()))
+    if faltando:
+        raise ValueError(f"Modelos do artigo ausentes em {origem}: {faltando}")
+    return df[df["model"].isin(MODELS)].copy()
+
+
 def load_interval_calibration() -> pd.DataFrame:
     """Calibracao dos intervalos, produzida por scripts/run_intervals.py."""
-    return pd.read_csv(RESULTS / "comparisons" / "interval_calibration.csv")
+    return _so_publicados(
+        pd.read_csv(RESULTS / "comparisons" / "interval_calibration.csv"),
+        "interval_calibration.csv",
+    )
 
 
 def load_interval_predictions() -> pd.DataFrame:
-    return pd.read_csv(
-        RESULTS / "comparisons" / "predictions_with_intervals.csv", parse_dates=["date"]
+    return _so_publicados(
+        pd.read_csv(
+            RESULTS / "comparisons" / "predictions_with_intervals.csv",
+            parse_dates=["date"],
+        ),
+        "predictions_with_intervals.csv",
     )
 
 
@@ -550,8 +571,17 @@ primary metric is declared in advance (sMAPE) and the others are reported alongs
 # Tabela 5: calibracao dos intervalos
 # --------------------------------------------------------------------------- #
 def table5(cal: pd.DataFrame, pred: pd.DataFrame) -> tuple[str, dict]:
+    # Restrito aos 7 modelos do artigo. O CSV de calibracao traz tambem o
+    # seasonal_naive e os cinco globais, e a coluna de vitorias conta por cidade
+    # sobre os modelos presentes: deixa-los entrar mudaria numero publicado.
+    # As linhas dos 7 nao mudam com a presenca dos outros, porque a calibracao
+    # conformal de um modelo so usa os residuos passados dele proprio.
+    faltando = sorted(set(MODELS) - set(cal["model"].unique()))
+    if faltando:
+        raise ValueError(f"Modelos do artigo ausentes na calibracao: {faltando}")
+    cal = cal[cal["model"].isin(MODELS)].copy()
+    pred = pred[pred["model"].isin(MODELS)]
     scale_by_city = pred.groupby("city")["y_true"].mean()
-    cal = cal.copy()
     cal["rWIS"] = [r.WIS / scale_by_city[r.city] for r in cal.itertuples()]
 
     blocks, summary = [], {}
@@ -971,6 +1001,17 @@ def load_ensembles() -> pd.DataFrame:
 
 
 def table6(ens: pd.DataFrame) -> tuple[str, dict]:
+    # O conjunto de membros muda toda abordagem, inclusive as que nao estimam
+    # nada: a mediana de 7 previsoes nao e a mediana de 12. Por isso aqui e
+    # guarda, e nao filtro: se o arquivo vier de outra rodada, a tabela do
+    # artigo estaria errada de um jeito que filtrar linha nenhuma conserta.
+    membros = set(ens[ens["kind"] == "member"]["approach"])
+    if membros != set(MODELS):
+        raise ValueError(
+            f"ensemble_summary.csv tem membros {sorted(membros)}, esperado "
+            f"{sorted(MODELS)}. A variante com os globais mora em "
+            "ensemble_summary_with_global.csv e nao entra na Tabela 6."
+        )
     g = ens.groupby(["approach", "kind"])[["sMAPE", "MAE", "RMSE"]].mean().reset_index()
     wins = ens.loc[ens.groupby("city")["sMAPE"].idxmin()]["approach"].value_counts()
 

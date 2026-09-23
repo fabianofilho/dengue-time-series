@@ -18,12 +18,16 @@ from __future__ import annotations
 import argparse
 import json
 import sys
+
+import pandas as pd
 from pathlib import Path
 
 ROOT = Path(__file__).resolve().parents[1]
 README = ROOT / "README.md"
 VERIFIED = ROOT / "paper" / "verified_numbers.json"
 SUMMARY = ROOT / "results" / "criterion_summary.json"
+ENS_PUB = ROOT / "results" / "comparisons" / "ensemble_summary.csv"
+ENS_GLB = ROOT / "results" / "comparisons" / "ensemble_summary_with_global.csv"
 
 CITY_LABEL = {
     "sao_paulo": "São Paulo",
@@ -202,11 +206,72 @@ def bloco_localglobal(v: dict, s: dict) -> str:
     )
 
 
+def bloco_ensembles(v: dict, s: dict) -> str:
+    """Compara o ensemble de 7 membros com o de 12, lendo os dois CSVs."""
+    a = pd.read_csv(ENS_PUB)
+    b = pd.read_csv(ENS_GLB)
+
+    def bate(d: pd.DataFrame, city: str) -> tuple[float, float]:
+        sub = d[d["city"] == city]
+        return (
+            float(sub[sub["kind"] == "member"]["sMAPE"].min()),
+            float(sub[sub["kind"] == "ensemble"]["sMAPE"].min()),
+        )
+
+    # Cada ensemble e julgado contra o melhor membro DO SEU PROPRIO conjunto.
+    # Uma coluna unica de "melhor membro" faria o ensemble de 12 parecer vencer
+    # em Brasilia, porque o melhor membro dos 12 (68,66) e melhor que o dos 7
+    # (71,27) e a comparacao certa e contra o primeiro.
+    linhas = [
+        "| Cidade | Melhor membro (7) | Ensemble (7) | Melhor membro (12) | Ensemble (12) |",
+        "|---|---:|---:|---:|---:|",
+    ]
+    n7 = n12 = 0
+    for c in sorted(a["city"].unique()):
+        m7, e7 = bate(a, c)
+        m12, e12 = bate(b, c)
+        n7 += e7 < m7
+        n12 += e12 < m12
+        marca = lambda e, m: f"**{e:.2f}**" if e < m else f"{e:.2f}"
+        linhas.append(
+            f"| {CITY_LABEL[c]} | {m7:.2f} | {marca(e7, m7)} | "
+            f"{m12:.2f} | {marca(e12, m12)} |"
+        )
+    tabela = "\n".join(linhas)
+
+    med7 = float(a[a["approach"] == "median"]["sMAPE"].mean())
+    med12 = float(b[b["approach"] == "median"]["sMAPE"].mean())
+    tfm = float(a[a["approach"] == "timesfm"]["sMAPE"].mean())
+    n_cid = a["city"].nunique()
+
+    return "\n".join(
+        [
+            "O conjunto de membros muda o resultado de toda abordagem, inclusive das que "
+            "não estimam nada: a mediana de 7 previsões não é a mediana de 12. Por isso as "
+            "duas variantes ficam em arquivos separados e a do artigo continua sendo a de "
+            "7 membros. O naive sazonal fica de fora das duas: ele é a régua contra a qual "
+            "o ensemble é julgado.",
+            "",
+            "Em negrito, onde o ensemble bate o melhor membro individual daquela cidade.",
+            "",
+            tabela,
+            "",
+            f"**Com os globais no conjunto, o ensemble passa a bater o melhor membro em "
+            f"{n12} de {n_cid} cidades, contra {n7} de {n_cid} com os 7 do artigo.** A "
+            f"mediana, que é a melhor combinação nas duas variantes, cai de {med7:.2f} "
+            f"para {med12:.2f} de sMAPE médio, e mesmo assim continua atrás do TimesFM "
+            f"sozinho ({tfm:.2f}). Combinar ajuda mais quando há modelo global no "
+            "conjunto, e ainda não é suficiente para superar o melhor modelo único.",
+        ]
+    )
+
+
 BLOCOS = {
     "COORTE": bloco_coorte,
     "MODELOS": bloco_modelos,
     "BASELINE": bloco_baseline,
     "LOCALGLOBAL": bloco_localglobal,
+    "ENSEMBLES": bloco_ensembles,
 }
 
 

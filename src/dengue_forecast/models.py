@@ -2,6 +2,7 @@
 Implementação dos modelos de forecasting usando skforecast.
 
 Modelos incluídos:
+- Naive sazonal (piso da comparação)
 - SARIMAX (baseline estatístico)
 - Prophet (Meta)
 - LightGBM
@@ -53,6 +54,33 @@ class Forecaster(ABC):
     def forecast(self, train: pd.Series, horizon: int) -> np.ndarray:
         """Recebe a série de treino e retorna a previsão para o horizonte."""
         pass
+
+
+class SeasonalNaiveForecaster(Forecaster):
+    """Repete o valor observado no mesmo mês do ano anterior.
+
+    É o piso da comparação. Um modelo que não bate isto não aprendeu nada que a
+    sazonalidade sozinha já não diga, e sem esta linha o benchmark compara sete
+    modelos entre si sem dizer se algum deles vale a pena.
+
+    Portado de onco_timeseries.models, sem os parâmetros exógenos, que a
+    interface Forecaster deste repo não tem.
+    """
+
+    name = "seasonal_naive"
+
+    def __init__(self, season_length: int = 12):
+        self.season_length = season_length
+
+    def forecast(self, train: pd.Series, horizon: int) -> np.ndarray:
+        m = self.season_length
+        if len(train) < m:
+            # Sem um ciclo completo, cai para o último valor observado.
+            return np.full(horizon, float(train.iloc[-1]))
+
+        last_season = np.asarray(train.iloc[-m:], dtype=float)
+        idx = np.arange(horizon) % m
+        return last_season[idx]
 
 
 class SarimaxForecaster(Forecaster):

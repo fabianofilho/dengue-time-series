@@ -17,6 +17,7 @@ from dengue_forecast.evaluate import rolling_origin_splits, run_backtest
 from dengue_forecast.models import (
     ProphetForecaster,
     SarimaxForecaster,
+    SeasonalNaiveForecaster,
     TimesFMForecaster,
     catboost_forecaster,
     lgbm_forecaster,
@@ -35,10 +36,11 @@ def parse_args() -> argparse.Namespace:
     parser.add_argument("--min-train-size", type=int, default=48, help="Janela mínima de treino (meses)")
     parser.add_argument(
         "--models",
-        default="sarimax,lgbm,xgboost,catboost,randomforest,ridge,timesfm",
+        default="seasonal_naive,sarimax,lgbm,xgboost,catboost,randomforest,ridge,timesfm",
         help=(
             "Lista de modelos para rodar (separados por vírgula). O default é o "
-            "conjunto de 7 modelos publicado. Prophet continua disponível por nome, "
+            "conjunto de 7 modelos publicado mais o naive sazonal. Prophet "
+            "continua disponível por nome, "
             "mas exige requirements-optional.txt instalado."
         ),
     )
@@ -59,7 +61,24 @@ def parse_args() -> argparse.Namespace:
 def build_models(model_names: list[str], lags: int):
     """Constrói a lista de objetos de modelo com base nos nomes fornecidos."""
     selected = {m.strip().lower() for m in model_names if m.strip()}
+    valid = {
+        "seasonal_naive",
+        "sarimax",
+        "prophet",
+        "lgbm",
+        "xgboost",
+        "catboost",
+        "randomforest",
+        "ridge",
+        "timesfm",
+    }
+    invalid = selected - valid
+    if invalid:
+        raise ValueError(f"Modelos inválidos: {sorted(invalid)}")
+
     models = []
+    if "seasonal_naive" in selected:
+        models.append(SeasonalNaiveForecaster())
     if "sarimax" in selected:
         models.append(SarimaxForecaster(order=(1, 1, 1), seasonal_order=(1, 1, 0, 12)))
     if "prophet" in selected:

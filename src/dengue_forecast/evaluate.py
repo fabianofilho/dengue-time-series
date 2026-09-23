@@ -104,13 +104,18 @@ def run_backtest(
         y_true_all.append(y_true)
         y_pred_all.append(y_pred)
 
-        for dt, yt, yp in zip(test.index, y_true, y_pred):
+        # window e horizon sao gravados, nao reconstruidos depois. Sem eles o
+        # pareamento entre modelos depende da ordem das linhas do CSV, e um
+        # bootstrap por janela precisa saber qual previsao veio de qual origem.
+        for h, (dt, yt, yp) in enumerate(zip(test.index, y_true, y_pred), start=1):
             rows.append(
                 {
                     "model": model.name,
                     "date": dt,
                     "y_true": yt,
                     "y_pred": yp,
+                    "window": window_id,
+                    "horizon": h,
                 }
             )
 

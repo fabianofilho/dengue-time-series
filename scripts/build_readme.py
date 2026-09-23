@@ -44,7 +44,14 @@ MODEL_LABEL = {
     "ridge": "Ridge",
     "lgbm": "LightGBM",
     "seasonal_naive": "Naive sazonal",
+    "global_lgbm": "LightGBM global",
+    "global_xgboost": "XGBoost global",
+    "global_catboost": "CatBoost global",
+    "global_randomforest": "Random Forest global",
+    "global_ridge": "Ridge global",
 }
+
+ESTIMADORES = ["catboost", "lgbm", "randomforest", "ridge", "xgboost"]
 
 MES = {
     "01": "janeiro", "02": "fevereiro", "03": "março", "04": "abril",
@@ -120,6 +127,9 @@ def bloco_baseline(v: dict, s: dict) -> str:
 
     n_ok = b["cities_where_any_model_beats_baseline"]
     n_tot = b["cities_total"]
+    # Conta do proprio escopo do criterio, sem o piso, em vez de reusar
+    # n_models, que e o numero de modelos DO ARTIGO e nao inclui os globais.
+    n_modelos = len([m for m in b["scope_models"] if m != "seasonal_naive"])
     discord = sum(1 for c in s["cidades"] if not c["metrica_concorda"])
 
     texto = [
@@ -137,9 +147,9 @@ def bloco_baseline(v: dict, s: dict) -> str:
         "",
         tabela,
         "",
-        f"**Resposta: nenhum dos {v['n_models']} modelos bate o naive sazonal por este "
-        f"critério, em {n_ok} de {n_tot} cidades.** O ponto estimado favorece o modelo em "
-        f"todas as cidades, mas o teste de Diebold-Mariano não acompanha: o melhor modelo "
+        f"**Resposta: nenhum dos {n_modelos} modelos bate o naive sazonal por este "
+        f"critério, em {n_ok} de {n_tot} cidades.** O ponto estimado favorece o melhor "
+        f"modelo em todas as cidades, mas o teste de Diebold-Mariano não acompanha: ele "
         f"fica bem abaixo dos {crit['min_horizontes']} horizontes exigidos. A análise de "
         f"sensibilidade em sMAPE, rotulada como exploratória, dá o mesmo veredito nas "
         f"{n_tot} cidades, mas troca o modelo vencedor em {discord} delas.",
@@ -147,10 +157,56 @@ def bloco_baseline(v: dict, s: dict) -> str:
     return "\n".join(texto)
 
 
+def bloco_localglobal(v: dict, s: dict) -> str:
+    b = v["baseline"]
+    linhas = [
+        "| Cidade | " + " | ".join(MODEL_LABEL[e] for e in ESTIMADORES) + " |",
+        "|---|" + "---:|" * len(ESTIMADORES),
+    ]
+    ajuda = atrapalha = 0
+    for c in s["cidades"]:
+        celulas = []
+        for e in ESTIMADORES:
+            x = c["local_vs_global"][e]
+            marca = "\\*" if x["confirmado"] else ""
+            if x["agrupar_ajuda"]:
+                ajuda += 1
+            if x["agrupar_atrapalha"]:
+                atrapalha += 1
+            celulas.append(f"{x['diferenca_global_menos_local']:+.3f}{marca}")
+        linhas.append(f"| {CITY_LABEL[c['cidade']]} | " + " | ".join(celulas) + " |")
+    tabela = "\n".join(linhas)
+    total = len(ESTIMADORES) * len(s["cidades"])
+
+    return "\n".join(
+        [
+            "Diferença de RelMAE, modelo global menos modelo local do mesmo estimador. "
+            "Negativo significa que agrupar as 8 cidades num modelo só ajudou. O asterisco "
+            "marca os pares confirmados pelo mesmo critério pré-declarado; sem asterisco o "
+            "sinal é ponto estimado e não passa no teste.",
+            "",
+            "Comparar global de um estimador com local de outro misturaria o efeito de "
+            "agrupar com o de trocar de estimador, então a tabela é sempre o mesmo "
+            "estimador nas duas formas.",
+            "",
+            tabela,
+            "",
+            f"**Agrupar ajudou de forma confirmada em {ajuda} de {total} pares "
+            f"cidade-estimador, e atrapalhou em {atrapalha}.** Nos outros "
+            f"{total - ajuda - atrapalha} o teste não distingue as duas formas. "
+            "Nenhum modelo global bate o naive sazonal, e em várias cidades eles ficam "
+            "bem acima dele: no Rio o melhor global tem RelMAE "
+            f"{min(v['baseline']['relmae_global_by_city']['rio'].values()):.2f}, "
+            "ou seja, erra bem mais que repetir o ano anterior.",
+        ]
+    )
+
+
 BLOCOS = {
     "COORTE": bloco_coorte,
     "MODELOS": bloco_modelos,
     "BASELINE": bloco_baseline,
+    "LOCALGLOBAL": bloco_localglobal,
 }
 
 
@@ -162,7 +218,7 @@ def render(texto: str, v: dict, s: dict) -> str:
             raise ValueError(f"Marcadores de {nome} ausentes no README")
         i = texto.index(ini) + len(ini)
         j = texto.index(fim)
-        conteudo = fn(v, s) if fn is bloco_baseline else fn(v)
+        conteudo = fn(v) if fn is bloco_modelos or fn is bloco_coorte else fn(v, s)
         texto = texto[:i] + "\n" + conteudo + "\n" + texto[j:]
     return texto
 

@@ -122,11 +122,49 @@ O criterio de decisao esta em results/criterion.json, fixado e commitado antes
 da primeira execucao do teste. scripts/run_uncertainty.py le aquele arquivo e
 nao aceita criterio por linha de comando, de proposito.
 
-Veredito atual: nenhum dos 7 modelos bate o piso, em 0 de 8 cidades. O ponto
-estimado favorece o modelo em todas elas (RelMAE de 0,665 a 0,966), mas o
+Veredito atual: nenhum dos 12 modelos bate o piso, em 0 de 8 cidades. O ponto
+estimado favorece o melhor modelo em todas elas (RelMAE de 0,665 a 0,966),
+mas o
 Diebold-Mariano por horizonte nao acompanha. Ao ler qualquer afirmacao de
 vitoria neste repo, checar se ela e entre os 7 modelos ou contra o piso: sao
 coisas diferentes e so a primeira se sustenta.
+
+## Modelos globais multi-serie
+Cinco modelos `global_*` treinam nas 8 cidades ao mesmo tempo
+(ForecasterRecursiveMultiSeries), e existem para testar a premissa de que nao
+ha nada a aprender de uma cidade que sirva para outra.
+
+Duas decisoes de especificacao que mudam o resultado, em
+src/dengue_forecast/global_models.py: padronizacao POR SERIE e identidade da
+cidade como indicadora (`encoding="onehot"`). Sem a padronizacao o treino
+conjunto e dominado por Sao Paulo, que tem media mensal 15x a de Salvador, e o
+modelo "global" vira um modelo de Sao Paulo aplicado as outras sete. Isso nao e
+o mesmo assunto da armadilha do Ridge acima: la o problema e condicionamento
+numerico dentro de uma serie, aqui e o peso relativo entre series, e por isso
+vale tambem para as arvores. O default do skforecast para encoding e "ordinal",
+que numera as cidades e impoe uma ordem inexistente que as arvores usam para
+partir.
+
+Comparar global com local so faz sentido com o MESMO estimador: global_lgbm
+contra lgbm. Comparar global_lgbm com catboost mistura o efeito de agrupar com
+o de trocar de estimador. O mapa esta em LOCAL_COUNTERPART, e ha teste que
+exige que todo global tenha par declarado.
+
+Resultado: agrupar ajuda de forma confirmada em 6 de 40 pares cidade-estimador
+e atrapalha em 1. Nenhum modelo global bate o naive sazonal, e no Rio os
+globais ficam entre 1,79 e 2,93 de RelMAE, ou seja, erram bem mais que repetir
+o ano anterior.
+
+## Armadilha conhecida: "TimesFM vence em 7 de 8" depende de quem esta no pool
+Entre os 7 modelos publicados, o TimesFM lidera por sMAPE em 7 das 8 cidades.
+Com os 5 globais no pool, lidera em 5: perde Belo Horizonte e Manaus para o
+global_randomforest e Brasilia para o global_catboost.
+
+Nenhuma dessas tres inversoes e confirmada pelo criterio (DM 0/12, 0/12 e
+1/12), entao nao se pode dizer que o global bate o TimesFM. O que se pode dizer
+e que a contagem 7/8 nao sobrevive a entrada de um baseline que o artigo nao
+tem, e que a diferenca entre os dois nao e distinguivel de ruido. Ao citar
+qualquer contagem de vitorias, dizer contra quem.
 
 ## Armadilha conhecida: o baseline nao entra nas tabelas do artigo
 `MODELS` em build_paper_assets.py lista os 7 modelos publicados, e
@@ -139,9 +177,10 @@ real de incluir o piso, e pertence ao criterion_summary, nao a Tabela 7.
 - `python -m venv .venv && .venv/Scripts/python.exe -m pip install -r requirements.txt` - setup
 - `make benchmark-all` - benchmark das 8 cidades. Termina com exit code diferente
   de zero se algum modelo perder alguma janela, dizendo qual perdeu quais.
+- `PYTHONPATH=src python scripts/run_global_benchmark.py` - modelos multi-serie
 - `PYTHONPATH=src python scripts/run_uncertainty.py` - bootstrap, DM e veredito
 - `PYTHONPATH=src python scripts/build_paper_assets.py && python scripts/build_readme.py`
-- `PYTHONPATH=src python -m pytest tests/ -q` - 61 testes
+- `PYTHONPATH=src python -m pytest tests/ -q` - 72 testes
 - `make` - ver alvos disponiveis
 
 Prophet e TimesFM estao em requirements-optional.txt. O Prophet saiu do default

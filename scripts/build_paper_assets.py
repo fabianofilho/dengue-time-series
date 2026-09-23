@@ -185,6 +185,21 @@ def baseline_facts() -> dict:
             "cidades_em_que_algum_modelo_bate_o_baseline"
         ],
         "cities_total": resumo["resposta"]["de_um_total_de"],
+        # O escopo do criterio inclui os modelos globais, que nao sao modelos
+        # do artigo. Quem le o verified_numbers precisa saber contra quantos
+        # modelos o veredito foi dado, e MODELS aqui so tem os 7 publicados.
+        "scope_models": json.loads(
+            (RESULTS / "criterion.json").read_text(encoding="utf-8")
+        )["escopo"]["modelos"],
+        "grouping_helps_by_city": {
+            c["cidade"]: c["agrupar_ajuda_em"] for c in resumo["cidades"]
+        },
+        "grouping_hurts_by_city": {
+            c["cidade"]: c["agrupar_atrapalha_em"] for c in resumo["cidades"]
+        },
+        "relmae_global_by_city": {
+            c["cidade"]: c["relmae_globais"] for c in resumo["cidades"]
+        },
     }
 
 

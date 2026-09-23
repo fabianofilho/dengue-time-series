@@ -970,7 +970,7 @@
       "brasilia": 0.8831,
       "fortaleza": 0.8406,
       "recife": 0.6654,
-      "manaus": 0.9659,
+      "manaus": 0.8298,
       "salvador": 0.6993
     },
     "best_model_by_relmae_by_city": {
@@ -980,18 +980,18 @@
       "brasilia": "catboost",
       "fortaleza": "timesfm",
       "recife": "timesfm",
-      "manaus": "timesfm",
+      "manaus": "global_randomforest",
       "salvador": "timesfm"
     },
     "confirmed_pairs_by_city": {
-      "sao_paulo": "7/28",
-      "rio": "8/28",
-      "belo_horizonte": "11/28",
-      "brasilia": "7/28",
-      "fortaleza": "17/28",
-      "recife": "7/28",
-      "manaus": "9/28",
-      "salvador": "1/28"
+      "sao_paulo": "14/78",
+      "rio": "29/78",
+      "belo_horizonte": "21/78",
+      "brasilia": "7/78",
+      "fortaleza": "34/78",
+      "recife": "19/78",
+      "manaus": "25/78",
+      "salvador": "3/78"
     },
     "models_beating_baseline_by_city": {
       "sao_paulo": [],
@@ -1004,6 +1004,111 @@
       "salvador": []
     },
     "cities_where_any_model_beats_baseline": 0,
-    "cities_total": 8
+    "cities_total": 8,
+    "scope_models": [
+      "seasonal_naive",
+      "sarimax",
+      "lgbm",
+      "xgboost",
+      "catboost",
+      "randomforest",
+      "ridge",
+      "timesfm",
+      "global_lgbm",
+      "global_xgboost",
+      "global_catboost",
+      "global_randomforest",
+      "global_ridge"
+    ],
+    "grouping_helps_by_city": {
+      "sao_paulo": [],
+      "rio": [],
+      "belo_horizonte": [
+        "lgbm"
+      ],
+      "brasilia": [],
+      "fortaleza": [
+        "randomforest",
+        "ridge",
+        "xgboost"
+      ],
+      "recife": [
+        "lgbm"
+      ],
+      "manaus": [
+        "randomforest"
+      ],
+      "salvador": []
+    },
+    "grouping_hurts_by_city": {
+      "sao_paulo": [],
+      "rio": [],
+      "belo_horizonte": [],
+      "brasilia": [],
+      "fortaleza": [],
+      "recife": [],
+      "manaus": [
+        "ridge"
+      ],
+      "salvador": []
+    },
+    "relmae_global_by_city": {
+      "sao_paulo": {
+        "global_catboost": 1.0305,
+        "global_lgbm": 1.0941,
+        "global_randomforest": 1.011,
+        "global_ridge": 0.9942,
+        "global_xgboost": 1.0107
+      },
+      "rio": {
+        "global_catboost": 2.4012,
+        "global_lgbm": 2.9317,
+        "global_randomforest": 1.7869,
+        "global_ridge": 1.9425,
+        "global_xgboost": 1.8038
+      },
+      "belo_horizonte": {
+        "global_catboost": 0.9615,
+        "global_lgbm": 0.9517,
+        "global_randomforest": 0.8227,
+        "global_ridge": 0.936,
+        "global_xgboost": 0.8239
+      },
+      "brasilia": {
+        "global_catboost": 0.9072,
+        "global_lgbm": 0.9417,
+        "global_randomforest": 0.9123,
+        "global_ridge": 0.9387,
+        "global_xgboost": 0.9266
+      },
+      "fortaleza": {
+        "global_catboost": 1.0198,
+        "global_lgbm": 1.1898,
+        "global_randomforest": 1.037,
+        "global_ridge": 0.9285,
+        "global_xgboost": 1.1012
+      },
+      "recife": {
+        "global_catboost": 0.7853,
+        "global_lgbm": 1.0139,
+        "global_randomforest": 1.2321,
+        "global_ridge": 0.8648,
+        "global_xgboost": 1.276
+      },
+      "manaus": {
+        "global_catboost": 1.159,
+        "global_lgbm": 2.3225,
+        "global_randomforest": 0.8298,
+        "global_ridge": 1.7237,
+        "global_xgboost": 1.173
+      },
+      "salvador": {
+        "global_catboost": 0.837,
+        "global_lgbm": 0.9944,
+        "global_randomforest": 0.9222,
+        "global_ridge": 0.7837,
+        "global_xgboost": 0.8777
+      }
+    }
   }
 }

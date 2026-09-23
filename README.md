@@ -52,6 +52,7 @@ leitura de que liderar entre eles seja suficiente para recomendar qualquer um de
 | Ridge | ForecasterRecursive, 24 lags, StandardScaler nos lags |
 | LightGBM | ForecasterRecursive, 24 lags, random_state=42 |
 | Naive sazonal | repete o mesmo mês do ano anterior. É o piso, não um competidor. |
+| `global_*` | um modelo nas 8 cidades juntas (ForecasterRecursiveMultiSeries), 24 lags, padronização por série, cidade como indicadora |
 
 O Prophet foi especificado e falhou em 7 das 8 cidades. Não entra em nenhum número
 publicado, saiu do default de `--models` e vive em `requirements-optional.txt`.
@@ -79,17 +80,43 @@ RelMAE é o MAE do modelo dividido pelo MAE do naive sazonal da mesma cidade. Ab
 
 | Cidade | Melhor modelo (RelMAE) | RelMAE | Melhor por sMAPE | Métricas concordam | Pares confirmados | Bate o piso |
 |---|---|---:|---|:-:|---:|---|
-| São Paulo | TimesFM | 0.961 | TimesFM | sim | 7/28 | nenhum |
-| Rio de Janeiro | TimesFM | 0.851 | TimesFM | sim | 8/28 | nenhum |
-| Belo Horizonte | TimesFM | 0.760 | XGBoost | não | 11/28 | nenhum |
-| Brasília | CatBoost | 0.883 | TimesFM | não | 7/28 | nenhum |
-| Fortaleza | TimesFM | 0.841 | TimesFM | sim | 17/28 | nenhum |
-| Recife | TimesFM | 0.665 | TimesFM | sim | 7/28 | nenhum |
-| Manaus | TimesFM | 0.966 | TimesFM | sim | 9/28 | nenhum |
-| Salvador | TimesFM | 0.699 | TimesFM | sim | 1/28 | nenhum |
+| São Paulo | TimesFM | 0.961 | TimesFM | sim | 14/78 | nenhum |
+| Rio de Janeiro | TimesFM | 0.851 | TimesFM | sim | 29/78 | nenhum |
+| Belo Horizonte | TimesFM | 0.760 | Random Forest global | não | 21/78 | nenhum |
+| Brasília | CatBoost | 0.883 | CatBoost global | não | 7/78 | nenhum |
+| Fortaleza | TimesFM | 0.841 | TimesFM | sim | 34/78 | nenhum |
+| Recife | TimesFM | 0.665 | TimesFM | sim | 19/78 | nenhum |
+| Manaus | Random Forest global | 0.830 | Random Forest global | sim | 25/78 | nenhum |
+| Salvador | TimesFM | 0.699 | TimesFM | sim | 3/78 | nenhum |
 
-**Resposta: nenhum dos 7 modelos bate o naive sazonal por este critério, em 0 de 8 cidades.** O ponto estimado favorece o modelo em todas as cidades, mas o teste de Diebold-Mariano não acompanha: o melhor modelo fica bem abaixo dos 6 horizontes exigidos. A análise de sensibilidade em sMAPE, rotulada como exploratória, dá o mesmo veredito nas 8 cidades, mas troca o modelo vencedor em 2 delas.
+**Resposta: nenhum dos 12 modelos bate o naive sazonal por este critério, em 0 de 8 cidades.** O ponto estimado favorece o melhor modelo em todas as cidades, mas o teste de Diebold-Mariano não acompanha: ele fica bem abaixo dos 6 horizontes exigidos. A análise de sensibilidade em sMAPE, rotulada como exploratória, dá o mesmo veredito nas 8 cidades, mas troca o modelo vencedor em 2 delas.
 <!-- END BASELINE -->
+
+## Agrupar as cidades ajuda?
+
+O benchmark treina um modelo por cidade, o que presume que não há nada a aprender de uma
+cidade que sirva para outra. Os cinco modelos `global_*` testam essa premissa: um único
+modelo treinado nas 8 séries ao mesmo tempo, com padronização por série e a identidade da
+cidade como indicadora.
+
+<!-- BEGIN LOCALGLOBAL (gerado por scripts/build_readme.py, nao editar a mao) -->
+Diferença de RelMAE, modelo global menos modelo local do mesmo estimador. Negativo significa que agrupar as 8 cidades num modelo só ajudou. O asterisco marca os pares confirmados pelo mesmo critério pré-declarado; sem asterisco o sinal é ponto estimado e não passa no teste.
+
+Comparar global de um estimador com local de outro misturaria o efeito de agrupar com o de trocar de estimador, então a tabela é sempre o mesmo estimador nas duas formas.
+
+| Cidade | CatBoost | LightGBM | Random Forest | Ridge | XGBoost |
+|---|---:|---:|---:|---:|---:|
+| São Paulo | +0.027 | -0.034 | -0.049 | -0.246 | -0.095 |
+| Rio de Janeiro | +0.390 | +0.464 | -1.515 | -0.262 | -1.941 |
+| Belo Horizonte | -0.022 | -0.878\* | -0.267 | -0.056 | -0.248 |
+| Brasília | +0.024 | -0.116 | -0.062 | -0.053 | -0.070 |
+| Fortaleza | -0.142 | -0.621 | -0.972\* | -0.219\* | -0.851\* |
+| Recife | -0.237 | -0.485\* | +0.198 | -0.157 | +0.253 |
+| Manaus | -0.052 | +0.810 | -0.246\* | +0.757\* | -0.093 |
+| Salvador | +0.045 | +0.043 | +0.080 | -0.087 | +0.009 |
+
+**Agrupar ajudou de forma confirmada em 6 de 40 pares cidade-estimador, e atrapalhou em 1.** Nos outros 33 o teste não distingue as duas formas. Nenhum modelo global bate o naive sazonal, e em várias cidades eles ficam bem acima dele: no Rio o melhor global tem RelMAE 1.79, ou seja, erra bem mais que repetir o ano anterior.
+<!-- END LOCALGLOBAL -->
 
 ## Como usar
 
@@ -125,7 +152,18 @@ correto: o resultado publicado inclui o TimesFM.
 PYTHONPATH=src python scripts/backfill_windows.py --dry-run
 ```
 
-### 5. Rodar o teste contra o piso
+### 5. Rodar os modelos globais
+
+```bash
+PYTHONPATH=src python scripts/run_global_benchmark.py
+```
+
+Uma janela produz previsão para as 8 cidades de uma vez, e um erro em qualquer uma
+descarta a janela inteira para todas: a janela é a unidade de ajuste, e guardar meia
+janela deixaria cidades diferentes com conjuntos de janelas diferentes, quebrando o
+pareamento do bootstrap sem avisar.
+
+### 6. Rodar o teste contra o piso
 
 ```bash
 PYTHONPATH=src python scripts/run_uncertainty.py
@@ -134,7 +172,7 @@ PYTHONPATH=src python scripts/run_uncertainty.py
 Lê o critério de `results/criterion.json` e recusa rodar sem ele. Não há opção de linha de
 comando para sobrescrever o critério, de propósito.
 
-### 6. Gerar as tabelas, figuras e este README
+### 7. Gerar as tabelas, figuras e este README
 
 ```bash
 PYTHONPATH=src python scripts/build_paper_assets.py
@@ -162,7 +200,8 @@ python scripts/build_readme.py
 ├── scripts/
 │   ├── fetch_infodengue.py
 │   ├── process_data.py
-│   ├── run_benchmark.py                   # backtesting
+│   ├── run_benchmark.py                   # backtesting por cidade
+│   ├── run_global_benchmark.py            # backtesting multi-serie
 │   ├── backfill_windows.py                # window/horizon em CSVs antigos
 │   ├── run_uncertainty.py                 # bootstrap, Diebold-Mariano, veredito
 │   ├── build_paper_assets.py              # tabelas, figuras, verified_numbers
@@ -171,6 +210,7 @@ python scripts/build_readme.py
 │   └── dengue_forecast/
 │       ├── evaluate.py                    # métricas e backtesting
 │       ├── models.py                      # wrappers dos modelos
+│       ├── global_models.py               # modelo unico, varias series
 │       ├── uncertainty.py                 # bootstrap de janelas e DM
 │       ├── intervals.py                   # predição conformal
 │       └── ensembles.py
@@ -184,10 +224,9 @@ agregação de semana epidemiológica para mês.
 
 ## Próximos passos
 
-1. Baseline de modelo global multi-série (`ForecasterRecursiveMultiSeries`), que é a lacuna
-   metodológica mais séria que resta
-2. Variáveis exógenas (temperatura, umidade, pluviometria) via API Mosqlimate
-3. Otimizar hiperparâmetros com `optuna`, medindo o custo do ajuste contra o piso
+1. Variáveis exógenas (temperatura, umidade, pluviometria) via API Mosqlimate, que é a
+   lacuna que resta agora que o baseline global foi medido
+2. Otimizar hiperparâmetros com `optuna`, medindo o custo do ajuste contra o piso
 
 ## Referências
 

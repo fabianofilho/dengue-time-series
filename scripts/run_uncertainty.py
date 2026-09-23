@@ -30,6 +30,7 @@ from pathlib import Path
 import numpy as np
 import pandas as pd
 
+from dengue_forecast.global_models import LOCAL_COUNTERPART
 from dengue_forecast.uncertainty import (
     bootstrap_metrica,
     dm_test,
@@ -263,12 +264,51 @@ def analisa_cidade(
             )
 
         batem = [c["modelo"] for c in contra_baseline if c["bate_o_baseline"]]
+
+        # Agrupar as cidades ajuda ou nao? A unica comparacao que responde isso
+        # e entre o MESMO estimador nas duas formas. Comparar global_lgbm com
+        # catboost misturaria o efeito de agrupar com o de trocar de estimador.
+        por_par = {i["par"]: i for i in itens}
+        local_vs_global = []
+        for glob, local in sorted(LOCAL_COUNTERPART.items()):
+            if glob not in models or local not in models:
+                continue
+            chave = f"{glob}_menos_{local}" if f"{glob}_menos_{local}" in por_par else f"{local}_menos_{glob}"
+            it = por_par[chave]
+            inverte = chave.startswith(f"{local}_menos_")
+            sinal = -1.0 if inverte else 1.0
+            a, b = chave.split("_menos_")
+            lo_r, hi_r = ic_percentil(boot[a] - boot[b])
+            if inverte:
+                lo_r, hi_r = -hi_r, -lo_r
+            dif = round(sinal * it["diferenca"], 4)
+            local_vs_global.append(
+                {
+                    "estimador": local,
+                    "global": glob,
+                    "diferenca_global_menos_local": dif,
+                    "ic95_global_menos_local": f"[{lo_r:.4f}, {hi_r:.4f}]",
+                    "ic_exclui_zero": it["ic_exclui_zero"],
+                    "dm_abaixo_alpha": it["dm_abaixo_alpha"],
+                    "confirmado": it["confirmado"],
+                    "agrupar_ajuda": bool(it["confirmado"] and dif < 0),
+                    "agrupar_atrapalha": bool(it["confirmado"] and dif > 0),
+                }
+            )
+
         return {
             "metrica": metrica,
             "itens": itens,
             "contra_baseline": contra_baseline,
+            "local_vs_global": local_vs_global,
             "pares_confirmados": f"{sum(i['confirmado'] for i in itens)}/{len(itens)}",
             "batem_o_baseline": sorted(batem),
+            "agrupar_ajuda_em": sorted(
+                c["estimador"] for c in local_vs_global if c["agrupar_ajuda"]
+            ),
+            "agrupar_atrapalha_em": sorted(
+                c["estimador"] for c in local_vs_global if c["agrupar_atrapalha"]
+            ),
         }
 
     metrica_crit = crit["criterio"]["metrica_bootstrap"]
@@ -293,6 +333,7 @@ def analisa_cidade(
         "baseline": BASELINE,
         "baseline_mae": round(float(den_point), 4),
         "baseline_smape": round(float(sm[BASELINE].mean()), 4),
+        "relmae_por_modelo": {m: round(float(rel_point[m]), 4) for m in models},
         "melhor_por_relmae": melhor_rel,
         "relmae_do_melhor": round(float(rel_point[melhor_rel]), 4),
         "melhor_por_smape": melhor_smape,
@@ -312,7 +353,9 @@ def analisa_cidade(
         f"  {city:<16} baseline MAE {den_point:>10.1f}  "
         f"melhor {melhor_rel:<14} RelMAE {rel_point[melhor_rel]:.3f}  "
         f"confirmados {v_crit['pares_confirmados']:<6} "
-        f"batem o piso: {v_crit['batem_o_baseline'] or 'nenhum'}"
+        f"piso: {v_crit['batem_o_baseline'] or 'nenhum'}  "
+        f"agrupar ajuda: {v_crit['agrupar_ajuda_em'] or 'nenhum'}  "
+        f"atrapalha: {v_crit['agrupar_atrapalha_em'] or 'nenhum'}"
     )
     return verdict
 
@@ -353,6 +396,16 @@ def main() -> int:
                 "metrica_concorda": v["metrica_concorda"],
                 "pares_confirmados": v["veredito"]["pares_confirmados"],
                 "batem_o_baseline": v["veredito"]["batem_o_baseline"],
+                "agrupar_ajuda_em": v["veredito"]["agrupar_ajuda_em"],
+                "agrupar_atrapalha_em": v["veredito"]["agrupar_atrapalha_em"],
+                "local_vs_global": {
+                    x["estimador"]: x for x in v["veredito"]["local_vs_global"]
+                },
+                "relmae_globais": {
+                    m: r
+                    for m, r in v["relmae_por_modelo"].items()
+                    if m.startswith("global_")
+                },
                 "batem_o_baseline_sensibilidade_smape": v["analise_de_sensibilidade"][
                     "batem_o_baseline"
                 ],

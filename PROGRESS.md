@@ -1,6 +1,6 @@
 # PROGRESS: Dengue Forecast Prediction (DFP)
 
-Atualizado em 2026-10-05, ao fim da sessão de 04-05/10.
+Atualizado em 2026-10-05 à noite, depois do retorno do grupo "Artigo pred dengue".
 
 ## Objetivo
 Artigo comparando o TimesFM 2.5 zero-shot com modelos treinados por cidade na previsão mensal de dengue em 8 capitais, horizonte de 12 meses, para a **PLOS Neglected Tropical Diseases**.
@@ -22,13 +22,27 @@ Artigo comparando o TimesFM 2.5 zero-shot com modelos treinados por cidade na pr
 - 05/10 07:10: mensagem com as decisões, o deck (`scripts/build_deck.py` gera `build/DFP_deck_pipeline_AAAA-MM-DD.pdf`, 11 slides, números do verified_numbers) e o .docx de revisão enviados ao grupo de WhatsApp "Artigo pred dengue" (José e Wilson) pelo Fermes. O Alexandre não está no grupo; o Fabiano fala com ele. O grupo tem 3 participantes, mas a busca só identificou o Wilson pelo nome: confirmar que o José recebeu. Os arquivos enviados ficaram em `/opt/fermes-mcp/uploads` na VPS.
 - Remoto em dia até o commit que registrou o envio (`71b7bef`).
 
+## Retorno do grupo (05/10, lido na Evolution API)
+Só o Wilson escreveu; o José não se manifestou no grupo (o Wilson mandou a afiliação dele).
+- **Afiliações (enviadas pelo Wilson às 19:41):**
+  - Wilson Falco: Faculdade de Medicina de Catanduva, São Paulo, Brazil (wilson.academic.mail@gmail.com).
+  - José Trajano Feitosa Filho (nome completo): King's College London, London, United Kingdom (jttrajano@me.com). Veio do Wilson, não do José; confirmar com o José.
+- **Enquadramento:** o Wilson achou o reframe "bom, mais robusto" e a Discussion boa.
+- **Tipo de artigo:** o Wilson perguntou o formato (está olhando as guidelines da PLOS NTD). O Fabiano respondeu que a Introduction deve ser curta, um parágrafo só.
+- **Introdução:** o Wilson redigiu um parágrafo novo (18:36), com referências [1], [2], [3] e [5]. Antes de usar: conferir na fonte o número "5,421,759 cases and 4,066 deaths worldwide in 2025 [1]" (abrangência e ano), achar a referência [4] que falta na numeração, e alinhar a última frase com o texto atual ("six purpose-trained models" bate com os 7 modelos: 6 treinados + TimesFM).
+- **Discussion:** o Wilson se ofereceu para acrescentar referências de benchmarking e comparação com outros estudos brasileiros. O Fabiano autorizou ("pode mexer sim").
+- O .docx com as edições do Wilson ainda não voltou; ele disse que mandaria no grupo.
+
 ## Próximos passos
-1. Esperar a revisão de José e Wilson (enviada ao grupo em 05/10; confirmar que o José está no grupo) e o retorno do Alexandre (o Fabiano fala com ele). Para reenviar material novo: regenerar com `build_docx.py`/`build_deck.py`, copiar por scp (root) para `/opt/fermes-mcp/uploads` com dono `automacoes`, e mandar pelo Fermes só depois do OK do Fabiano.
-2. Ao voltar o .docx: passar as afiliações para `AFFILIATIONS` em `scripts/build_docx.py` e para o `.tex`, e incorporar os comentários.
-3. Decidir sobre o repositório privado: abrir ou depositar no Zenodo com DOI. A frase de disponibilidade de código depende disso.
-4. Atualizar o manuscrito de submissão no template LaTeX da PLOS NTD (template oficial v3.8, `plos2025.bst`; a conversão já feita no repo arquivado em `paper/plos/` serve de modelo). Os `.tex` atuais deste repo (`manuscript.tex`, `manuscript_rsbmt.tex`, `supplementary.tex`) ainda trazem os ICs antigos (bootstrap iid), "Barcellos-Filho", "Google DeepMind", autoria sem Alexandre e nada da análise exploratória.
-5. Incluir os ICs na lista curada do `scripts/check_numbers.py`: hoje ele não detecta IC defasado no texto.
-6. Opcional: renderizar o .docx em PDF para conferência visual (só houve validação estrutural; a exportação pelo Word foi cancelada).
+1. Esperar o .docx revisado do Wilson (intro nova, referências de benchmarking, comparação com estudos brasileiros) e o retorno do José e do Alexandre (o Fabiano fala com o Alexandre). Para ler o grupo de novo: `chat/findMessages` da Evolution com o ambiente do serviço `fermes-mcp` (chave em `/opt/whatsapp-bot/.env`), remoteJid `120363163601111597@g.us`.
+2. Passar as afiliações para `AFFILIATIONS` em `scripts/build_docx.py` (e o nome completo do José em `AUTHORS`) e depois para o `.tex`. A do José só depois de ele confirmar.
+3. Ao voltar o .docx: incorporar a intro e a discussion do Wilson conferindo cada número e cada referência na fonte (DOI no Crossref), como foi feito com as 28 referências da v2.
+4. Decidir sobre o repositório privado: abrir ou depositar no Zenodo com DOI. A frase de disponibilidade de código depende disso.
+5. Atualizar o manuscrito de submissão no template LaTeX da PLOS NTD (Research Article; template oficial v3.8, `plos2025.bst`; a conversão no repo arquivado em `paper/plos/` serve de modelo). Os `.tex` atuais deste repo ainda trazem os ICs antigos (bootstrap iid), "Barcellos-Filho", "Google DeepMind", autoria sem Alexandre e nada da análise exploratória.
+6. Incluir os ICs na lista curada do `scripts/check_numbers.py`: hoje ele não detecta IC defasado no texto.
+7. Opcional: renderizar o .docx em PDF para conferência visual (só houve validação estrutural).
+
+Para reenviar material ao grupo: regenerar com `build_docx.py`/`build_deck.py`, copiar por scp (root) para `/opt/fermes-mcp/uploads` com dono `automacoes`, e mandar pelo Fermes só depois do OK do Fabiano.
 
 ## Restrições
 - Números só por script (`paper/verified_numbers.json`, `build_paper_assets.py`); nada digitado.

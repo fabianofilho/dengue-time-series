@@ -19,10 +19,10 @@ Artigo comparando o TimesFM 2.5 zero-shot com modelos treinados por cidade na pr
 - `build_docx.py` gera o .docx de revisão com a autoria nova, `[PENDING]` nas afiliações de José e Wilson, Métodos e Resultados exploratórios (Tabela 10) e "comparable, not better". Cópia no Drive: `Labs/Dengue Time Series/DFP_manuscrito_revisao_coautores_2026-10-04.docx` (id 1BXD-CfJP197kYml5GUrl74OrJRmElaOY), como .docx (não convertido em Google Doc).
 - Documentação do projeto no Drive (Google Doc 1iJsELmCIHUxL5WLn2fRol_Lhf45yq1xtoCmrKRYbQbQ) atualizada em 05/10.
 - LAB-135 (05/10): comentário registrando que o critério de 23/09 (commit 0f7fdd6, fixado 4 min antes da primeira rodada) resolve o bloqueio para a publicação de dengue. A issue já estava Done pelo lado do OPT.
-- Tudo no `main` remoto.
+- 05/10 07:10: mensagem com as decisões, o deck (`scripts/build_deck.py` gera `build/DFP_deck_pipeline_AAAA-MM-DD.pdf`, 11 slides, números do verified_numbers) e o .docx de revisão enviados ao grupo de WhatsApp "Artigo pred dengue" (José e Wilson) pelo Fermes. O Alexandre não está no grupo; o Fabiano fala com ele.
 
 ## Próximos passos
-1. Esperar a revisão dos coautores no .docx (afiliações e enquadramento da análise exploratória).
+1. Esperar a revisão de José e Wilson (enviada ao grupo em 05/10) e o retorno do Alexandre (o Fabiano fala com ele).
 2. Ao voltar o .docx: passar as afiliações para `AFFILIATIONS` em `scripts/build_docx.py` e para o `.tex`, e incorporar os comentários.
 3. Decidir sobre o repositório privado: abrir ou depositar no Zenodo com DOI. A frase de disponibilidade de código depende disso.
 4. Atualizar o manuscrito de submissão no template LaTeX da PLOS NTD (template oficial v3.8, `plos2025.bst`; a conversão já feita no repo arquivado em `paper/plos/` serve de modelo). Os `.tex` atuais deste repo (`manuscript.tex`, `manuscript_rsbmt.tex`, `supplementary.tex`) ainda trazem os ICs antigos (bootstrap iid), "Barcellos-Filho", "Google DeepMind", autoria sem Alexandre e nada da análise exploratória.

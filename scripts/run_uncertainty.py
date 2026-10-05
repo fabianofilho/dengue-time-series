@@ -90,12 +90,29 @@ def to_matrices(df: pd.DataFrame, models: list[str], n_win: int, n_hor: int) -> 
 
 
 def analisa_cidade(
-    city: str, preds_path: Path, crit: dict, results_dir: Path
+    city: str,
+    preds_path: Path,
+    crit: dict,
+    results_dir: Path,
+    escopo: list[str] | None = None,
+    sufixo: str = "",
 ) -> dict:
+    """Bootstrap, DM e veredito de uma cidade.
+
+    `escopo` limita os modelos ao conjunto declarado. Sem isso, todo modelo que
+    aparecesse no CSV entraria no veredito, e acrescentar uma variante
+    exploratória mudaria em silêncio o veredito confirmatório (o melhor por
+    RelMAE, a contagem de pares). `sufixo` separa os arquivos de cada conjunto.
+    """
     df = pd.read_csv(preds_path, parse_dates=["date"])
     for col in ("model", "y_true", "y_pred", "window", "horizon"):
         if col not in df.columns:
             raise ValueError(f"Coluna obrigatória ausente em {preds_path}: {col}")
+    if escopo is not None:
+        faltando = sorted(set(escopo) - set(df.model.unique()))
+        if faltando:
+            raise ValueError(f"{city}: modelos do escopo ausentes do CSV: {faltando}")
+        df = df[df.model.isin(escopo)]
 
     models = sorted(df.model.unique())
     if BASELINE not in models:
@@ -157,7 +174,7 @@ def analisa_cidade(
                 }
             )
     boot_df = pd.DataFrame(linhas)
-    boot_path = results_dir / f"uncertainty_{city}_bootstrap_metrics.csv"
+    boot_path = results_dir / f"uncertainty_{city}{sufixo}_bootstrap_metrics.csv"
     boot_df.to_csv(boot_path, index=False)
 
     # ---------------- diferenças pareadas e Diebold-Mariano ----------------
@@ -207,7 +224,7 @@ def analisa_cidade(
             )
     dm_df = pd.DataFrame(dm_linhas)
     pair_df = pd.concat([pd.DataFrame(linhas), dm_df], ignore_index=True)
-    pair_path = results_dir / f"uncertainty_{city}_pairwise_tests.csv"
+    pair_path = results_dir / f"uncertainty_{city}{sufixo}_pairwise_tests.csv"
     pair_df.to_csv(pair_path, index=False)
 
     # ---------------- veredito ----------------
@@ -346,7 +363,7 @@ def analisa_cidade(
             "aviso": crit["analise_de_sensibilidade"]["regra"],
         },
     }
-    vpath = results_dir / f"criterion_verdict_{city}.json"
+    vpath = results_dir / f"criterion_verdict_{city}{sufixo}.json"
     vpath.write_text(json.dumps(verdict, indent=2, ensure_ascii=False), encoding="utf-8")
 
     print(
@@ -379,10 +396,49 @@ def main() -> int:
         f"B={crit['bootstrap']['B']:,}, semente {crit['bootstrap']['seed']}"
     )
 
+    # Conjunto confirmatorio: exatamente os modelos declarados no criterio.
+    escopo_conf = crit["escopo"]["modelos"]
     vereditos = []
     for city in cities:
         preds = results_dir / f"benchmark_{city}_predictions.csv"
-        vereditos.append(analisa_cidade(city, preds, crit, results_dir))
+        vereditos.append(analisa_cidade(city, preds, crit, results_dir, escopo=escopo_conf))
+
+    # Conjunto exploratorio da emenda de 2026-10-04: variantes _log ao lado dos
+    # modelos brutos correspondentes, do TimesFM e do piso. Arquivos proprios.
+    logs = crit["escopo"].get("modelos_exploratorios_log", [])
+    if logs:
+        escopo_exp = [BASELINE, "timesfm"] + [m[:-4] for m in logs] + logs
+        print("\n[INFO] Analise EXPLORATORIA (variantes _log, emenda de 2026-10-04)")
+        exp = []
+        for city in cities:
+            preds = results_dir / f"benchmark_{city}_predictions.csv"
+            exp.append(
+                analisa_cidade(city, preds, crit, results_dir, escopo=escopo_exp, sufixo="_exploratorio_log")
+            )
+        (results_dir / "criterion_summary_exploratorio_log.json").write_text(
+            json.dumps(
+                {
+                    "status": "EXPLORATORIA: emenda feita depois de ver resultados; nao substitui o veredito confirmatorio",
+                    "escopo": escopo_exp,
+                    "cidades": [
+                        {
+                            "cidade": v["cidade"],
+                            "relmae_por_modelo": v["relmae_por_modelo"],
+                            "melhor_por_relmae": v["melhor_por_relmae"],
+                            "melhor_por_smape": v["melhor_por_smape"],
+                            "batem_o_baseline": v["veredito"]["batem_o_baseline"],
+                        }
+                        for v in exp
+                    ],
+                    "cidades_em_que_algum_modelo_bate_o_baseline": sum(
+                        1 for v in exp if v["veredito"]["batem_o_baseline"]
+                    ),
+                },
+                indent=2,
+                ensure_ascii=False,
+            ),
+            encoding="utf-8",
+        )
 
     resumo = {
         "criterio": crit["criterio"],

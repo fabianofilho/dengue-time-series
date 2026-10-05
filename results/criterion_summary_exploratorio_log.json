@@ -1,0 +1,198 @@
+{
+  "status": "EXPLORATORIA: emenda feita depois de ver resultados; nao substitui o veredito confirmatorio",
+  "escopo": [
+    "seasonal_naive",
+    "timesfm",
+    "sarimax",
+    "lgbm",
+    "xgboost",
+    "catboost",
+    "randomforest",
+    "ridge",
+    "sarimax_log",
+    "lgbm_log",
+    "xgboost_log",
+    "catboost_log",
+    "randomforest_log",
+    "ridge_log"
+  ],
+  "cidades": [
+    {
+      "cidade": "sao_paulo",
+      "relmae_por_modelo": {
+        "catboost": 1.0032,
+        "catboost_log": 0.9658,
+        "lgbm": 1.1285,
+        "lgbm_log": 1.0094,
+        "randomforest": 1.0599,
+        "randomforest_log": 0.9653,
+        "ridge": 1.24,
+        "ridge_log": 1.0744,
+        "sarimax": 8.394,
+        "sarimax_log": 1.2325,
+        "seasonal_naive": 1.0,
+        "timesfm": 0.9612,
+        "xgboost": 1.1055,
+        "xgboost_log": 0.9796
+      },
+      "melhor_por_relmae": "timesfm",
+      "melhor_por_smape": "timesfm",
+      "batem_o_baseline": []
+    },
+    {
+      "cidade": "rio",
+      "relmae_por_modelo": {
+        "catboost": 2.0108,
+        "catboost_log": 1.0158,
+        "lgbm": 2.4677,
+        "lgbm_log": 1.104,
+        "randomforest": 3.3019,
+        "randomforest_log": 1.2945,
+        "ridge": 2.2048,
+        "ridge_log": 1.7385,
+        "sarimax": 1.1116,
+        "sarimax_log": 1.2668,
+        "seasonal_naive": 1.0,
+        "timesfm": 0.8509,
+        "xgboost": 3.7449,
+        "xgboost_log": 1.2915
+      },
+      "melhor_por_relmae": "timesfm",
+      "melhor_por_smape": "ridge_log",
+      "batem_o_baseline": []
+    },
+    {
+      "cidade": "belo_horizonte",
+      "relmae_por_modelo": {
+        "catboost": 0.9837,
+        "catboost_log": 0.6935,
+        "lgbm": 1.8301,
+        "lgbm_log": 0.8454,
+        "randomforest": 1.0899,
+        "randomforest_log": 0.7249,
+        "ridge": 0.9915,
+        "ridge_log": 0.8448,
+        "sarimax": 1.3774,
+        "sarimax_log": 1.909,
+        "seasonal_naive": 1.0,
+        "timesfm": 0.7598,
+        "xgboost": 1.0721,
+        "xgboost_log": 0.7512
+      },
+      "melhor_por_relmae": "catboost_log",
+      "melhor_por_smape": "catboost_log",
+      "batem_o_baseline": []
+    },
+    {
+      "cidade": "brasilia",
+      "relmae_por_modelo": {
+        "catboost": 0.8831,
+        "catboost_log": 0.9223,
+        "lgbm": 1.058,
+        "lgbm_log": 0.9428,
+        "randomforest": 0.9747,
+        "randomforest_log": 0.9391,
+        "ridge": 0.9914,
+        "ridge_log": 0.938,
+        "sarimax": 1.0233,
+        "sarimax_log": 1.1838,
+        "seasonal_naive": 1.0,
+        "timesfm": 0.8875,
+        "xgboost": 0.9971,
+        "xgboost_log": 0.9855
+      },
+      "melhor_por_relmae": "catboost",
+      "melhor_por_smape": "timesfm",
+      "batem_o_baseline": []
+    },
+    {
+      "cidade": "fortaleza",
+      "relmae_por_modelo": {
+        "catboost": 1.1623,
+        "catboost_log": 0.9011,
+        "lgbm": 1.8108,
+        "lgbm_log": 1.0692,
+        "randomforest": 2.0085,
+        "randomforest_log": 1.0006,
+        "ridge": 1.1475,
+        "ridge_log": 0.968,
+        "sarimax": 1.1007,
+        "sarimax_log": 1.2799,
+        "seasonal_naive": 1.0,
+        "timesfm": 0.8406,
+        "xgboost": 1.952,
+        "xgboost_log": 1.1583
+      },
+      "melhor_por_relmae": "timesfm",
+      "melhor_por_smape": "timesfm",
+      "batem_o_baseline": []
+    },
+    {
+      "cidade": "recife",
+      "relmae_por_modelo": {
+        "catboost": 1.0225,
+        "catboost_log": 0.7683,
+        "lgbm": 1.4992,
+        "lgbm_log": 0.8643,
+        "randomforest": 1.0344,
+        "randomforest_log": 0.7979,
+        "ridge": 1.0222,
+        "ridge_log": 0.6782,
+        "sarimax": 1.186,
+        "sarimax_log": 1.8579,
+        "seasonal_naive": 1.0,
+        "timesfm": 0.6654,
+        "xgboost": 1.0232,
+        "xgboost_log": 0.8244
+      },
+      "melhor_por_relmae": "timesfm",
+      "melhor_por_smape": "catboost_log",
+      "batem_o_baseline": []
+    },
+    {
+      "cidade": "manaus",
+      "relmae_por_modelo": {
+        "catboost": 1.2107,
+        "catboost_log": 0.9569,
+        "lgbm": 1.5121,
+        "lgbm_log": 1.0348,
+        "randomforest": 1.0754,
+        "randomforest_log": 0.899,
+        "ridge": 0.9669,
+        "ridge_log": 0.9302,
+        "sarimax": 1.2408,
+        "sarimax_log": 1.0578,
+        "seasonal_naive": 1.0,
+        "timesfm": 0.9659,
+        "xgboost": 1.2664,
+        "xgboost_log": 1.0736
+      },
+      "melhor_por_relmae": "randomforest_log",
+      "melhor_por_smape": "randomforest_log",
+      "batem_o_baseline": []
+    },
+    {
+      "cidade": "salvador",
+      "relmae_por_modelo": {
+        "catboost": 0.792,
+        "catboost_log": 0.7483,
+        "lgbm": 0.9515,
+        "lgbm_log": 0.7839,
+        "randomforest": 0.8423,
+        "randomforest_log": 0.7377,
+        "ridge": 0.8704,
+        "ridge_log": 0.7554,
+        "sarimax": 0.9993,
+        "sarimax_log": 1.285,
+        "seasonal_naive": 1.0,
+        "timesfm": 0.6993,
+        "xgboost": 0.8691,
+        "xgboost_log": 0.7752
+      },
+      "melhor_por_relmae": "timesfm",
+      "melhor_por_smape": "timesfm",
+      "batem_o_baseline": []
+    }
+  ],
+  "cidades_em_que_algum_modelo_bate_o_baseline": 0
+}

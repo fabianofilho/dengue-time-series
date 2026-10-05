@@ -60,7 +60,15 @@
     "janelas_por_cidade": 119,
     "previsoes_por_modelo_por_cidade": 1428,
     "unidade_de_analise": "cidade. Nao ha pooling entre cidades: cada cidade recebe seu proprio bootstrap, seus proprios testes pareados e seu proprio veredito.",
-    "modelos_globais": "Um unico modelo treinado nas 8 cidades ao mesmo tempo (ForecasterRecursiveMultiSeries), com padronizacao por serie e identidade da cidade como indicadora. A comparacao que interessa e entre o mesmo estimador nas duas formas: lgbm contra global_lgbm, e assim por diante. SARIMAX e TimesFM nao tem forma global aqui."
+    "modelos_globais": "Um unico modelo treinado nas 8 cidades ao mesmo tempo (ForecasterRecursiveMultiSeries), com padronizacao por serie e identidade da cidade como indicadora. A comparacao que interessa e entre o mesmo estimador nas duas formas: lgbm contra global_lgbm, e assim por diante. SARIMAX e TimesFM nao tem forma global aqui.",
+    "modelos_exploratorios_log": [
+      "sarimax_log",
+      "lgbm_log",
+      "xgboost_log",
+      "catboost_log",
+      "randomforest_log",
+      "ridge_log"
+    ]
   },
   "pergunta": "Algum dos 7 modelos publicados bate o seasonal_naive por este criterio, e em quantas das 8 cidades?",
   "emendas": [
@@ -70,6 +78,14 @@
       "o_que_nao_mudou": "a regra de decisao. alpha, min_horizontes, metrica_bootstrap, definicao_confirmado, B e semente ficaram identicos ao commit 0f7fdd6.",
       "por_que": "O baseline global multi-serie foi registrado como a lacuna metodologica mais seria que restava ANTES de o teste rodar: esta em 'Proximos passos' do README no commit 9d6e664 e na entrega da sessao. Nao foi escolhido depois de ver resultado nenhum.",
       "efeito_no_teste": "13 modelos em vez de 8, entao 78 pares por cidade em vez de 28. Mais pares significa mais comparacoes multiplas, e o numerador de 'pares confirmados' nao e comparavel com o da rodada anterior. O que e comparavel e o veredito contra o baseline, modelo a modelo, que nao depende de quantos outros modelos existem."
+    },
+    {
+      "data": "2026-10-04",
+      "o_que_mudou": "escopo.modelos ganhou 6 variantes exploratorias ajustadas em log1p(y): sarimax_log, lgbm_log, xgboost_log, catboost_log, randomforest_log, ridge_log. A previsao volta a escala de casos por expm1, com teto em log1p(max do treino) + 5.",
+      "o_que_nao_mudou": "a regra de decisao (alpha, min_horizontes, metrica_bootstrap, definicao_confirmado, B e semente) e os 13 modelos e vereditos ja registrados. O veredito confirmatorio continua sendo o dos modelos da emenda anterior.",
+      "por_que": "Arvores ajustadas na contagem bruta nao preveem acima do maximo visto no treino, o que as prejudica em anos de epidemia recorde como 2024. Uma replicacao no repo dengue-timeseries-skforecast (benchmark v2, 28/09/2026, tag paper-v2) mostrou que, com os modelos treinados em log1p, a lideranca descritiva do TimesFM por sMAPE desaparece.",
+      "status": "EXPLORATORIA. A emenda foi feita DEPOIS de ver resultados (os da replicacao acima), entao nada que dependa das variantes _log pode ser apresentado como confirmatorio. O texto tem que dizer isso.",
+      "efeito_no_teste": "19 modelos por cidade. Os vereditos das variantes _log contra o seasonal_naive sao reportados como analise exploratoria, separados do veredito confirmatorio."
     }
   ]
 }

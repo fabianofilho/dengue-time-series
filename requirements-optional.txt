@@ -13,4 +13,7 @@ prophet>=1.1.0
 
 # TimesFM 2.5 (Google), foundation model zero-shot. Python>=3.10.
 # Pode exigir libomp no macOS.
-# uv pip install "timesfm[torch] @ git+https://github.com/google-research/timesfm.git"
+# Versao fixa: com torch 2.14 + timesfm 3.x o LightGBM da segfault no macOS ARM quando
+# importado depois do torch (04/10/2026). Com estes pins o Mac reproduz o CSV do Windows
+# (arvores e ridge ate 1e-12, TimesFM ate 0,009 caso).
+# uv pip install "torch==2.8.0" "timesfm[torch] @ git+https://github.com/google-research/timesfm.git@8a755c9c755fd5b1fe2f0c8af3b86d7a5b846160"

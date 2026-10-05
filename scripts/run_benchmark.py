@@ -60,8 +60,8 @@ def parse_args() -> argparse.Namespace:
 
 def build_models(model_names: list[str], lags: int):
     """Constrói a lista de objetos de modelo com base nos nomes fornecidos."""
-    selected = {m.strip().lower() for m in model_names if m.strip()}
-    valid = {
+    selected = [m.strip().lower() for m in model_names if m.strip()]
+    base_valid = {
         "seasonal_naive",
         "sarimax",
         "prophet",
@@ -72,29 +72,36 @@ def build_models(model_names: list[str], lags: int):
         "ridge",
         "timesfm",
     }
-    invalid = selected - valid
+    # Variantes _log: emenda exploratoria de 2026-10-04 (results/criterion.json)
+    log_valid = {"sarimax", "lgbm", "xgboost", "catboost", "randomforest", "ridge"}
+    invalid = [
+        m for m in selected
+        if not (m in base_valid or (m.endswith("_log") and m[:-4] in log_valid))
+    ]
     if invalid:
         raise ValueError(f"Modelos inválidos: {sorted(invalid)}")
 
+    factories = {
+        "lgbm": lgbm_forecaster,
+        "xgboost": xgboost_forecaster,
+        "catboost": catboost_forecaster,
+        "randomforest": randomforest_forecaster,
+        "ridge": ridge_forecaster,
+    }
     models = []
-    if "seasonal_naive" in selected:
-        models.append(SeasonalNaiveForecaster())
-    if "sarimax" in selected:
-        models.append(SarimaxForecaster(order=(1, 1, 1), seasonal_order=(1, 1, 0, 12)))
-    if "prophet" in selected:
-        models.append(ProphetForecaster())
-    if "lgbm" in selected:
-        models.append(lgbm_forecaster(lags=lags))
-    if "xgboost" in selected:
-        models.append(xgboost_forecaster(lags=lags))
-    if "catboost" in selected:
-        models.append(catboost_forecaster(lags=lags))
-    if "randomforest" in selected:
-        models.append(randomforest_forecaster(lags=lags))
-    if "ridge" in selected:
-        models.append(ridge_forecaster(lags=lags))
-    if "timesfm" in selected:
-        models.append(TimesFMForecaster())
+    for name in selected:
+        log_target = name.endswith("_log")
+        base = name[:-4] if log_target else name
+        if base == "seasonal_naive":
+            models.append(SeasonalNaiveForecaster())
+        elif base == "sarimax":
+            models.append(SarimaxForecaster(order=(1, 1, 1), seasonal_order=(1, 1, 0, 12), log_target=log_target))
+        elif base == "prophet":
+            models.append(ProphetForecaster())
+        elif base in factories:
+            models.append(factories[base](lags=lags, log_target=log_target))
+        elif base == "timesfm":
+            models.append(TimesFMForecaster())
 
     if not models:
         raise ValueError("Nenhum modelo válido selecionado.")

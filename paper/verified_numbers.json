@@ -45,8 +45,8 @@
       "timesfm": {
         "sMAPE": 75.54,
         "sMAPE_CI": [
-          72.83,
-          78.34
+          70.31,
+          80.88
         ],
         "MAE": 8759.0,
         "RMSE": 41532.3
@@ -54,8 +54,8 @@
       "catboost": {
         "sMAPE": 80.11,
         "sMAPE_CI": [
-          77.28,
-          82.9
+          75.81,
+          84.48
         ],
         "MAE": 9142.0,
         "RMSE": 41327.0
@@ -63,8 +63,8 @@
       "xgboost": {
         "sMAPE": 87.55,
         "sMAPE_CI": [
-          84.7,
-          90.46
+          82.57,
+          92.74
         ],
         "MAE": 10073.9,
         "RMSE": 41602.6
@@ -72,8 +72,8 @@
       "randomforest": {
         "sMAPE": 84.22,
         "sMAPE_CI": [
-          81.27,
-          87.08
+          79.48,
+          88.94
         ],
         "MAE": 9658.6,
         "RMSE": 41330.5
@@ -81,8 +81,8 @@
       "sarimax": {
         "sMAPE": 88.63,
         "sMAPE_CI": [
-          85.27,
-          91.64
+          81.68,
+          95.6
         ],
         "MAE": 76492.7,
         "RMSE": 1314044.0
@@ -90,8 +90,8 @@
       "ridge": {
         "sMAPE": 111.46,
         "sMAPE_CI": [
-          108.16,
-          114.67
+          103.92,
+          119.1
         ],
         "MAE": 11300.3,
         "RMSE": 43506.4
@@ -99,8 +99,8 @@
       "lgbm": {
         "sMAPE": 116.92,
         "sMAPE_CI": [
-          113.86,
-          120.12
+          111.37,
+          122.55
         ],
         "MAE": 10283.3,
         "RMSE": 40820.5
@@ -110,8 +110,8 @@
       "timesfm": {
         "sMAPE": 96.09,
         "sMAPE_CI": [
-          93.3,
-          98.73
+          90.99,
+          101.34
         ],
         "MAE": 1898.7,
         "RMSE": 5801.1
@@ -119,8 +119,8 @@
       "catboost": {
         "sMAPE": 127.15,
         "sMAPE_CI": [
-          124.31,
-          129.75
+          120.54,
+          133.6
         ],
         "MAE": 4487.1,
         "RMSE": 8039.0
@@ -128,8 +128,8 @@
       "xgboost": {
         "sMAPE": 123.04,
         "sMAPE_CI": [
-          120.07,
-          125.96
+          117.07,
+          129.2
         ],
         "MAE": 8356.7,
         "RMSE": 17102.3
@@ -137,8 +137,8 @@
       "randomforest": {
         "sMAPE": 133.92,
         "sMAPE_CI": [
-          131.2,
-          136.48
+          127.98,
+          139.74
         ],
         "MAE": 7368.2,
         "RMSE": 13349.0
@@ -146,8 +146,8 @@
       "sarimax": {
         "sMAPE": 136.81,
         "sMAPE_CI": [
-          133.51,
-          139.95
+          128.66,
+          144.86
         ],
         "MAE": 2480.5,
         "RMSE": 6080.6
@@ -155,8 +155,8 @@
       "ridge": {
         "sMAPE": 132.06,
         "sMAPE_CI": [
-          128.91,
-          135.05
+          124.83,
+          139.07
         ],
         "MAE": 4920.0,
         "RMSE": 8426.6
@@ -164,8 +164,8 @@
       "lgbm": {
         "sMAPE": 152.81,
         "sMAPE_CI": [
-          149.89,
-          155.8
+          147.24,
+          158.12
         ],
         "MAE": 5506.7,
         "RMSE": 8071.0
@@ -175,8 +175,8 @@
       "timesfm": {
         "sMAPE": 96.6,
         "sMAPE_CI": [
-          93.18,
-          99.68
+          91.6,
+          101.46
         ],
         "MAE": 6176.8,
         "RMSE": 16840.3
@@ -184,8 +184,8 @@
       "catboost": {
         "sMAPE": 94.88,
         "sMAPE_CI": [
-          91.85,
-          97.71
+          88.63,
+          101.08
         ],
         "MAE": 7997.0,
         "RMSE": 17631.2
@@ -193,8 +193,8 @@
       "xgboost": {
         "sMAPE": 87.48,
         "sMAPE_CI": [
-          84.11,
-          90.73
+          80.76,
+          94.11
         ],
         "MAE": 8715.5,
         "RMSE": 20454.3
@@ -202,8 +202,8 @@
       "randomforest": {
         "sMAPE": 92.19,
         "sMAPE_CI": [
-          88.82,
-          95.42
+          85.29,
+          99.28
         ],
         "MAE": 8859.9,
         "RMSE": 18748.9
@@ -211,8 +211,8 @@
       "sarimax": {
         "sMAPE": 149.9,
         "sMAPE_CI": [
-          146.9,
-          152.86
+          142.97,
+          156.81
         ],
         "MAE": 11197.5,
         "RMSE": 21838.0
@@ -220,8 +220,8 @@
       "ridge": {
         "sMAPE": 132.79,
         "sMAPE_CI": [
-          129.91,
-          135.84
+          126.27,
+          139.29
         ],
         "MAE": 8060.1,
         "RMSE": 16684.4
@@ -229,8 +229,8 @@
       "lgbm": {
         "sMAPE": 151.98,
         "sMAPE_CI": [
-          149.31,
-          154.57
+          147.63,
+          156.13
         ],
         "MAE": 14877.4,
         "RMSE": 21096.7
@@ -240,8 +240,8 @@
       "timesfm": {
         "sMAPE": 72.64,
         "sMAPE_CI": [
-          69.97,
-          75.19
+          68.14,
+          77.36
         ],
         "MAE": 3686.5,
         "RMSE": 12444.1
@@ -249,8 +249,8 @@
       "catboost": {
         "sMAPE": 73.44,
         "sMAPE_CI": [
-          71.04,
-          75.77
+          69.22,
+          77.77
         ],
         "MAE": 3668.2,
         "RMSE": 11989.0
@@ -258,8 +258,8 @@
       "xgboost": {
         "sMAPE": 82.77,
         "sMAPE_CI": [
-          80.17,
-          85.43
+          78.47,
+          87.14
         ],
         "MAE": 4141.5,
         "RMSE": 12456.2
@@ -267,8 +267,8 @@
       "randomforest": {
         "sMAPE": 82.46,
         "sMAPE_CI": [
-          79.82,
-          84.9
+          77.74,
+          87.02
         ],
         "MAE": 4048.6,
         "RMSE": 12154.8
@@ -276,8 +276,8 @@
       "sarimax": {
         "sMAPE": 103.49,
         "sMAPE_CI": [
-          100.09,
-          106.86
+          95.68,
+          111.36
         ],
         "MAE": 4250.2,
         "RMSE": 12032.3
@@ -285,8 +285,8 @@
       "ridge": {
         "sMAPE": 113.32,
         "sMAPE_CI": [
-          109.95,
-          116.59
+          107.54,
+          119.09
         ],
         "MAE": 4117.8,
         "RMSE": 12314.9
@@ -294,8 +294,8 @@
       "lgbm": {
         "sMAPE": 102.44,
         "sMAPE_CI": [
-          99.64,
-          105.2
+          97.83,
+          107.28
         ],
         "MAE": 4394.7,
         "RMSE": 11678.0
@@ -305,8 +305,8 @@
       "timesfm": {
         "sMAPE": 63.07,
         "sMAPE_CI": [
-          60.94,
-          65.29
+          59.5,
+          66.57
         ],
         "MAE": 1417.2,
         "RMSE": 2602.2
@@ -314,8 +314,8 @@
       "catboost": {
         "sMAPE": 78.08,
         "sMAPE_CI": [
-          75.45,
-          80.77
+          71.57,
+          84.5
         ],
         "MAE": 1959.6,
         "RMSE": 3031.7
@@ -323,8 +323,8 @@
       "xgboost": {
         "sMAPE": 91.29,
         "sMAPE_CI": [
-          88.37,
-          94.22
+          85.18,
+          97.28
         ],
         "MAE": 3291.1,
         "RMSE": 5276.3
@@ -332,8 +332,8 @@
       "randomforest": {
         "sMAPE": 99.07,
         "sMAPE_CI": [
-          96.24,
-          101.79
+          93.03,
+          104.88
         ],
         "MAE": 3386.4,
         "RMSE": 4568.4
@@ -341,8 +341,8 @@
       "sarimax": {
         "sMAPE": 88.38,
         "sMAPE_CI": [
-          85.16,
-          91.6
+          80.28,
+          96.73
         ],
         "MAE": 1855.7,
         "RMSE": 3102.2
@@ -350,8 +350,8 @@
       "ridge": {
         "sMAPE": 86.65,
         "sMAPE_CI": [
-          83.8,
-          89.33
+          80.97,
+          92.43
         ],
         "MAE": 1934.7,
         "RMSE": 2882.1
@@ -359,8 +359,8 @@
       "lgbm": {
         "sMAPE": 103.12,
         "sMAPE_CI": [
-          100.05,
-          105.99
+          97.42,
+          108.83
         ],
         "MAE": 3053.0,
         "RMSE": 3971.2
@@ -370,8 +370,8 @@
       "timesfm": {
         "sMAPE": 69.33,
         "sMAPE_CI": [
-          66.94,
-          71.84
+          65.2,
+          73.71
         ],
         "MAE": 754.5,
         "RMSE": 1428.5
@@ -379,8 +379,8 @@
       "catboost": {
         "sMAPE": 83.32,
         "sMAPE_CI": [
-          80.76,
-          86.0
+          77.51,
+          89.1
         ],
         "MAE": 1159.5,
         "RMSE": 1824.0
@@ -388,8 +388,8 @@
       "xgboost": {
         "sMAPE": 79.77,
         "sMAPE_CI": [
-          76.88,
-          82.61
+          73.18,
+          86.58
         ],
         "MAE": 1160.3,
         "RMSE": 1942.4
@@ -397,8 +397,8 @@
       "randomforest": {
         "sMAPE": 82.68,
         "sMAPE_CI": [
-          79.82,
-          85.34
+          76.45,
+          89.18
         ],
         "MAE": 1173.0,
         "RMSE": 1866.5
@@ -406,8 +406,8 @@
       "sarimax": {
         "sMAPE": 115.18,
         "sMAPE_CI": [
-          111.92,
-          118.49
+          106.66,
+          123.79
         ],
         "MAE": 1344.9,
         "RMSE": 2327.2
@@ -415,8 +415,8 @@
       "ridge": {
         "sMAPE": 102.65,
         "sMAPE_CI": [
-          99.73,
-          105.44
+          97.07,
+          108.61
         ],
         "MAE": 1159.1,
         "RMSE": 1994.2
@@ -424,8 +424,8 @@
       "lgbm": {
         "sMAPE": 113.56,
         "sMAPE_CI": [
-          110.86,
-          116.26
+          108.49,
+          118.69
         ],
         "MAE": 1700.1,
         "RMSE": 2218.2
@@ -435,8 +435,8 @@
       "timesfm": {
         "sMAPE": 55.62,
         "sMAPE_CI": [
-          53.46,
-          57.78
+          52.09,
+          59.13
         ],
         "MAE": 274.0,
         "RMSE": 556.2
@@ -444,8 +444,8 @@
       "catboost": {
         "sMAPE": 68.68,
         "sMAPE_CI": [
-          66.79,
-          70.66
+          65.24,
+          72.17
         ],
         "MAE": 343.4,
         "RMSE": 577.6
@@ -453,8 +453,8 @@
       "xgboost": {
         "sMAPE": 65.6,
         "sMAPE_CI": [
-          63.18,
-          67.88
+          61.81,
+          69.35
         ],
         "MAE": 359.2,
         "RMSE": 634.3
@@ -462,8 +462,8 @@
       "randomforest": {
         "sMAPE": 64.12,
         "sMAPE_CI": [
-          62.23,
-          66.04
+          61.08,
+          67.18
         ],
         "MAE": 305.0,
         "RMSE": 530.6
@@ -471,8 +471,8 @@
       "sarimax": {
         "sMAPE": 102.05,
         "sMAPE_CI": [
-          98.56,
-          105.39
+          93.47,
+          110.6
         ],
         "MAE": 351.9,
         "RMSE": 618.3
@@ -480,8 +480,8 @@
       "ridge": {
         "sMAPE": 61.35,
         "sMAPE_CI": [
-          59.35,
-          63.33
+          58.06,
+          64.77
         ],
         "MAE": 274.3,
         "RMSE": 529.1
@@ -489,8 +489,8 @@
       "lgbm": {
         "sMAPE": 84.54,
         "sMAPE_CI": [
-          81.91,
-          87.12
+          79.07,
+          90.0
         ],
         "MAE": 428.9,
         "RMSE": 640.8
@@ -500,8 +500,8 @@
       "timesfm": {
         "sMAPE": 67.59,
         "sMAPE_CI": [
-          65.32,
-          69.95
+          63.17,
+          72.08
         ],
         "MAE": 416.4,
         "RMSE": 686.7
@@ -509,8 +509,8 @@
       "catboost": {
         "sMAPE": 74.28,
         "sMAPE_CI": [
-          71.91,
-          76.74
+          68.51,
+          80.15
         ],
         "MAE": 471.6,
         "RMSE": 726.3
@@ -518,8 +518,8 @@
       "xgboost": {
         "sMAPE": 75.85,
         "sMAPE_CI": [
-          73.28,
-          78.5
+          69.36,
+          82.28
         ],
         "MAE": 517.5,
         "RMSE": 780.8
@@ -527,8 +527,8 @@
       "randomforest": {
         "sMAPE": 72.35,
         "sMAPE_CI": [
-          69.8,
-          74.88
+          66.44,
+          78.26
         ],
         "MAE": 501.6,
         "RMSE": 742.2
@@ -536,8 +536,8 @@
       "sarimax": {
         "sMAPE": 105.03,
         "sMAPE_CI": [
-          101.47,
-          108.4
+          96.45,
+          113.39
         ],
         "MAE": 595.0,
         "RMSE": 916.6
@@ -545,8 +545,8 @@
       "ridge": {
         "sMAPE": 93.88,
         "sMAPE_CI": [
-          90.97,
-          96.87
+          87.5,
+          100.6
         ],
         "MAE": 518.3,
         "RMSE": 757.7
@@ -554,8 +554,8 @@
       "lgbm": {
         "sMAPE": 84.17,
         "sMAPE_CI": [
-          81.81,
-          86.67
+          78.67,
+          89.69
         ],
         "MAE": 566.6,
         "RMSE": 765.1
@@ -727,8 +727,9 @@
     }
   ],
   "bootstrap": {
-    "replicates": 2000,
-    "seed": 42,
+    "replicates": 10000,
+    "seed": 20260817,
+    "unit": "whole rolling-origin window (12 horizons)",
     "method": "percentile"
   },
   "intervals": {
@@ -946,6 +947,121 @@
     "degradation_h1_h12": 44.9,
     "share_of_degradation_by_h6": 99,
     "plateau_from_h": 7
+  },
+  "exploratory_log": {
+    "status": "exploratory (amendment of 2026-10-04, made after results were seen)",
+    "cities_where_any_model_beats_baseline": 0,
+    "per_city": {
+      "Sao Paulo": {
+        "relmae_timesfm": 0.961,
+        "best_raw": "catboost",
+        "relmae_best_raw": 1.003,
+        "best_log": "randomforest_log",
+        "relmae_best_log": 0.965,
+        "best_overall": "timesfm",
+        "beat_baseline": []
+      },
+      "Rio de Janeiro": {
+        "relmae_timesfm": 0.851,
+        "best_raw": "sarimax",
+        "relmae_best_raw": 1.112,
+        "best_log": "catboost_log",
+        "relmae_best_log": 1.016,
+        "best_overall": "timesfm",
+        "beat_baseline": []
+      },
+      "Belo Horizonte": {
+        "relmae_timesfm": 0.76,
+        "best_raw": "catboost",
+        "relmae_best_raw": 0.984,
+        "best_log": "catboost_log",
+        "relmae_best_log": 0.694,
+        "best_overall": "catboost_log",
+        "beat_baseline": []
+      },
+      "Brasilia": {
+        "relmae_timesfm": 0.887,
+        "best_raw": "catboost",
+        "relmae_best_raw": 0.883,
+        "best_log": "catboost_log",
+        "relmae_best_log": 0.922,
+        "best_overall": "catboost",
+        "beat_baseline": []
+      },
+      "Fortaleza": {
+        "relmae_timesfm": 0.841,
+        "best_raw": "sarimax",
+        "relmae_best_raw": 1.101,
+        "best_log": "catboost_log",
+        "relmae_best_log": 0.901,
+        "best_overall": "timesfm",
+        "beat_baseline": []
+      },
+      "Recife": {
+        "relmae_timesfm": 0.665,
+        "best_raw": "ridge",
+        "relmae_best_raw": 1.022,
+        "best_log": "ridge_log",
+        "relmae_best_log": 0.678,
+        "best_overall": "timesfm",
+        "beat_baseline": []
+      },
+      "Manaus": {
+        "relmae_timesfm": 0.966,
+        "best_raw": "ridge",
+        "relmae_best_raw": 0.967,
+        "best_log": "randomforest_log",
+        "relmae_best_log": 0.899,
+        "best_overall": "randomforest_log",
+        "beat_baseline": []
+      },
+      "Salvador": {
+        "relmae_timesfm": 0.699,
+        "best_raw": "catboost",
+        "relmae_best_raw": 0.792,
+        "best_log": "randomforest_log",
+        "relmae_best_log": 0.738,
+        "best_overall": "timesfm",
+        "beat_baseline": []
+      }
+    },
+    "timesfm_lowest_relmae_cities": 5,
+    "timesfm_vs_log_pairs": 48,
+    "timesfm_vs_log_ci_excludes_zero": 35,
+    "timesfm_vs_log_confirmed": 3,
+    "timesfm_vs_log_confirmed_list": [
+      {
+        "city": "Brasilia",
+        "model": "lgbm_log",
+        "timesfm_better": true
+      },
+      {
+        "city": "Brasilia",
+        "model": "randomforest_log",
+        "timesfm_better": true
+      },
+      {
+        "city": "Brasilia",
+        "model": "xgboost_log",
+        "timesfm_better": true
+      }
+    ],
+    "timesfm_vs_catboost_log_confirmed": 0,
+    "mean_relmae": {
+      "sarimax": 2.054,
+      "lgbm": 1.532,
+      "xgboost": 1.504,
+      "catboost": 1.134,
+      "randomforest": 1.423,
+      "ridge": 1.179,
+      "sarimax_log": 1.384,
+      "lgbm_log": 0.957,
+      "xgboost_log": 0.98,
+      "catboost_log": 0.872,
+      "randomforest_log": 0.92,
+      "ridge_log": 0.991,
+      "timesfm": 0.829
+    }
   },
   "baseline": {
     "baseline_model": "seasonal_naive",

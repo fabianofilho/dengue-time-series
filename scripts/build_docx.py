@@ -54,6 +54,22 @@ ENS_LABEL = {
     "stacking": "Stacked ensemble (Ridge)",
 }
 
+# Autoria (ordem decidida em 04/10/2026). Afiliacao None = pendente, preenchida
+# pelo proprio coautor no .docx de revisao.
+AUTHORS = [
+    ("Fabiano Novaes Barcellos Filho", "1*"),
+    ("José Trajano", "2"),
+    ("Wilson Falco", "3"),
+    ("Alexandre Chiavegatto Filho", "1"),
+]
+AFFILIATIONS = [
+    ("1", "Laboratório de Big Data e Análise Preditiva em Saúde (LABDAPS), Faculdade de "
+          "Saúde Pública, Universidade de São Paulo, São Paulo, Brazil"),
+    ("2", None),
+    ("3", None),
+]
+AFF_PENDING = {"2": "José Trajano", "3": "Wilson Falco"}
+
 CITY_ORDER = [
     "Sao Paulo", "Rio de Janeiro", "Belo Horizonte", "Brasilia",
     "Fortaleza", "Recife", "Manaus", "Salvador",
@@ -244,11 +260,33 @@ def title_block(doc: Document, v: dict, stale: bool) -> None:
 
     p = doc.add_paragraph()
     p.alignment = WD_ALIGN_PARAGRAPH.CENTER
-    p.add_run("Fabiano Barcellos-Filho, Jose Trajano, Wilson Falco")
+    for i, (nome, sup) in enumerate(AUTHORS):
+        p.add_run(("" if i == 0 else ", ") + nome)
+        s = p.add_run(sup)
+        s.font.superscript = True
+
+    # Afiliacoes: as que ainda faltam saem como campo vermelho editavel, para o
+    # proprio coautor preencher no Word. Nunca inventar afiliacao.
+    for sup, texto in AFFILIATIONS:
+        p = doc.add_paragraph()
+        p.paragraph_format.line_spacing = 1.0
+        s = p.add_run(sup)
+        s.font.superscript = True
+        if texto is None:
+            r = p.add_run(f" [PENDING: affiliation of {AFF_PENDING[sup]} (department, institution, city, country)]")
+            r.bold = True
+            r.font.color.rgb = RGBColor(0xC0, 0x00, 0x00)
+        else:
+            p.add_run(" " + texto)
+        for run in p.runs:
+            run.font.size = Pt(10)
 
     p = doc.add_paragraph()
     p.alignment = WD_ALIGN_PARAGRAPH.CENTER
-    r = p.add_run("Corresponding author: fabiano.nb@gmail.com")
+    r = p.add_run(
+        "*Corresponding author: Fabiano Novaes Barcellos Filho, fabiano.filho@usp.br, "
+        "ORCID 0000-0002-1491-2700"
+    )
     r.font.size = Pt(10)
 
     box = doc.add_paragraph()
@@ -281,6 +319,7 @@ def title_block(doc: Document, v: dict, stale: bool) -> None:
 
 def abstract(doc: Document, v: dict) -> None:
     heading(doc, "ABSTRACT")
+    ex = v["exploratory_log"]
     ms = v["mean_smape_by_model"]
     wins = v["cities_ranked_first_by_model"]
     pc = v["per_city"]
@@ -312,10 +351,16 @@ def abstract(doc: Document, v: dict) -> None:
         f"sMAPE {pc['Rio de Janeiro']['timesfm']['sMAPE']:.1f}% against "
         f"{pc['Rio de Janeiro']['xgboost']['sMAPE']:.1f}% for XGBoost. The three accuracy "
         "metrics selected the same model in only four of eight cities. All models "
-        "substantially underestimated the 2024 epidemic peaks."
+        "substantially underestimated the 2024 epidemic peaks. In an exploratory analysis "
+        "with the trained models fitted on log-transformed counts, the gap between "
+        f"TimesFM and the best trained model narrowed (mean relative MAE "
+        f"{ex['mean_relmae']['timesfm']:.3f} against {ex['mean_relmae']['catboost_log']:.3f} "
+        f"for log-scale CatBoost) and was confirmed by the pre-registered rule in "
+        f"{ex['timesfm_vs_log_confirmed']} of {ex['timesfm_vs_log_pairs']} comparisons, none "
+        "of them against CatBoost."
     ), bold_lead="Results. ")
     body(doc, (
-        "A zero-shot foundation model matched or exceeded purpose-trained models for "
+        "A zero-shot foundation model performed comparably to purpose-trained models for "
         "12-month-ahead dengue point forecasting without any local training, which lowers "
         "the cost of extending forecasting to municipalities lacking modelling capacity. "
         "The advantage does not extend to probabilistic forecasts, where the ranking "
@@ -430,11 +475,24 @@ def methods(doc: Document, v: dict) -> None:
         "The pre-specified primary metric was sMAPE, with MAE and RMSE reported alongside "
         "because the three reward different behaviour: sMAPE rewards accuracy in "
         "inter-epidemic troughs and RMSE rewards accuracy at peaks. Confidence intervals "
-        f"for the accuracy estimates come from bootstrap resampling of the pooled "
-        f"predictions ({v['bootstrap']['replicates']:,} replicates, "
-        f"{v['bootstrap']['method']} method, seed {v['bootstrap']['seed']}). Because "
-        "predictions from the same fold are not independent, these intervals understate "
-        "the true uncertainty and are read as a lower bound."
+        f"for the accuracy estimates resample whole rolling-origin windows, each with its "
+        f"twelve horizons ({v['bootstrap']['replicates']:,} replicates, "
+        f"{v['bootstrap']['method']} method, seed {v['bootstrap']['seed']}), the same "
+        "resampling unit and draw used by the pre-registered decision rule. Resampling the "
+        "individual predictions would treat overlapping windows as independent and give "
+        "intervals several times too narrow."
+    ))
+    heading(doc, "Exploratory analysis: trained models on the log scale", 2)
+    body(doc, (
+        "Tree ensembles fitted on raw counts cannot forecast above the largest value seen "
+        "in their training window, which handicaps them in record epidemic years such as "
+        "2024, whereas TimesFM normalises its input internally. In an amendment to the "
+        "registered protocol, dated 4 October 2026, we refitted SARIMAX and the five "
+        "skforecast models on log(1 + y) and back-transformed their forecasts with "
+        "exp(z) - 1, capped at 5 log units above the largest training value to prevent "
+        "overflow. The amendment was made after the main results had been seen, so these "
+        "results are exploratory: the decision rule was applied to them unchanged, but "
+        "they do not replace the confirmatory verdict."
     ))
     body(doc, (
         "Prediction intervals were built by split conformal prediction on the point "
@@ -762,6 +820,44 @@ def baseline_e_globais(doc: Document, v: dict) -> None:
               "lowest sMAPE. None of these reversals satisfies the pre-registered rule.")
 
 
+def exploratory_log(doc: Document, v: dict) -> None:
+    """Resultados da emenda exploratoria de 2026-10-04 (variantes _log)."""
+    ex = v["exploratory_log"]
+    mr = ex["mean_relmae"]
+    heading(doc, "Exploratory: trained models on the log scale", 2)
+    flag(doc, "exploratory analysis added on 2026-10-04, after the main results were "
+              "seen; co-authors, please review the framing")
+    body(doc, (
+        f"Fitting the trained models on log-transformed counts reduced their error "
+        f"substantially. Mean relative MAE across cities fell from {mr['catboost']:.3f} to "
+        f"{mr['catboost_log']:.3f} for CatBoost, from {mr['randomforest']:.3f} to "
+        f"{mr['randomforest_log']:.3f} for Random Forest and from {mr['xgboost']:.3f} to "
+        f"{mr['xgboost_log']:.3f} for XGBoost, against {mr['timesfm']:.3f} for TimesFM. "
+        f"TimesFM still had the lowest point estimate in "
+        f"{ex['timesfm_lowest_relmae_cities']} of {v['n_cities']} cities, but the "
+        f"difference from the log-scale models was confirmed by the pre-registered rule in "
+        f"only {ex['timesfm_vs_log_confirmed']} of {ex['timesfm_vs_log_pairs']} "
+        f"comparisons, all in Brasilia and none against CatBoost; the bootstrap interval "
+        f"excluded zero in {ex['timesfm_vs_log_ci_excludes_zero']}, but the "
+        f"Diebold-Mariano test did not reach the required six horizons. No log-scale model "
+        f"beat the seasonal naive baseline in any city "
+        f"({ex['cities_where_any_model_beats_baseline']} of {v['n_cities']})."
+    ))
+    rows = []
+    for c in CITY_ORDER:
+        r = ex["per_city"][c]
+        rows.append([
+            c, f"{r['relmae_timesfm']:.3f}",
+            f"{r['relmae_best_raw']:.3f} ({LABEL.get(r['best_raw'], r['best_raw'])})",
+            f"{r['relmae_best_log']:.3f} ({LABEL.get(r['best_log'][:-4], r['best_log'])} log)",
+        ])
+    add_table(doc, ["City", "TimesFM", "Best trained, raw scale", "Best trained, log scale"],
+              rows, "Table 10.",
+              "Relative MAE (model MAE divided by seasonal naive MAE; below 1 means lower "
+              "error than the baseline) for TimesFM and the best trained model on each "
+              "scale. Exploratory analysis; no value is confirmed as beating the baseline.")
+
+
 def discussion(doc: Document, v: dict) -> None:
     ms = v["mean_smape_by_model"]
     wins = v["cities_ranked_first_by_model"]
@@ -781,7 +877,7 @@ def discussion(doc: Document, v: dict) -> None:
     ))
     body(doc, (
         f"Within that boundary, the model comparison still carries information. A "
-        f"foundation model applied with no local training matched or exceeded six "
+        f"foundation model applied with no local training performed comparably to six "
         f"purpose-trained models at a 12-month horizon. It ranked first by sMAPE in "
         f"{wins['timesfm']} of {v['n_cities']} cities and by MAE in all {v['n_cities']}. "
         f"The comparison is asymmetric in its disfavour: the supervised models were "
@@ -790,7 +886,12 @@ def discussion(doc: Document, v: dict) -> None:
         f"models compared: adding five global models moved it from "
         f"{g['timesfm_wins_published_pool']} of {g['n_cities']} to "
         f"{g['timesfm_wins_with_global_pool']} of {g['n_cities']} without any published "
-        f"number changing."
+        f"number changing. The comparison was also tilted in its favour in one respect: "
+        f"the trained models were fitted on raw counts. Refitted on the log scale, the "
+        f"best of them came close to TimesFM ({v['exploratory_log']['mean_relmae']['catboost_log']:.3f} "
+        f"against {v['exploratory_log']['mean_relmae']['timesfm']:.3f} mean relative MAE), "
+        f"and the remaining difference was not confirmed. The defensible reading is that "
+        f"the zero-shot model is comparable to the best trained models, not better."
     ))
     body(doc, (
         "The operational consequence that remains is about cost rather than accuracy, "
@@ -823,9 +924,12 @@ def discussion(doc: Document, v: dict) -> None:
         "the 2024 epidemic. An interval that is correct on average across a decade while "
         "failing during the one epidemic in the series does not support the decision it "
         "would be used for.",
-        "Bootstrap intervals resample predictions that are serially dependent within and "
-        "across folds. They understate uncertainty and are reported as a lower bound, not "
-        "as a significance test.",
+        "Bootstrap intervals resample whole windows independently, although consecutive "
+        "windows overlap; they are wider than resampling individual predictions but may "
+        "still understate uncertainty.",
+        "The trained models in the confirmatory analysis were fitted on raw counts. The "
+        "log-scale refit that narrows the gap to TimesFM was added after the results were "
+        "seen and is exploratory.",
         "Validation is internal and temporal. No independent surveillance system or "
         "country was used, and the eight cities constitute eight internal validations "
         "rather than a geographic external validation.",
@@ -848,7 +952,7 @@ def declarations(doc: Document) -> None:
          "the InfoDengue API. All analysis code, processed data, result files and the "
          "scripts that generate every table and figure in this manuscript are available at "
          "https://github.com/fabianofilho/dengue-time-series."),
-        ("Funding. ", "No external funding was received."),
+        ("Funding. ", "The authors received no specific funding for this work."),
         ("Conflicts of interest. ", "The authors declare no conflicts of interest."),
         ("Declaration of the use of generative AI and AI-assisted technologies in the writing "
          "process. ",
@@ -859,17 +963,21 @@ def declarations(doc: Document) -> None:
          "analysis output, and take full responsibility for the content of the publication. "
          "The tool is not an author and does not meet authorship criteria."),
         ("Acknowledgements. ", "Surveillance data were obtained from InfoDengue "
-         "(Fiocruz/FGV). TimesFM was developed by Google DeepMind."),
+         "(Fiocruz/FGV). TimesFM was developed by Google Research."),
     ]:
         body(doc, text, bold_lead=lead)
+    flag(doc, "the repository github.com/fabianofilho/dengue-time-series is private; make it "
+              "public (or deposit it on Zenodo with a DOI) before submission, or change the "
+              "data and code availability sentence")
     body(doc, (
-        "Following the CRediT taxonomy. Fabiano Barcellos-Filho: Conceptualization, Data "
+        "Following the CRediT taxonomy. Fabiano Novaes Barcellos Filho: Conceptualization, Data "
         "curation, Formal analysis, Investigation, Methodology, Project administration, "
         "Software, Validation, Visualization, Writing: original draft, Writing: review "
-        "and editing. Jose Trajano: Conceptualization, Formal analysis, Methodology, "
+        "and editing. José Trajano: Conceptualization, Formal analysis, Methodology, "
         "Supervision, Writing: review and editing. Wilson Falco: Data curation, "
-        "Investigation, Software, Writing: review and editing. All authors read and "
-        "approved the final manuscript."
+        "Investigation, Software, Writing: review and editing. Alexandre Chiavegatto Filho: "
+        "Supervision, Writing: review and editing. All authors read and approved the final "
+        "manuscript."
     ), bold_lead="Author contributions. ")
 
 
@@ -896,6 +1004,7 @@ def main() -> None:
     results(doc, v)
     ensembles(doc, v)
     baseline_e_globais(doc, v)
+    exploratory_log(doc, v)
     discussion(doc, v)
     declarations(doc)
 

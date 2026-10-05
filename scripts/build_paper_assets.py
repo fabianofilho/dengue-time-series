@@ -293,6 +293,57 @@ def load_baseline_summary() -> dict:
     return json.loads(caminho.read_text(encoding="utf-8"))
 
 
+TRAINED_RAW = ["sarimax", "lgbm", "xgboost", "catboost", "randomforest", "ridge"]
+
+
+def exploratory_log_summary() -> dict:
+    """Resumo da emenda exploratoria de 2026-10-04 (variantes _log).
+
+    Le os vereditos *_exploratorio_log*, que run_uncertainty grava separados do
+    confirmatorio. Nada aqui entra no veredito do criterio: e analise exploratoria
+    e o texto tem que dizer isso.
+    """
+    resumo = json.loads((RESULTS / "criterion_summary_exploratorio_log.json").read_text(encoding="utf-8"))
+    logs = [m + "_log" for m in TRAINED_RAW]
+    per_city, n_pairs, conf, conf_list, ic_excl = {}, 0, 0, [], 0
+    for slug, (name, _, _) in CITIES.items():
+        v = json.loads((RESULTS / f"criterion_verdict_{RESULT_SLUG[slug]}_exploratorio_log.json").read_text(encoding="utf-8"))
+        rel = v["relmae_por_modelo"]
+        best_raw = min(TRAINED_RAW, key=lambda m: rel[m])
+        best_log = min(logs, key=lambda m: rel[m])
+        per_city[name] = {
+            "relmae_timesfm": round(rel["timesfm"], 3),
+            "best_raw": best_raw, "relmae_best_raw": round(rel[best_raw], 3),
+            "best_log": best_log, "relmae_best_log": round(rel[best_log], 3),
+            "best_overall": v["melhor_por_relmae"],
+            "beat_baseline": v["veredito"]["batem_o_baseline"],
+        }
+        for it in v["veredito"]["itens"]:
+            a, b = it["par"].split("_menos_")
+            if "timesfm" in (a, b) and (a in logs or b in logs):
+                n_pairs += 1
+                ic_excl += it["ic_exclui_zero"]
+                if it["confirmado"]:
+                    conf += 1
+                    outro = b if a == "timesfm" else a
+                    sinal = 1 if a == "timesfm" else -1
+                    conf_list.append({"city": name, "model": outro,
+                                      "timesfm_better": sinal * it["diferenca"] < 0})
+    mean_raw = {m: float(np.mean([json.loads((RESULTS / f"criterion_verdict_{RESULT_SLUG[s]}_exploratorio_log.json").read_text(encoding="utf-8"))["relmae_por_modelo"][m] for s in CITIES])) for m in TRAINED_RAW + logs + ["timesfm"]}
+    return {
+        "status": "exploratory (amendment of 2026-10-04, made after results were seen)",
+        "cities_where_any_model_beats_baseline": resumo["cidades_em_que_algum_modelo_bate_o_baseline"],
+        "per_city": per_city,
+        "timesfm_lowest_relmae_cities": sum(1 for c in per_city.values() if c["best_overall"] == "timesfm"),
+        "timesfm_vs_log_pairs": n_pairs,
+        "timesfm_vs_log_ci_excludes_zero": int(ic_excl),
+        "timesfm_vs_log_confirmed": conf,
+        "timesfm_vs_log_confirmed_list": conf_list,
+        "timesfm_vs_catboost_log_confirmed": sum(1 for c in conf_list if c["model"] == "catboost_log"),
+        "mean_relmae": {m: round(x, 3) for m, x in mean_raw.items()},
+    }
+
+
 def load_city_bootstrap() -> pd.DataFrame:
     """Metricas com IC por bootstrap, uma linha por cidade, modelo e metrica."""
     frames = []
@@ -325,7 +376,16 @@ def load_predictions() -> dict[str, pd.DataFrame]:
     return out
 
 
-def compute_metrics(preds: dict[str, pd.DataFrame]) -> pd.DataFrame:
+def compute_metrics(preds: dict[str, pd.DataFrame], boot_city: pd.DataFrame) -> pd.DataFrame:
+    """Metricas pontuais e IC95 do sMAPE por cidade e modelo.
+
+    O IC vem de scripts/run_uncertainty.py, que reamostra JANELAS inteiras (o
+    mesmo sorteio do criterio, B e semente de results/criterion.json). Ate
+    04/10/2026 este IC reamostrava as 1.428 previsoes como se fossem
+    independentes; como as janelas se sobrepoem e os 12 horizontes de uma janela
+    compartilham a origem, aquele IC saia varias vezes mais estreito que o real.
+    """
+    ic = boot_city[boot_city["metric"] == "smape"].set_index(["city_name", "model"])
     rows = []
     for city, df in preds.items():
         for model in MODELS:
@@ -334,7 +394,8 @@ def compute_metrics(preds: dict[str, pd.DataFrame]) -> pd.DataFrame:
                 continue
             yt = sub["y_true"].to_numpy(dtype=float)
             yp = sub["y_pred"].to_numpy(dtype=float)
-            lo, hi = boot_ci(yt, yp)
+            lo, hi = ic.loc[(city, model), ["ci_low", "ci_high"]]
+            assert abs(ic.loc[(city, model), "point"] - smape(yt, yp)) < 1e-6, (city, model)
             rows.append(
                 {
                     "city": city,
@@ -457,6 +518,7 @@ Censuses (see Methods). Case source: InfoDengue (Fiocruz/FGV); population source
 def table2(met: pd.DataFrame) -> str:
     n_pred = int(met["n"].iloc[0])
     n_pred_tex = f"{n_pred:,}".replace(",", "{,}")
+    boot_b = f"{load_criterion()['bootstrap']['B']:,}".replace(",", "{,}")
     order = [v[0] for v in CITIES.values()]
     lines = []
     for city in order:
@@ -507,12 +569,12 @@ Cities ranked first & {" & ".join(win_cells)} \\
 \vspace{{0.5em}}
 \begin{{minipage}}{{\textwidth}}
 \footnotesize
-Bold indicates the lowest sMAPE in each row. Confidence intervals were obtained by
-resampling the {n_pred_tex} paired predictions with replacement ({BOOT_N} replicates,
-percentile method). Because predictions from the same rolling-origin fold are not
-independent, these intervals understate the true uncertainty and should be read as a
-lower bound on the spread. TimesFM was applied zero-shot, with no city-specific
-training.
+Bold indicates the lowest sMAPE in each row. Confidence intervals resample whole
+rolling-origin windows, each with its 12 horizons, with replacement ({boot_b} replicates,
+percentile method), the same resampling unit and draw as the pre-registered criterion.
+Resampling the {n_pred_tex} predictions individually would treat overlapping windows as
+independent and give intervals several times too narrow. TimesFM was applied zero-shot,
+with no city-specific training.
 \end{{minipage}}
 \end{{table}}
 """
@@ -1635,8 +1697,9 @@ def main() -> None:
     pop = load_population()
     preds = load_predictions()
 
-    print(f"Calculando metricas e bootstrap ({BOOT_N} replicas)...")
-    met = compute_metrics(preds)
+    print("Calculando metricas (IC do sMAPE por janela, de run_uncertainty)...")
+    boot_city = load_city_bootstrap()
+    met = compute_metrics(preds, boot_city)
     met.to_csv(RESULTS / "comparisons" / "metrics_with_ci.csv", index=False)
     print("  escrito results/comparisons/metrics_with_ci.csv")
 
@@ -1659,7 +1722,6 @@ def main() -> None:
     t7, horizon_summary = table7(hor)
     write(TABLES / "table7_horizon.tex", t7)
     crit = load_criterion()
-    boot_city = load_city_bootstrap()
     verdicts = load_city_verdicts()
     t8, baseline_summary = table8(boot_city, verdicts, crit)
     write(TABLES / "table8_baseline.tex", t8)
@@ -1729,10 +1791,16 @@ def main() -> None:
         },
         "descriptive": {r["city"]: r for r in desc_rows},
         "metric_disagreement": disagree,
-        "bootstrap": {"replicates": BOOT_N, "seed": BOOT_SEED, "method": "percentile"},
+        "bootstrap": {
+            "replicates": crit["bootstrap"]["B"],
+            "seed": crit["bootstrap"]["seed"],
+            "unit": "whole rolling-origin window (12 horizons)",
+            "method": "percentile",
+        },
         "intervals": interval_summary,
         "ensembles": ensemble_summary,
         "horizon": horizon_summary,
+        "exploratory_log": exploratory_log_summary(),
     }
     verified["baseline"] = baseline_facts()
     verified["baseline"].update(baseline_summary)

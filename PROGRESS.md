@@ -11,6 +11,7 @@ Este repositório é o **canônico** do estudo. O `dengue-timeseries-skforecast`
 - IC descritivo do sMAPE por janela inteira (B = 10.000, semente do critério), no lugar do bootstrap iid das previsões.
 - `build_docx.py`: autoria nova, afiliações de José e Wilson como `[PENDING]`, Métodos e Resultados exploratórios (Tabela 10), "comparable, not better".
 - Mac reproduz o Windows (árvores até 1e-12) com torch 2.8.0 e timesfm no commit 8a755c9 (ver requirements-optional.txt).
+- LAB-135 (05/10): comentário registrando que o critério de 23/09 (RelMAE, commit 0f7fdd6, fixado 4 min antes da primeira rodada) resolve o bloqueio para a publicação de dengue. A issue já estava Done pelo lado do OPT.
 
 ## Próximos passos
 1. Coautores revisam `build/manuscript_review.docx` (preenchem as afiliações e revisam o enquadramento exploratório).

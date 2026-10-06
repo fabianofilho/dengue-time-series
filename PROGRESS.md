@@ -1,6 +1,6 @@
 # PROGRESS: Dengue Forecast Prediction (DFP)
 
-Atualizado em 2026-10-05 à noite, depois do retorno do grupo "Artigo pred dengue".
+Atualizado em 2026-10-05, 21:40, ao encerrar a sessão (retorno do grupo "Artigo pred dengue" incorporado e versão de 05/10 do .docx enviada).
 
 ## Objetivo
 Artigo comparando o TimesFM 2.5 zero-shot com modelos treinados por cidade na previsão mensal de dengue em 8 capitais, horizonte de 12 meses, para a **PLOS Neglected Tropical Diseases**.
@@ -34,7 +34,7 @@ Só o Wilson escreveu; o José não se manifestou no grupo (o Wilson mandou a af
 - O .docx com as edições do Wilson ainda não voltou; ele disse que mandaria no grupo.
 
 ## Próximos passos
-1. Esperar o .docx revisado do Wilson (intro nova, referências de benchmarking, comparação com estudos brasileiros) e o retorno do José e do Alexandre (o Fabiano fala com o Alexandre). Para ler o grupo de novo: `chat/findMessages` da Evolution com o ambiente do serviço `fermes-mcp` (chave em `/opt/whatsapp-bot/.env`), remoteJid `120363163601111597@g.us`.
+1. Esperar o .docx revisado do Wilson, feito sobre a versão de 05/10 enviada ao grupo às 21:37 (intro nova, referências de benchmarking, comparação com estudos brasileiros), a confirmação do José sobre a afiliação (pedida na mesma mensagem) e o retorno do José e do Alexandre (o Fabiano fala com o Alexandre). Para ler o grupo de novo: `chat/findMessages` da Evolution com o ambiente do serviço `fermes-mcp` (chave em `/opt/whatsapp-bot/.env`), remoteJid `120363163601111597@g.us`.
 2. [feito 05/10] Afiliações em `AFFILIATIONS` do `scripts/build_docx.py` e nome completo do José (José Trajano Feitosa Filho) em `AUTHORS` e no CRediT. A do José veio do Wilson: confirmar com ele. Falta levar ao `.tex` de submissão.
 3. Ao voltar o .docx: incorporar a intro e a discussion do Wilson conferindo cada número e cada referência na fonte (DOI no Crossref), como foi feito com as 28 referências da v2.
 4. Decidir sobre o repositório privado: abrir ou depositar no Zenodo com DOI. A frase de disponibilidade de código depende disso.

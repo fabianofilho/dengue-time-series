@@ -375,6 +375,70 @@ def abstract(doc: Document, v: dict) -> None:
     ), bold_lead="Keywords: ")
 
 
+NUM_WORD = {5: "five", 6: "six", 7: "seven", 8: "eight", 9: "nine"}
+MONTH_EN = {"01": "January", "02": "February", "03": "March", "04": "April", "05": "May",
+            "06": "June", "07": "July", "08": "August", "09": "September", "10": "October",
+            "11": "November", "12": "December"}
+
+# Referencias numeradas da Introducao, em Vancouver, na ordem de citacao.
+# Texto e referencias trazidos pelo Wilson Falco no grupo "Artigo pred dengue" em
+# 06/10/2026 (DFP_introducao_referencias_2026-10-05.docx). A ref. 4 segue a versao
+# publicada (ICML 2024) usada em paper/refs/references.bib, nao o preprint.
+INTRO_REFERENCES = [
+    "World Health Organization. Global dengue surveillance [Internet]. Geneva: World Health "
+    "Organization; [cited 2026 Oct 5]. Available from: https://worldhealthorg.shinyapps.io/dengue_global/",
+    "Leung XY, Islam RM, Adhami M, Ilic D, McDonald L, Palawaththa S, et al. A systematic review "
+    "of dengue outbreak prediction models: Current scenario and future directions. PLoS Negl Trop "
+    "Dis. 2023;17(2):e0010631. doi:10.1371/journal.pntd.0010631",
+    "Roster K, Connaughton C, Rodrigues FA. Machine-Learning-Based Forecasting of Dengue Fever in "
+    "Brazilian Cities Using Epidemiologic and Meteorological Variables. Am J Epidemiol. "
+    "2022;191(10):1803-1812. doi:10.1093/aje/kwac090",
+    "Das A, Kong W, Sen R, Zhou Y. A decoder-only foundation model for time-series forecasting. "
+    "In: Proceedings of the 41st International Conference on Machine Learning (ICML); 2024. "
+    "arXiv:2310.10688",
+]
+
+
+def _periodo(v: dict) -> str:
+    ini, fim = v["study_period"].split(" to ")
+    (ai, mi), (af, mf) = ini.split("-"), fim.split("-")
+    return f"{MONTH_EN[mi]} {ai} to {MONTH_EN[mf]} {af}"
+
+
+def introduction(doc: Document, v: dict) -> None:
+    heading(doc, "INTRODUCTION")
+    n_trained = v["n_models"] - 1  # todos menos o TimesFM
+    body(doc, (
+        "Dengue is a well-known public health problem, accounting for 5,421,759 cases and 4,066 "
+        "deaths worldwide in 2025 [1]. Forecasting has been widely explored in this context, "
+        "ranging from univariate to multivariate specifications and from seasonal ARIMA to "
+        "artificial neural networks [2], and municipal services use such forecasts to schedule "
+        "vector control, procurement and hospital capacity. A problem limits what this "
+        "literature establishes. Forecast accuracy differs substantially between cities and the "
+        "best-performing model is not the same in each [3], so operational use requires per-city "
+        "model selection, retraining and monitoring. Additionally, limitations in metrics "
+        "reporting are observable [2]. Zero-shot time-series foundation models forecast without "
+        "purpose-specific training [4] and would be useful in this scenario, but they have not "
+        "been extensively evaluated on Brazilian dengue surveillance data. We benchmarked a "
+        f"zero-shot foundation model against {NUM_WORD[n_trained]} purpose-trained models and "
+        f"against a seasonal naive baseline, on monthly notified dengue counts for "
+        f"{NUM_WORD[v['n_cities']]} Brazilian state capitals from {_periodo(v)}, under "
+        "rolling-origin cross-validation and a decision rule fixed before the comparison was run."
+    ))
+    flag(doc, "WHO figure (5,421,759 cases and 4,066 deaths in 2025) read by Wilson from the WHO "
+              "global dengue dashboard on 2026-10-05. A WHO report gives over 5 million cases and "
+              "over 3,000 deaths by early December 2025, which is consistent, but the exact value "
+              "was not reproduced here: please re-check it on the dashboard before submission")
+
+
+def references(doc: Document) -> None:
+    heading(doc, "REFERENCES")
+    note(doc, "In this review copy only the Introduction cites by number. The full reference list "
+              "is in the submission manuscript.")
+    for i, ref in enumerate(INTRO_REFERENCES, 1):
+        body(doc, f"{i}. {ref}")
+
+
 def methods(doc: Document, v: dict) -> None:
     heading(doc, "METHODS")
     body(doc, (
@@ -1001,6 +1065,7 @@ def main() -> None:
     doc = setup_document()
     title_block(doc, v, stale)
     abstract(doc, v)
+    introduction(doc, v)
     methods(doc, v)
     results(doc, v)
     ensembles(doc, v)
@@ -1008,6 +1073,7 @@ def main() -> None:
     exploratory_log(doc, v)
     discussion(doc, v)
     declarations(doc)
+    references(doc)
 
     out = Path(args.out)
     out.parent.mkdir(parents=True, exist_ok=True)

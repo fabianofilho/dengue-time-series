@@ -1,6 +1,6 @@
 # PROGRESS: Dengue Forecast Prediction (DFP)
 
-Atualizado em 2026-10-05, 21:40, ao encerrar a sessão (retorno do grupo "Artigo pred dengue" incorporado e versão de 05/10 do .docx enviada).
+Atualizado em 2026-10-06, depois do retorno do grupo da madrugada de 06/10 (introdução do Wilson incorporada ao .docx).
 
 ## Objetivo
 Artigo comparando o TimesFM 2.5 zero-shot com modelos treinados por cidade na previsão mensal de dengue em 8 capitais, horizonte de 12 meses, para a **PLOS Neglected Tropical Diseases**.
@@ -26,17 +26,20 @@ Artigo comparando o TimesFM 2.5 zero-shot com modelos treinados por cidade na pr
 Só o Wilson escreveu; o José não se manifestou no grupo (o Wilson mandou a afiliação dele).
 - **Afiliações (enviadas pelo Wilson às 19:41):**
   - Wilson Falco: Faculdade de Medicina de Catanduva, São Paulo, Brazil (wilson.academic.mail@gmail.com).
-  - José Trajano Feitosa Filho (nome completo): King's College London, London, United Kingdom (jttrajano@me.com). Veio do Wilson, não do José; confirmar com o José.
+  - José Trajano Feitosa Filho (nome completo): King's College London, London, United Kingdom. **Confirmado pelo José em 06/10 00:00.** E-mail acadêmico: jose.filho@kcl.ac.uk (o jttrajano@me.com veio do Wilson). Opcional, sugerido pelo José: setor London Institute for Healthcare Engineering.
 - **Enquadramento:** o Wilson achou o reframe "bom, mais robusto" e a Discussion boa.
 - **Tipo de artigo:** o Wilson perguntou o formato (está olhando as guidelines da PLOS NTD). O Fabiano respondeu que a Introduction deve ser curta, um parágrafo só.
 - **Introdução:** o Wilson redigiu um parágrafo novo (18:36), com referências [1], [2], [3] e [5]. Antes de usar: conferir na fonte o número "5,421,759 cases and 4,066 deaths worldwide in 2025 [1]" (abrangência e ano), achar a referência [4] que falta na numeração, e alinhar a última frase com o texto atual ("six purpose-trained models" bate com os 7 modelos: 6 treinados + TimesFM).
 - **Discussion:** o Wilson se ofereceu para acrescentar referências de benchmarking e comparação com outros estudos brasileiros. O Fabiano autorizou ("pode mexer sim").
-- O .docx com as edições do Wilson ainda não voltou; ele disse que mandaria no grupo.
+- **06/10 00:11:** o Wilson mandou `DFP_introducao_referencias_2026-10-05.docx` (baixado pela Evolution para `build/coautores/`, fora do git): a Introduction de um parágrafo, agora com citações [1] a [4], e 5 referências. Ele também achou bom o parágrafo da escala log e sugeriu referenciar mais os métodos e talvez acrescentar um parágrafo.
+- **Incorporado em 06/10 no `build_docx.py`:** seção INTRODUCTION entre Abstract e Methods, com o texto do Wilson (contagens de modelos e cidades e o período vêm do verified_numbers; o período ficou "February 2010 to November 2024") e seção REFERENCES com as 4 citadas em Vancouver. A ref. 4 (Das) segue a versão publicada (ICML 2024), não o preprint. A entrada `WHO2025dengue` foi para o `references.bib`.
+- **Não incorporado:** a ref. 5 do Wilson (Jain e Sen, blog do TimesFM-3, Google Research, 31/08/2026; a página existe) não é citada no texto. Caberia na limitação de checkpoint único ou junto de "sem covariáveis", já que o TimesFM-3 aceita covariáveis. Decidir com o Wilson.
+- **A conferir:** o número da OMS (5.421.759 casos e 4.066 óbitos em 2025) foi lido pelo Wilson no painel da OMS em 05/10/2026. O painel é ao vivo e não foi reproduzido aqui; um informe da OMS fala em mais de 5 milhões de casos e mais de 3.000 óbitos até o início de dezembro de 2025, o que é coerente. Ficou `[PENDING]` no .docx.
 
 ## Próximos passos
-1. Esperar o .docx revisado do Wilson, feito sobre a versão de 05/10 enviada ao grupo às 21:37 (intro nova, referências de benchmarking, comparação com estudos brasileiros), a confirmação do José sobre a afiliação (pedida na mesma mensagem) e o retorno do José e do Alexandre (o Fabiano fala com o Alexandre). Para ler o grupo de novo: `chat/findMessages` da Evolution com o ambiente do serviço `fermes-mcp` (chave em `/opt/whatsapp-bot/.env`), remoteJid `120363163601111597@g.us`.
-2. [feito 05/10] Afiliações em `AFFILIATIONS` do `scripts/build_docx.py` e nome completo do José (José Trajano Feitosa Filho) em `AUTHORS` e no CRediT. A do José veio do Wilson: confirmar com ele. Falta levar ao `.tex` de submissão.
-3. Ao voltar o .docx: incorporar a intro e a discussion do Wilson conferindo cada número e cada referência na fonte (DOI no Crossref), como foi feito com as 28 referências da v2.
+1. Esperar do Wilson as referências de métodos e de benchmarking e a comparação com estudos brasileiros na Discussion, e o retorno do Alexandre (o Fabiano fala com o Alexandre). Para ler o grupo de novo: `chat/findMessages` da Evolution com o ambiente do serviço `fermes-mcp` (chave em `/opt/whatsapp-bot/.env`), remoteJid `120363163601111597@g.us`.
+2. [feito 05-06/10] Afiliações e nome completo do José no `build_docx.py`, já confirmados pelo José. Decidir se entra o setor do José (London Institute for Healthcare Engineering). Falta levar ao `.tex` de submissão.
+3. [intro feita 06/10] Introduction do Wilson no .docx; no `.tex` de submissão, a seção Introduction atual será substituída por ela (citando `WHO2025dengue`, `Leung2023`, `Roster2022`, `Das2024timesfm`). Decidir se a frase final menciona também os 5 modelos globais multi-série. A Discussion do Wilson, quando vier, entra conferindo cada número e referência na fonte.
 4. Decidir sobre o repositório privado: abrir ou depositar no Zenodo com DOI. A frase de disponibilidade de código depende disso.
 5. Atualizar o manuscrito de submissão no template LaTeX da PLOS NTD (Research Article; template oficial v3.8, `plos2025.bst`; a conversão no repo arquivado em `paper/plos/` serve de modelo). Os `.tex` atuais deste repo ainda trazem os ICs antigos (bootstrap iid), "Barcellos-Filho", "Google DeepMind", autoria sem Alexandre e nada da análise exploratória.
 6. Incluir os ICs na lista curada do `scripts/check_numbers.py`: hoje ele não detecta IC defasado no texto.

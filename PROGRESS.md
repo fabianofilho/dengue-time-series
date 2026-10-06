@@ -1,6 +1,6 @@
 # PROGRESS: Dengue Forecast Prediction (DFP)
 
-Atualizado em 2026-10-06, depois do retorno do grupo da madrugada de 06/10 (introdução do Wilson incorporada ao .docx).
+Atualizado em 2026-10-06, sessão encerrada depois de enviar ao grupo a versão de 06/10 do .docx (introdução do Wilson incorporada).
 
 ## Objetivo
 Artigo comparando o TimesFM 2.5 zero-shot com modelos treinados por cidade na previsão mensal de dengue em 8 capitais, horizonte de 12 meses, para a **PLOS Neglected Tropical Diseases**.
@@ -21,7 +21,7 @@ Artigo comparando o TimesFM 2.5 zero-shot com modelos treinados por cidade na pr
 - Versão de 06/10 do .docx (com a Introduction do Wilson; md5 cc9490d3a6ac8c3a3faed910e64f51c6) no Drive (id 11SoDdZ11lw238Op1U2OPyRJLfLuul7yv) e enviada ao grupo em 06/10 às 06:41 pelo Fermes (status ok em ver_envios), com aviso de que o número da OMS está PENDING e de que a ref. 5 (TimesFM-3) ficou de fora.
 - LAB-135 (05/10): comentário registrando que o critério de 23/09 (commit 0f7fdd6, fixado 4 min antes da primeira rodada) resolve o bloqueio para a publicação de dengue. A issue já estava Done pelo lado do OPT.
 - 05/10 07:10: mensagem com as decisões, o deck (`scripts/build_deck.py` gera `build/DFP_deck_pipeline_AAAA-MM-DD.pdf`, 11 slides, números do verified_numbers) e o .docx de revisão enviados ao grupo de WhatsApp "Artigo pred dengue" (José e Wilson) pelo Fermes. O Alexandre não está no grupo; o Fabiano fala com ele. O grupo tem 3 participantes, mas a busca só identificou o Wilson pelo nome: confirmar que o José recebeu. Os arquivos enviados ficaram em `/opt/fermes-mcp/uploads` na VPS.
-- Remoto em dia até o commit que registrou o envio (`71b7bef`).
+- Remoto em dia em 06/10 (push depois do envio da versão de 06/10). Próxima sessão: `git fetch` antes de tudo.
 
 ## Retorno do grupo (05/10, lido na Evolution API)
 Só o Wilson escreveu; o José não se manifestou no grupo (o Wilson mandou a afiliação dele).

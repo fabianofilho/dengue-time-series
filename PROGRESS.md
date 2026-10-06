@@ -35,7 +35,7 @@ Só o Wilson escreveu; o José não se manifestou no grupo (o Wilson mandou a af
 
 ## Próximos passos
 1. Esperar o .docx revisado do Wilson (intro nova, referências de benchmarking, comparação com estudos brasileiros) e o retorno do José e do Alexandre (o Fabiano fala com o Alexandre). Para ler o grupo de novo: `chat/findMessages` da Evolution com o ambiente do serviço `fermes-mcp` (chave em `/opt/whatsapp-bot/.env`), remoteJid `120363163601111597@g.us`.
-2. Passar as afiliações para `AFFILIATIONS` em `scripts/build_docx.py` (e o nome completo do José em `AUTHORS`) e depois para o `.tex`. A do José só depois de ele confirmar.
+2. [feito 05/10] Afiliações em `AFFILIATIONS` do `scripts/build_docx.py` e nome completo do José (José Trajano Feitosa Filho) em `AUTHORS` e no CRediT. A do José veio do Wilson: confirmar com ele. Falta levar ao `.tex` de submissão.
 3. Ao voltar o .docx: incorporar a intro e a discussion do Wilson conferindo cada número e cada referência na fonte (DOI no Crossref), como foi feito com as 28 referências da v2.
 4. Decidir sobre o repositório privado: abrir ou depositar no Zenodo com DOI. A frase de disponibilidade de código depende disso.
 5. Atualizar o manuscrito de submissão no template LaTeX da PLOS NTD (Research Article; template oficial v3.8, `plos2025.bst`; a conversão no repo arquivado em `paper/plos/` serve de modelo). Os `.tex` atuais deste repo ainda trazem os ICs antigos (bootstrap iid), "Barcellos-Filho", "Google DeepMind", autoria sem Alexandre e nada da análise exploratória.

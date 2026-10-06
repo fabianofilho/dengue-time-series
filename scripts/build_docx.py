@@ -58,17 +58,18 @@ ENS_LABEL = {
 # pelo proprio coautor no .docx de revisao.
 AUTHORS = [
     ("Fabiano Novaes Barcellos Filho", "1*"),
-    ("José Trajano", "2"),
+    ("José Trajano Feitosa Filho", "2"),
     ("Wilson Falco", "3"),
     ("Alexandre Chiavegatto Filho", "1"),
 ]
 AFFILIATIONS = [
     ("1", "Laboratório de Big Data e Análise Preditiva em Saúde (LABDAPS), Faculdade de "
           "Saúde Pública, Universidade de São Paulo, São Paulo, Brazil"),
-    ("2", None),
-    ("3", None),
+    # Enviadas pelo Wilson no grupo "Artigo pred dengue" em 05/10/2026.
+    ("2", "King's College London, London, United Kingdom"),
+    ("3", "Faculdade de Medicina de Catanduva, São Paulo, Brazil"),
 ]
-AFF_PENDING = {"2": "José Trajano", "3": "Wilson Falco"}
+AFF_PENDING: dict[str, str] = {}
 
 CITY_ORDER = [
     "Sao Paulo", "Rio de Janeiro", "Belo Horizonte", "Brasilia",
@@ -973,7 +974,7 @@ def declarations(doc: Document) -> None:
         "Following the CRediT taxonomy. Fabiano Novaes Barcellos Filho: Conceptualization, Data "
         "curation, Formal analysis, Investigation, Methodology, Project administration, "
         "Software, Validation, Visualization, Writing: original draft, Writing: review "
-        "and editing. José Trajano: Conceptualization, Formal analysis, Methodology, "
+        "and editing. José Trajano Feitosa Filho: Conceptualization, Formal analysis, Methodology, "
         "Supervision, Writing: review and editing. Wilson Falco: Data curation, "
         "Investigation, Software, Writing: review and editing. Alexandre Chiavegatto Filho: "
         "Supervision, Writing: review and editing. All authors read and approved the final "

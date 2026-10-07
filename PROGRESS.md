@@ -37,6 +37,10 @@ Só o Wilson escreveu; o José não se manifestou no grupo (o Wilson mandou a af
 - **Não incorporado:** a ref. 5 do Wilson (Jain e Sen, blog do TimesFM-3, Google Research, 31/08/2026; a página existe) não é citada no texto. Caberia na limitação de checkpoint único ou junto de "sem covariáveis", já que o TimesFM-3 aceita covariáveis. Decidir com o Wilson.
 - **A conferir:** o número da OMS (5.421.759 casos e 4.066 óbitos em 2025) foi lido pelo Wilson no painel da OMS em 05/10/2026. O painel é ao vivo e não foi reproduzido aqui; um informe da OMS fala em mais de 5 milhões de casos e mais de 3.000 óbitos até o início de dezembro de 2025, o que é coerente. Ficou `[PENDING]` no .docx.
 
+- **06/10 depois do envio da versão de 06/10 (lido em 07/10):** o Wilson reagiu e disse que "mais tarde" vê o ponto do número da OMS e da ref. 5. Sobre o repositório: "pessoalmente tanto faz", e lembrou que o GitHub rende visualizações; a decisão fica com o Fabiano (sugestão: GitHub público com arquivamento no Zenodo pela integração, para citar DOI). Duas mensagens dele às 12:34 e 12:41 não são legíveis pela Evolution (provavelmente visualização única ou enquete): conferir no celular. O José não se manifestou depois da confirmação da afiliação.
+
+Comunicação: grupo de WhatsApp "Artigo pred dengue" (conectado na /zap em 07/10).
+
 ## Próximos passos
 1. Esperar do Wilson as referências de métodos e de benchmarking e a comparação com estudos brasileiros na Discussion, e o retorno do Alexandre (o Fabiano fala com o Alexandre). Para ler o grupo de novo: `chat/findMessages` da Evolution com o ambiente do serviço `fermes-mcp` (chave em `/opt/whatsapp-bot/.env`), remoteJid `120363163601111597@g.us`.
 2. [feito 05-06/10] Afiliações e nome completo do José no `build_docx.py`, já confirmados pelo José. Decidir se entra o setor do José (London Institute for Healthcare Engineering). Falta levar ao `.tex` de submissão.

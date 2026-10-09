@@ -1,9 +1,10 @@
 """
-Compara o PDF do LaTeX com o .docx de revisao e acusa divergencia.
+Compara o PDF de submissao com o .docx de revisao e acusa divergencia.
 
-Os dois sao gerados do mesmo verified_numbers.json, de proposito, para que nao
-sejam derivados um do outro. A consequencia e que qualquer divergencia entre
-eles e bug detectavel, e este script e quem detecta.
+Desde 09/10/2026 os dois saem da mesma fonte (paper/plos/manuscript_src.tex) por
+scripts/build_plos.py: o PDF pelo tectonic e o .docx pelo pandoc. A conversao do
+pandoc pode perder numero, tabela ou figura sem avisar, e este script e quem
+detecta.
 
 Confere tres coisas:
   numeros    todo numero com tres ou mais digitos que aparece num e nao no outro
@@ -24,17 +25,23 @@ import docx
 import pymupdf
 
 ROOT = Path(__file__).resolve().parent.parent
-PDF = ROOT / "build" / "manuscript.pdf"
-DOCX = ROOT / "build" / "manuscript_review.docx"
+PDF = ROOT / "build" / "plos" / "manuscript.pdf"
+DOCX = ROOT / "build" / "plos" / "manuscript_review.docx"
 NUMBERS = ROOT / "paper" / "verified_numbers.json"
 
-# Secoes que a revista alvo exige, e que precisam existir nos dois artefatos.
+# Secoes que a PLOS NTD exige no manuscrito. Funding, competing interests,
+# autoria e disponibilidade de dados vao nos campos do sistema
+# (paper/plos/submission_fields.md), nao aqui.
 REQUIRED = [
-    "Ethical Considerations",
-    "Declaration of the use of generative AI",
-    "Author contributions",
-    "Data and code availability",
-    "Conflicts of interest",
+    "Abstract",
+    "Author summary",
+    "Introduction",
+    "Methods",
+    "Ethics statement",
+    "Results",
+    "Discussion",
+    "Acknowledgments",
+    "References",
 ]
 
 
@@ -81,7 +88,7 @@ def key_numbers() -> dict[str, str]:
 
 def main() -> None:
     if not PDF.exists() or not DOCX.exists():
-        raise SystemExit("gere os dois artefatos antes: tectonic e scripts/build_docx.py")
+        raise SystemExit("gere os dois artefatos antes: python scripts/build_plos.py")
 
     tex, doc = pdf_text(), docx_text()
     problems = 0
@@ -108,12 +115,12 @@ def main() -> None:
     print("\n=== numeracao de tabela e figura ===")
 
     def labels(txt: str, sep: str) -> list[str]:
-        """Rotulos presentes no texto. O LaTeX usa 'Table 1:' e o Word 'Table 1.'."""
-        pat = r"(Table|Figure) (\d+)" + re.escape(sep)
+        """Rotulos de legenda. O template da PLOS usa 'Table 1.' e 'Fig 1.' nos dois."""
+        pat = r"(Table|Fig) (\d+)" + re.escape(sep)
         return sorted({f"{k} {n}" for k, n in re.findall(pat, txt)},
                       key=lambda x: (x.split()[0], int(x.split()[1])))
 
-    lt, ld = labels(tex, ":"), labels(doc, ".")
+    lt, ld = labels(tex, "."), labels(doc, ".")
     so_pdf = [x for x in lt if x not in ld]
     so_doc = [x for x in ld if x not in lt]
     status = "OK  " if not so_pdf and not so_doc else "ERRO"
@@ -127,7 +134,7 @@ def main() -> None:
 
 
     print("\n=== marcadores de pendencia ===")
-    for name, txt, marker in (("PDF", tex, "[MISSING"), ("DOCX", doc, "[PENDING")):
+    for name, txt, marker in (("PDF", tex, "[PENDING"), ("DOCX", doc, "[PENDING")):
         n = txt.count(marker)
         status = "OK  " if n == 0 else "ERRO"
         if n:

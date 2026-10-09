@@ -1,5 +1,8 @@
 """
-Audita a declaracao CRediT do manuscrito.
+Audita a declaracao CRediT da submissao (paper/plos/submission_fields.md).
+
+Na PLOS a autoria vai no campo do sistema, nao no manuscrito, entao a declaracao
+mora no arquivo dos campos prontos para colar.
 
 Confere os 14 papeis da taxonomia, a ordem alfabetica dentro de cada autor, a
 contradicao entre Funding acquisition e a declaracao de ausencia de
@@ -18,11 +21,10 @@ CREDIT = {
     "Writing: original draft", "Writing: review and editing",
 }
 
-s = io.open("paper/manuscript.tex", encoding="utf-8").read()
-blk = s[s.index("Author contributions"): s.index("All authors read")]
-blk = " ".join(blk.split())
+s = io.open("paper/plos/submission_fields.md", encoding="utf-8").read()
+blk = s[s.index("Author Contributions"): s.index("All authors read")]
 
-authors = re.findall(r"\\textbf\{([^}]+):\}([^\\]*)", blk)
+authors = re.findall(r"\*\*([^*\n]+):\*\* ([^\n]*)", blk)
 bad = 0
 for name, roles in authors:
     ps = [p.strip().rstrip(".") for p in roles.split(",") if p.strip()]
@@ -38,7 +40,7 @@ for name, roles in authors:
 
 print()
 funding = "Funding acquisition" in blk
-nofund = "No external funding was received" in s
+nofund = "received no specific funding" in s
 print(f"Funding acquisition declarado: {funding} | artigo nega financiamento: {nofund}")
 if funding and nofund:
     print("   CONTRADICAO: Funding acquisition com financiamento negado")

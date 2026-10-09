@@ -1,0 +1,36 @@
+% gerado por scripts/build_paper_assets.py -- nao editar a mao
+\begin{table}[htbp]
+\centering
+\small
+\setlength{\tabcolsep}{5pt}
+\caption{Exploratory analysis: relative MAE of TimesFM and of the best trained model
+fitted on raw counts and on the log scale, by city.}
+\label{tab:exploratory}
+\begin{tabular}{lccc}
+\toprule
+City & TimesFM & Best trained, raw scale & Best trained, log scale \\
+\midrule
+Sao Paulo & 0.961 & 1.003 (CatBoost) & 0.965 (Random Forest) \\
+Rio de Janeiro & 0.851 & 1.112 (SARIMAX) & 1.016 (CatBoost) \\
+Belo Horizonte & 0.760 & 0.984 (CatBoost) & 0.694 (CatBoost) \\
+Brasilia & 0.887 & 0.883 (CatBoost) & 0.922 (CatBoost) \\
+Fortaleza & 0.841 & 1.101 (SARIMAX) & 0.901 (CatBoost) \\
+Recife & 0.665 & 1.022 (Ridge) & 0.678 (Ridge) \\
+Manaus & 0.966 & 0.967 (Ridge) & 0.899 (Random Forest) \\
+Salvador & 0.699 & 0.792 (CatBoost) & 0.738 (Random Forest) \\
+\midrule
+Mean across cities & 0.829 & 1.134 (CatBoost) & 0.872 (CatBoost) \\
+\bottomrule
+\end{tabular}
+
+\vspace{0.5em}
+\begin{minipage}{\textwidth}
+\footnotesize
+Relative MAE is the MAE of the model divided by the MAE of the seasonal naive forecast
+over the same folds and horizons; below 1 means lower error than the baseline. The
+log-scale models were fitted on $\log(1+y)$ and back-transformed. This analysis was added
+on 4 October 2026, after the main results had been seen, and is exploratory. No model
+satisfies the pre-registered rule for beating the baseline in any city
+(0 of 8).
+\end{minipage}
+\end{table}

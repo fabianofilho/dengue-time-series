@@ -1,57 +1,22 @@
-# Cover Letter
+# Cover letter (PLOS Neglected Tropical Diseases)
 
-> Carta alternativa, para o caso de a submissao a Revista da Sociedade Brasileira de
-> Medicina Tropical nao seguir adiante. A carta da revista alvo e
-> `cover_letter_rsbmt.md`. A afiliacao continua pendente e esta marcada abaixo.
+> Os números abaixo repetem o manuscrito e são conferidos por `scripts/check_numbers.py`.
+> Antes de enviar: confirmar que todos os autores aprovaram a versão final.
 
-Dear Editor,
+Dear Editors,
 
-We submit our manuscript "Zero-Shot Foundation Models Versus Purpose-Trained Models for
-Dengue Forecasting in Eight Brazilian State Capitals (2010 to 2024): A Rolling-Origin
-Benchmark" for consideration as an original research article in PLOS Neglected Tropical
-Diseases.
+We submit our manuscript "Zero-shot foundation model versus purpose-trained models for dengue forecasting in eight Brazilian state capitals: A rolling-origin benchmark against a seasonal naive baseline" for consideration as a Research Article in PLOS Neglected Tropical Diseases.
 
-Dengue affects millions of Brazilians each year, with 2024 recording the highest burden on
-record. Forecasting monthly case counts matters for planning vector control, procurement
-and hospital capacity. Most available tools require city-specific training and frequent
-retraining, a maintenance burden that limits scaling across the 5,570 municipalities
-covered by Brazil's surveillance network. We evaluated whether a zero-shot foundation model
-can substitute for that pipeline, and, once the work was under way, whether any model in
-the comparison is worth running at all.
+Dengue is the most important arboviral disease in Brazil, and 2024 brought the largest epidemic on record. Municipal forecasts of monthly case counts support the planning of vector control, supplies and hospital capacity, but the models in use must be trained and maintained city by city, which limits how many of Brazil's municipalities can have them. Time-series foundation models forecast a new series without being trained on it, and could remove that burden. We tested whether one of them, TimesFM 2.5, forecasts monthly notified dengue as well as six models trained on each city, and, more fundamentally, whether any of these models improves on a seasonal naive forecast that repeats the same month of the previous year.
 
-The second question is the one we lead with, and the answer is no. We benchmarked seven
-models on 15 years of monthly InfoDengue data for eight capitals under a single
-rolling-origin design (119 folds per city, 79,968 predictions), and compared every one of
-them against a seasonal naive forecast that repeats the same month of the previous year.
-The decision rule was written to the project repository and committed before the comparison
-ran, so the ordering is verifiable in the public history. No model beats that baseline in
-any of the eight cities: point estimates favour the models, with the best model in each
-city reaching a relative MAE between 0.665 and 0.961, but a Diebold-Mariano test rejects
-equal accuracy at no more than three of the twelve horizon steps, against the six the rule
-requires. In Belo Horizonte the baseline is better than every model we fitted on the
-study's primary metric.
+The design is what we believe makes the work useful to the journal's readers. We evaluated 79,968 forecasts by rolling-origin cross-validation in eight state capitals over fifteen years, and we fixed the decision rule for beating the seasonal naive forecast in the project repository before running the comparison; the order of the commits is public. Under that rule no model, including the foundation model and five models pooled across cities, beat the seasonal naive forecast in any city: the best model's mean absolute error relative to the naive forecast ranged from 0.665 to 0.961, but the improvement was not consistent across forecast horizons. Within the model comparison, the foundation model was comparable to the best city-trained models without any local training (mean relative error 0.829 against 0.872 for CatBoost fitted on log counts, in an exploratory analysis we label as such). We report these results without presenting the model ranking as evidence for deployment.
 
-Within the model comparison, TimesFM 2.5 ranked first by sMAPE in seven of eight cities
-without any city-specific training, averaging 74.6% against 85.0% for CatBoost. That
-advantage is about the cost of the pipeline rather than forecast quality, and it depends on
-which models are compared: adding five global models fitted on all cities jointly moves the
-count to five of eight. The margin is also city-dependent, and in Sao Paulo the two leading
-models have overlapping intervals (75.5% against 80.1%), so we do not treat that gap as
-established.
+We think the findings matter for dengue control and policy in two ways. First, a single pre-trained model performing on par with per-city pipelines lowers the cost of extending forecasting to municipalities without modelling capacity. Second, and more broadly, a ranking among forecasting models is compatible with none of them being useful; we recommend that dengue forecasting studies report a seasonal naive benchmark and a decision rule fixed in advance, and we provide the code to do so.
 
-We present this as a reference benchmark rather than as support for deployment, and we
-recommend that dengue forecasting studies report a trivial baseline and a pre-registered
-decision rule as a matter of course. Without both, a ranking among models is compatible
-with none of the models being useful.
-
-The manuscript has not been submitted elsewhere. All authors contributed substantially and
-approved the final version. We declare no conflict of interest and received no external
-funding. Code, processed data, the pre-registered decision rule and the scripts that
-regenerate every table and figure are publicly available at
-https://github.com/fabianofilho/dengue-time-series. Reporting follows TRIPOD+AI.
+All data are public (InfoDengue), and the code that regenerates every table, figure and number in the manuscript will be openly available with a DOI. The manuscript is not under consideration elsewhere, all authors have approved it, and the authors declare no competing interests. The study received no specific funding.
 
 Sincerely,
 
-Fabiano Barcellos-Filho
-[Institution: to complete]
-fabiano.nb@gmail.com
+Fabiano Novaes Barcellos Filho, on behalf of all authors
+Laboratório de Big Data e Análise Preditiva em Saúde (LABDAPS), Faculdade de Saúde Pública, Universidade de São Paulo
+fabiano.filho@usp.br, ORCID 0000-0002-1491-2700

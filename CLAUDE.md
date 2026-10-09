@@ -212,7 +212,11 @@ Resultado: com os globais no conjunto, o ensemble bate o melhor membro em 3 de
 - `PYTHONPATH=src python scripts/run_ensembles.py` - combinacoes, 7 membros
 - `PYTHONPATH=src python scripts/run_ensembles.py --members publicados,globais --out-suffix _with_global`
 - `PYTHONPATH=src python scripts/build_paper_assets.py && python scripts/build_readme.py`
-- `PYTHONPATH=src python -m pytest tests/ -q` - 84 testes
+- `make paper PYTHON=.venv/bin/python` - manuscrito PLOS NTD: gera de paper/plos/manuscript_src.tex
+  o PDF de submissao, os TIFF e o .docx de revisao em build/plos/, e roda check_numbers,
+  check_credit e check_artifacts. O texto do artigo mora SO em manuscript_src.tex; numero
+  entra por \V{expr} contra verified_numbers.json, nunca digitado
+- `PYTHONPATH=src python -m pytest tests/ -q` - 90 testes
 - `make` - ver alvos disponiveis
 
 Prophet e TimesFM estao em requirements-optional.txt. O Prophet saiu do default

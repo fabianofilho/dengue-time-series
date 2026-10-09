@@ -1,6 +1,6 @@
 # PROGRESS: Dengue Forecast Prediction (DFP)
 
-Atualizado em 2026-10-07, sessão encerrada depois de ler o retorno do grupo à versão de 06/10 do .docx e conectar o projeto ao grupo na /zap.
+Atualizado em 2026-10-09: pacote de submissão PLOS montado a partir de uma fonte única (ver "Decisões de 09/10").
 
 ## Objetivo
 Artigo comparando o TimesFM 2.5 zero-shot com modelos treinados por cidade na previsão mensal de dengue em 8 capitais, horizonte de 12 meses, para a **PLOS Neglected Tropical Diseases**.
@@ -12,11 +12,21 @@ Artigo comparando o TimesFM 2.5 zero-shot com modelos treinados por cidade na pr
 - **Variantes log1p como emenda EXPLORATÓRIA** em `results/criterion.json`: foi decidida depois de ver resultados (os da v2), então não substitui o veredito confirmatório e o texto tem que dizer isso.
 - **IC do sMAPE por janela inteira** (mesmo sorteio do critério, B = 10.000), no lugar do bootstrap iid das 1.428 previsões, que saía estreito demais.
 
+## Decisões de 09/10/2026 e por quê
+- **Uma fonte só para o manuscrito:** `paper/plos/manuscript_src.tex`. O texto vivia em dois lugares que divergiram: `paper/manuscript.tex` (parado em 23/09, com as 37 citações e os ICs antigos) e `scripts/build_docx.py` (o que os coautores revisaram, sem citação fora da Introdução e sem a regra de decisão no Methods). `scripts/build_plos.py` gera da mesma fonte o PDF de submissão (`build/plos/manuscript.pdf`, sem figuras, como a PLOS pede), os TIFF (`build/plos/figures/Fig1-10.tif`) e o .docx de revisão (`build/plos/manuscript_review.docx`, via pandoc, com figuras, citações e numeração resolvidas pelo .aux do PDF). Números entram por `\V{expr}` avaliado contra o `verified_numbers.json`; nada digitado.
+- **Literatura restaurada e atualizada** (Sprint, Silva, Freitas, Palmer, Bannoud, Belo Horizonte), por decisão do Fabiano: o Wilson revisa e complementa em vez de escrever do zero.
+- **Setor do José incluído** (London Institute for Healthcare Engineering, King's College London).
+- **Repositório: GitHub público + Zenodo com DOI** (decisão do Fabiano). Abrir o repositório e gerar o DOI ficam para o OK final dele; até lá, `\pending` no texto e no `submission_fields.md`.
+- **Aposentados (recuperáveis pelo git):** `paper/manuscript.tex`, `manuscript_rsbmt.tex`, `manuscript.md`, `supplementary.tex`, `submission/cover_letter_rsbmt.md`, `highlights.md`, `peer_review_checklist.md`, `scripts/build_docx.py`, `scripts/check_limits.py`. Sem S1 Appendix: a PLOS não limita tamanho e as 10 tabelas e 10 figuras estão no texto.
+- **Correção encontrada no .docx de 06/10:** dizia que o TimesFM é o melhor por MAE em todas as cidades; em Brasília o melhor por MAE é o CatBoost (7 de 8). Agora o número é calculado e o `check_numbers.py` confere.
+- **Mudanças de conteúdo em relação ao .docx de 06/10** (listadas no topo do .docx de revisão para os coautores): abstract no formato PLOS e liderado pelo veredito contra o baseline (~300 palavras, o limite); Author summary novo (192 palavras); Methods com regra de decisão, modelos globais e combinações; baseline logo depois do ranking nos Results; literatura restaurada; citações em todo o texto; título passa a nomear o baseline; funding/competing interests/CRediT foram para `paper/plos/submission_fields.md`.
+- **Checagens:** `check_numbers.py` (fonte nova, 15 afirmações, os 56 ICs da Tabela 2, carta, literais proibidos como "Barcellos-Filho" e "Google DeepMind"), `check_artifacts.py` (PDF contra .docx), `check_credit.py` (lê `submission_fields.md`). `make paper` roda tudo. Teste de mutação feito: IC alterado e vitória por MAE alterada são acusados.
+
 ## Estado
 - Confirmatório (critério de 23/09, RelMAE, inalterado): nenhum modelo bate o seasonal naive, 0 de 8 cidades. A sensibilidade em sMAPE concorda.
 - Exploratório (log1p): também 0 de 8. RelMAE médio: TimesFM 0,829; CatBoost log 0,872 (1,134 na escala bruta). TimesFM tem o menor valor pontual em 5 de 8, mas contra as variantes log só 3 de 48 pares são confirmados (todos em Brasília), 0 contra o CatBoost log. Leitura: TimesFM comparável aos melhores treinados, não superior.
 - `run_uncertainty.py` com escopo explícito: confirmatório e exploratório (`*_exploratorio_log*`) em arquivos separados; o confirmatório reproduz o commitado (ruído < 1e-11 entre Mac e Windows).
-- `build_docx.py` gera o .docx de revisão com a autoria nova, `[PENDING]` nas afiliações de José e Wilson, Métodos e Resultados exploratórios (Tabela 10) e "comparable, not better". Cópias no Drive (`Labs/Dengue Time Series/`, como .docx): versão de 04/10 sem afiliações (id 1BXD-CfJP197kYml5GUrl74OrJRmElaOY, a que foi ao grupo) e versão de 05/10 com afiliações (id 12__dIaNJFzDEYkj1S4z7ls4TyiMHQaDy, linkada na Documentação do projeto). Versão nova não sobrescreve a anterior. A versão de 05/10 foi enviada ao grupo em 05/10 às 21:37, pedindo ao José que confirme a afiliação.
+- [até 06/10] `build_docx.py` (aposentado em 09/10) gerava o .docx de revisão com a autoria nova, `[PENDING]` nas afiliações de José e Wilson, Métodos e Resultados exploratórios (Tabela 10) e "comparable, not better". Cópias no Drive (`Labs/Dengue Time Series/`, como .docx): versão de 04/10 sem afiliações (id 1BXD-CfJP197kYml5GUrl74OrJRmElaOY, a que foi ao grupo) e versão de 05/10 com afiliações (id 12__dIaNJFzDEYkj1S4z7ls4TyiMHQaDy, linkada na Documentação do projeto). Versão nova não sobrescreve a anterior. A versão de 05/10 foi enviada ao grupo em 05/10 às 21:37, pedindo ao José que confirme a afiliação.
 - Documentação do projeto no Drive (Google Doc 1iJsELmCIHUxL5WLn2fRol_Lhf45yq1xtoCmrKRYbQbQ) atualizada em 06/10: link para a versão de 06/10, item de Estado com a intro do Wilson e a confirmação do José, pendência de afiliação removida.
 - Versão de 06/10 do .docx (com a Introduction do Wilson; md5 cc9490d3a6ac8c3a3faed910e64f51c6) no Drive (id 11SoDdZ11lw238Op1U2OPyRJLfLuul7yv) e enviada ao grupo em 06/10 às 06:41 pelo Fermes (status ok em ver_envios), com aviso de que o número da OMS está PENDING e de que a ref. 5 (TimesFM-3) ficou de fora.
 - LAB-135 (05/10): comentário registrando que o critério de 23/09 (commit 0f7fdd6, fixado 4 min antes da primeira rodada) resolve o bloqueio para a publicação de dengue. A issue já estava Done pelo lado do OPT.
@@ -26,8 +36,8 @@ Artigo comparando o TimesFM 2.5 zero-shot com modelos treinados por cidade na pr
 ## Retorno do grupo (05/10, lido na Evolution API)
 Só o Wilson escreveu; o José não se manifestou no grupo (o Wilson mandou a afiliação dele).
 - **Afiliações (enviadas pelo Wilson às 19:41):**
-  - Wilson Falco: Faculdade de Medicina de Catanduva, São Paulo, Brazil (wilson.academic.mail@gmail.com).
-  - José Trajano Feitosa Filho (nome completo): King's College London, London, United Kingdom. **Confirmado pelo José em 06/10 00:00.** E-mail acadêmico: jose.filho@kcl.ac.uk (o jttrajano@me.com veio do Wilson). Opcional, sugerido pelo José: setor London Institute for Healthcare Engineering.
+  - Wilson Falco: Faculdade de Medicina de Catanduva, São Paulo, Brazil.
+  - José Trajano Feitosa Filho (nome completo): King's College London, London, United Kingdom. **Confirmado pelo José em 06/10 00:00.** Setor London Institute for Healthcare Engineering incluído em 09/10 (decisão do Fabiano). Contatos dos coautores ficam na memória do projeto, não aqui.
 - **Enquadramento:** o Wilson achou o reframe "bom, mais robusto" e a Discussion boa.
 - **Tipo de artigo:** o Wilson perguntou o formato (está olhando as guidelines da PLOS NTD). O Fabiano respondeu que a Introduction deve ser curta, um parágrafo só.
 - **Introdução:** o Wilson redigiu um parágrafo novo (18:36), com referências [1], [2], [3] e [5]. Antes de usar: conferir na fonte o número "5,421,759 cases and 4,066 deaths worldwide in 2025 [1]" (abrangência e ano), achar a referência [4] que falta na numeração, e alinhar a última frase com o texto atual ("six purpose-trained models" bate com os 7 modelos: 6 treinados + TimesFM).
@@ -42,15 +52,15 @@ Só o Wilson escreveu; o José não se manifestou no grupo (o Wilson mandou a af
 Comunicação: grupo de WhatsApp "Artigo pred dengue" (conectado na /zap em 07/10).
 
 ## Próximos passos
-1. Esperar do Wilson as referências de métodos e de benchmarking e a comparação com estudos brasileiros na Discussion, e o retorno do Alexandre (o Fabiano fala com o Alexandre). Para ler o grupo de novo: `chat/findMessages` da Evolution com o ambiente do serviço `fermes-mcp` (chave em `/opt/whatsapp-bot/.env`), remoteJid `120363163601111597@g.us`.
-2. [feito 05-06/10] Afiliações e nome completo do José no `build_docx.py`, já confirmados pelo José. Decidir se entra o setor do José (London Institute for Healthcare Engineering). Falta levar ao `.tex` de submissão.
-3. [intro feita 06/10] Introduction do Wilson no .docx; no `.tex` de submissão, a seção Introduction atual será substituída por ela (citando `WHO2025dengue`, `Leung2023`, `Roster2022`, `Das2024timesfm`). Decidir se a frase final menciona também os 5 modelos globais multi-série. A Discussion do Wilson, quando vier, entra conferindo cada número e referência na fonte.
-4. Decidir sobre o repositório privado: abrir ou depositar no Zenodo com DOI. A frase de disponibilidade de código depende disso.
-5. Atualizar o manuscrito de submissão no template LaTeX da PLOS NTD (Research Article; template oficial v3.8, `plos2025.bst`; a conversão no repo arquivado em `paper/plos/` serve de modelo). Os `.tex` atuais deste repo ainda trazem os ICs antigos (bootstrap iid), "Barcellos-Filho", "Google DeepMind", autoria sem Alexandre e nada da análise exploratória.
-6. Incluir os ICs na lista curada do `scripts/check_numbers.py`: hoje ele não detecta IC defasado no texto.
-7. Opcional: renderizar o .docx em PDF para conferência visual (só houve validação estrutural).
+1. **Coautores:** mandar ao grupo o .docx de revisão novo (`build/plos/manuscript_review.docx`), com a lista do que mudou desde 06/10; pedir ao Wilson que revise e complemente a "Comparison with the literature" e confira as referências de métodos; o Fabiano manda ao Alexandre. Só com OK do Fabiano. Ler o grupo antes: `/zap grupo`.
+2. **Número da OMS** (`\pending` na Introdução): o Wilson confere no painel; se não voltar, trocar pelo informe da OMS (mais de 5 milhões de casos e mais de 3.000 óbitos em 2025).
+3. **Repositório público + Zenodo:** antes de abrir, limpar o que ainda for pessoal (o histórico tem e-mails dos coautores no PROGRESS desde o commit 2ac64d6; recomendação: manter o histórico, porque ele prova a ordem dos commits do critério; confirmar com o Fabiano). Depois, release no GitHub com a integração do Zenodo, DOI no Methods (`\pending`) e no `submission_fields.md`.
+4. **CRediT:** confirmar os papéis com José, Wilson e Alexandre (Alexandre hoje só com Supervision e revisão).
+5. **Submissão:** taxa e Fee Assistance conferidos no navegador (as páginas recusaram acesso automatizado; US$ 2.670 é dado indireto); ORCID do autor correspondente no sistema; subir PDF, TIFF e carta conforme `paper/plos/submission_fields.md`.
+6. Opcional: a ref. 5 do Wilson (blog do TimesFM-3) e a `McGough2021` (no .bib, não citada).
+7. Opcional: checklist TRIPOD+AI como S1 (a PLOS não exige para este tipo de estudo).
 
-Para reenviar material ao grupo: regenerar com `build_docx.py`/`build_deck.py`, copiar por scp (root) para `/opt/fermes-mcp/uploads` com dono `automacoes`, e mandar pelo Fermes só depois do OK do Fabiano.
+Para reenviar material ao grupo: `make paper PYTHON=.venv/bin/python` (ou `python scripts/build_plos.py`) e `build_deck.py`; copiar por scp (root) para `/opt/fermes-mcp/uploads` com dono `automacoes`, e mandar pelo Fermes só depois do OK do Fabiano.
 
 ## Restrições
 - Números só por script (`paper/verified_numbers.json`, `build_paper_assets.py`); nada digitado.

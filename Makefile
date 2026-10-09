@@ -48,19 +48,16 @@ benchmark-all:
 # paper-assets recalcula toda tabela e figura dos dados brutos. Rode sempre
 # antes de compilar: as tabelas em paper/tables/ sao geradas, nao editadas.
 paper-assets:
-	$(PYTHON) scripts/build_paper_assets.py
+	PYTHONPATH=src $(PYTHON) scripts/build_paper_assets.py
 
+# Manuscrito PLOS NTD: uma fonte (paper/plos/manuscript_src.tex), dois artefatos
+# (build/plos/manuscript.pdf para submeter, manuscript_review.docx para revisar),
+# mais os TIFF das figuras. As checagens comparam os dois e os numeros.
 paper: paper-assets
-	mkdir -p build
-	cd paper && $(TECTONIC) -X compile manuscript.tex --outdir ../build
-	@echo "PDF em build/manuscript.pdf"
+	$(PYTHON) scripts/build_plos.py
+	$(PYTHON) scripts/check_numbers.py
+	$(PYTHON) scripts/check_credit.py
+	-$(PYTHON) scripts/check_artifacts.py
 
 paper-clean:
-	rm -rf build paper/tables paper/figures paper/verified_numbers.json
-
-# versao condensada para a Rev Soc Bras Med Trop, mais o suplementar
-paper-rsbmt: paper-assets
-	mkdir -p build
-	cd paper && $(TECTONIC) -X compile manuscript_rsbmt.tex --outdir ../build
-	cd paper && $(TECTONIC) -X compile supplementary.tex --outdir ../build
-	$(PYTHON) scripts/check_limits.py manuscript_rsbmt.tex
+	rm -rf build/plos

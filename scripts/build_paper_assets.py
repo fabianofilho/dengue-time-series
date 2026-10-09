@@ -883,16 +883,71 @@ The seasonal naive forecast repeats the value observed in the same month of the 
 year. RelMAE is the mean absolute error of the best model divided by that of the seasonal
 naive forecast in the same city, over the same folds and horizons; a value below one means
 the model erred less than the baseline. DM gives the number of the twelve horizon steps at
-which a Diebold--Mariano test with the Harvey correction rejected equal predictive accuracy
+which a Diebold-Mariano test with the Harvey correction rejected equal predictive accuracy
 at $\alpha = {c['alpha']}$. Under the rule registered before the test was run, a model
 beats the baseline only if the 95\% bootstrap interval for the paired difference excludes
-zero {{\itshape and}} the Diebold--Mariano test rejects at no fewer than
+zero {{\itshape and}} the Diebold-Mariano test rejects at no fewer than
 {c['min_horizontes']} of the {c['n_horizontes']} horizons. The point estimate favours the
 model in every city, and no city satisfies the rule.
 \end{{minipage}}
 \end{{table}}
 """
     return tex, summary
+
+
+# --------------------------------------------------------------------------- #
+# Tabela 10: emenda exploratoria de 2026-10-04 (modelos treinados em log)
+# --------------------------------------------------------------------------- #
+def table10(ex: dict) -> str:
+    """TimesFM contra o melhor modelo treinado em cada escala, por cidade.
+
+    Antes so existia no .docx de revisao (build_docx.py); o manuscrito de
+    submissao precisa da mesma tabela, gerada do mesmo resumo.
+    """
+    order = [v[0] for v in CITIES.values()]
+    linhas = []
+    for city in order:
+        r = ex["per_city"][city]
+        raw = MODEL_LABEL[r["best_raw"]]
+        log = MODEL_LABEL[r["best_log"].removesuffix("_log")]
+        linhas.append(
+            f"{tex_escape(city)} & {r['relmae_timesfm']:.3f} & "
+            f"{r['relmae_best_raw']:.3f} ({raw}) & {r['relmae_best_log']:.3f} ({log}) \\\\"
+        )
+    mr = ex["mean_relmae"]
+    best_raw = min(TRAINED_RAW, key=lambda m: mr[m])
+    best_log = min(TRAINED_RAW, key=lambda m: mr[m + "_log"])
+    corpo = "\n".join(linhas)
+    return rf"""% gerado por scripts/build_paper_assets.py -- nao editar a mao
+\begin{{table}}[htbp]
+\centering
+\small
+\setlength{{\tabcolsep}}{{5pt}}
+\caption{{Exploratory analysis: relative MAE of TimesFM and of the best trained model
+fitted on raw counts and on the log scale, by city.}}
+\label{{tab:exploratory}}
+\begin{{tabular}}{{lccc}}
+\toprule
+City & TimesFM & Best trained, raw scale & Best trained, log scale \\
+\midrule
+{corpo}
+\midrule
+Mean across cities & {mr['timesfm']:.3f} & {mr[best_raw]:.3f} ({MODEL_LABEL[best_raw]}) & {mr[best_log + '_log']:.3f} ({MODEL_LABEL[best_log]}) \\
+\bottomrule
+\end{{tabular}}
+
+\vspace{{0.5em}}
+\begin{{minipage}}{{\textwidth}}
+\footnotesize
+Relative MAE is the MAE of the model divided by the MAE of the seasonal naive forecast
+over the same folds and horizons; below 1 means lower error than the baseline. The
+log-scale models were fitted on $\log(1+y)$ and back-transformed. This analysis was added
+on 4 October 2026, after the main results had been seen, and is exploratory. No model
+satisfies the pre-registered rule for beating the baseline in any city
+({ex['cities_where_any_model_beats_baseline']} of {len(order)}).
+\end{{minipage}}
+\end{{table}}
+"""
 
 
 # --------------------------------------------------------------------------- #
@@ -990,8 +1045,7 @@ the city identity entered as an indicator. Comparing a global model of one estim
 a per-city model of another would confound pooling with the choice of learner, so every
 comparison is within an estimator. An asterisk marks the pairs that satisfy the same
 pre-registered decision rule applied to the baseline comparison, which is defined in the
-Methods. This table is reproduced in both the main text and the supplementary material, so
-it does not cross-reference a table number that exists in only one of them. Pooling helped in {ajuda} of the
+Methods. Pooling helped in {ajuda} of the
 {total} city-estimator pairs and harmed in {atrapalha}; in the remaining
 {total - ajuda - atrapalha} the test did not distinguish the two forms. No global model
 beat the seasonal naive baseline in any city.
@@ -1727,6 +1781,7 @@ def main() -> None:
     write(TABLES / "table8_baseline.tex", t8)
     t9, global_summary = table9(load_baseline_summary())
     write(TABLES / "table9_global.tex", t9)
+    write(TABLES / "table10_exploratory.tex", table10(exploratory_log_summary()))
 
     print("Gerando figuras...")
     setup_style()

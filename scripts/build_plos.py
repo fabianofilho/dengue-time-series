@@ -378,6 +378,12 @@ def main() -> None:
     stage.write_text(final, encoding="utf-8")
     tectonic(stage)
     cites, labels = aux_maps(OUT / "manuscript.aux")
+    # FigN.tif sai da ordem dos \\plosfig na fonte; o numero da legenda no PDF tem
+    # que ser o mesmo, senao o arquivo enviado nao bate com a legenda
+    rotulos = re.findall(r"\\plosfig\{[^}]*\}\{([^}]*)\}", src)
+    for n, rot in enumerate(rotulos, 1):
+        if labels.get(rot) != str(n):
+            raise SystemExit(f"{rot} e a figura {n} na fonte mas Fig {labels.get(rot)} no PDF")
 
     # 2. S1 Appendix
     s1 = PLOS / "S1_Appendix_src.tex"

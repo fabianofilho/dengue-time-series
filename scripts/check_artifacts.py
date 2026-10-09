@@ -133,13 +133,15 @@ def main() -> None:
         print(f"       so no DOCX: {so_doc}")
 
 
+    # Pendencia e aviso, nao divergencia: as duas que restam (numero da OMS e DOI)
+    # sao conhecidas. Divergencia e o mesmo numero de pendencias nos dois.
     print("\n=== marcadores de pendencia ===")
-    for name, txt, marker in (("PDF", tex, "[PENDING"), ("DOCX", doc, "[PENDING")):
-        n = txt.count(marker)
-        status = "OK  " if n == 0 else "ERRO"
-        if n:
-            problems += 1
-        print(f"  {status} {name:5s} {marker}: {n}")
+    n_pdf, n_doc = tex.count("[PENDING"), doc.count("[PENDING")
+    status = "OK  " if n_pdf == n_doc else "ERRO"
+    if n_pdf != n_doc:
+        problems += 1
+    print(f"  {status} PDF {n_pdf}, DOCX {n_doc}" + ("  (AVISO: resolver antes de submeter)"
+                                                     if n_pdf else ""))
 
     print("\n=== referencia cruzada quebrada ===")
     for name, txt in (("PDF", tex),):

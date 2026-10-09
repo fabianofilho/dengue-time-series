@@ -57,7 +57,7 @@ paper: paper-assets
 	$(PYTHON) scripts/build_plos.py
 	$(PYTHON) scripts/check_numbers.py
 	$(PYTHON) scripts/check_credit.py
-	-$(PYTHON) scripts/check_artifacts.py
+	$(PYTHON) scripts/check_artifacts.py
 
 paper-clean:
 	rm -rf build/plos

@@ -51,7 +51,7 @@ Só o Wilson escreveu; o José não se manifestou no grupo (o Wilson mandou a af
 
 Comunicação: grupo de WhatsApp "Artigo pred dengue" (conectado na /zap em 07/10).
 
-- **11/10 19:33:** versão de 11/10 do .docx de revisão (gerada pelo `build_plos.py` no commit a742390; md5 45e741c8a8e7fbdfacebafe1c4ce1683) no Drive (`Labs/Dengue Time Series/DFP_manuscrito_revisao_coautores_2026-10-11.docx`, id 1djcKq3DzdGR6lpdAg-XyDLcNLrkwxeuT) e enviada ao grupo pelo Fermes (status ok), com a lista do que mudou, o pedido ao Wilson (literatura e número da OMS), a correção do MAE, a afiliação do José, a decisão GitHub + Zenodo e os papéis do CRediT no texto para cada um conferir. A Documentação do projeto no Drive ainda aponta para a versão de 06/10.
+- **11/10 19:33:** versão de 11/10 do .docx de revisão (gerada pelo `build_plos.py` no commit a742390; md5 45e741c8a8e7fbdfacebafe1c4ce1683) no Drive (`Labs/Dengue Time Series/DFP_manuscrito_revisao_coautores_2026-10-11.docx`, id 1djcKq3DzdGR6lpdAg-XyDLcNLrkwxeuT) e enviada ao grupo pelo Fermes (status ok), com a lista do que mudou, o pedido ao Wilson (literatura e número da OMS), a correção do MAE, a afiliação do José, a decisão GitHub + Zenodo e os papéis do CRediT no texto para cada um conferir. A Documentação do projeto no Drive foi atualizada em 11/10 (link da versão de 11/10, setor do José, item de Estado sobre o template PLOS e pendências refeitas).
 
 ## Próximos passos
 1. **Coautores:** [enviado ao grupo em 11/10] esperar o retorno do José e do Wilson (literatura, número da OMS, CRediT); o Fabiano manda ao Alexandre. Ler o grupo: `/zap grupo`.

@@ -246,6 +246,9 @@ def resolve_for_docx(tex: str, cites: dict[str, int], labels: dict[str, str]) ->
         out.append(tex[i:k] + "\\caption{" + prefixo + corpo + "}")
         i = fim
     tex = "".join(out) + tex[i:]
+    # o pandoc escreve \cmidrule(lr){4-7} como texto dentro da celula ("4-7 (lr)8-10");
+    # no Word a regra parcial nao faz falta
+    tex = re.sub(r"\\cmidrule(\([^)]*\))?\{[^}]*\}", "", tex)
     tex = re.sub(r"\\cite\{([^}]+)\}", cite, tex)
     tex = re.sub(r"\\ref\{([^}]+)\}", lambda m: labels[m.group(1)], tex)
     return tex

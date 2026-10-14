@@ -1,6 +1,6 @@
 # PROGRESS: Dengue Forecast Prediction (DFP)
 
-Atualizado em 2026-10-11, sessão encerrada: pacote de submissão PLOS montado a partir de uma fonte única (ver "Decisões de 09/10"), versão de 11/10 enviada ao grupo e Documentação do Drive atualizada. Esperando o retorno dos coautores.
+Atualizado em 2026-10-14, sessão encerrada: retorno do grupo de 11 a 14/10 lido, resumo para o Alexandre pronto e afirmações sobre outros estudos conferidas nas fontes (13 trechos a corrigir, esperando o OK do Fabiano).
 
 ## Objetivo
 Artigo comparando o TimesFM 2.5 zero-shot com modelos treinados por cidade na previsão mensal de dengue em 8 capitais, horizonte de 12 meses, para a **PLOS Neglected Tropical Diseases**.
@@ -31,7 +31,7 @@ Artigo comparando o TimesFM 2.5 zero-shot com modelos treinados por cidade na pr
 - Versão de 06/10 do .docx (com a Introduction do Wilson; md5 cc9490d3a6ac8c3a3faed910e64f51c6) no Drive (id 11SoDdZ11lw238Op1U2OPyRJLfLuul7yv) e enviada ao grupo em 06/10 às 06:41 pelo Fermes (status ok em ver_envios), com aviso de que o número da OMS está PENDING e de que a ref. 5 (TimesFM-3) ficou de fora.
 - LAB-135 (05/10): comentário registrando que o critério de 23/09 (commit 0f7fdd6, fixado 4 min antes da primeira rodada) resolve o bloqueio para a publicação de dengue. A issue já estava Done pelo lado do OPT.
 - 05/10 07:10: mensagem com as decisões, o deck (`scripts/build_deck.py` gera `build/DFP_deck_pipeline_AAAA-MM-DD.pdf`, 11 slides, números do verified_numbers) e o .docx de revisão enviados ao grupo de WhatsApp "Artigo pred dengue" (José e Wilson) pelo Fermes. O Alexandre não está no grupo; o Fabiano fala com ele. O grupo tem 3 participantes, mas a busca só identificou o Wilson pelo nome: confirmar que o José recebeu. Os arquivos enviados ficaram em `/opt/fermes-mcp/uploads` na VPS.
-- Remoto em dia em 11/10. Próxima sessão: `git fetch` antes de tudo e `/zap grupo` para ler o que chegou no grupo desde o envio de 11/10 às 19:33.
+- Remoto em dia em 14/10. Próxima sessão: `git fetch` antes de tudo e `/zap grupo` para ler o que chegou desde 14/10 09:47 (o Wilson ficou de mandar a revisão da Introdução e da Discussion).
 
 ## Retorno do grupo (05/10, lido na Evolution API)
 Só o Wilson escreveu; o José não se manifestou no grupo (o Wilson mandou a afiliação dele).
@@ -64,6 +64,7 @@ Comunicação: grupo de WhatsApp "Artigo pred dengue" (conectado na /zap em 07/1
 - **14/10, conferência da literatura nas fontes** (`paper/plos/verificacao_literatura_2026-10-14.md`): 6 afirmações herdadas do texto de 23/09 não conferem (Fang2024 e Chen2025rj sobre árvores contra paramétricos, Sebastianelli2024, Chen2025lstm, Barcellos2024, Lau2026foundation) e 7 são parciais (Leung2023 e Roster2022 na intro do Wilson, Sprint "prospective", Bannoud, Palmer, GurgelGoncalves2024, Siqueira2022). Texto ainda não alterado: esperando o OK do Fabiano. Resumo de uma página para o Alexandre em `build/plos/resumo_alexandre_2026-10-14.docx`.
 
 ## Próximos passos
+0. **Correções da literatura** (`paper/plos/verificacao_literatura_2026-10-14.md`): com o OK do Fabiano, reescrever os 13 trechos no `manuscript_src.tex`, rodar `make paper PYTHON=.venv/bin/python` e mostrar o diff; as duas frases da introdução do Wilson (Leung2023, Roster2022) vão para ele aprovar. Nenhum resultado nosso muda.
 1. **Coautores:** [enviado ao grupo em 11/10] esperar o retorno do José e do Wilson (literatura, número da OMS, CRediT). **Alexandre:** ainda não recebeu nada (13/10: nenhum e-mail enviado a ele desde junho, e o rascunho de 11/10 no Superhuman não existe mais; anexos de 11/10 em `~/Downloads/Email_Alexandre_2026-10-11/`). O Fabiano disse no grupo que fala com ele nesta semana (quarta é o dia no lab). Ler o grupo: `/zap grupo`.
 2. **Número da OMS** (`\pending` na Introdução): o Wilson confere no painel; se não voltar, trocar pelo informe da OMS (mais de 5 milhões de casos e mais de 3.000 óbitos em 2025).
 3. **Repositório público + Zenodo:** antes de abrir, limpar o que ainda for pessoal (o histórico tem e-mails dos coautores no PROGRESS desde o commit 2ac64d6; recomendação: manter o histórico, porque ele prova a ordem dos commits do critério; confirmar com o Fabiano). Depois, release no GitHub com a integração do Zenodo, DOI no Methods (`\pending`) e no `submission_fields.md`.

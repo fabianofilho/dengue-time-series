@@ -61,6 +61,8 @@ Comunicação: grupo de WhatsApp "Artigo pred dengue" (conectado na /zap em 07/1
   - O José segue sem se manifestar desde 06/10.
 - **14/10, defeito corrigido no .docx de revisão:** o pandoc escrevia `\cmidrule(lr){4-7}` como texto dentro das tabelas 1, 3 e 5 ("4-7 (lr)8-10"); a versão de 11/10 que foi ao grupo tem esse resíduo. `build_plos.py` agora remove as regras parciais antes do pandoc. O PDF de submissão não tinha o problema.
 
+- **14/10, conferência da literatura nas fontes** (`paper/plos/verificacao_literatura_2026-10-14.md`): 6 afirmações herdadas do texto de 23/09 não conferem (Fang2024 e Chen2025rj sobre árvores contra paramétricos, Sebastianelli2024, Chen2025lstm, Barcellos2024, Lau2026foundation) e 7 são parciais (Leung2023 e Roster2022 na intro do Wilson, Sprint "prospective", Bannoud, Palmer, GurgelGoncalves2024, Siqueira2022). Texto ainda não alterado: esperando o OK do Fabiano. Resumo de uma página para o Alexandre em `build/plos/resumo_alexandre_2026-10-14.docx`.
+
 ## Próximos passos
 1. **Coautores:** [enviado ao grupo em 11/10] esperar o retorno do José e do Wilson (literatura, número da OMS, CRediT). **Alexandre:** ainda não recebeu nada (13/10: nenhum e-mail enviado a ele desde junho, e o rascunho de 11/10 no Superhuman não existe mais; anexos de 11/10 em `~/Downloads/Email_Alexandre_2026-10-11/`). O Fabiano disse no grupo que fala com ele nesta semana (quarta é o dia no lab). Ler o grupo: `/zap grupo`.
 2. **Número da OMS** (`\pending` na Introdução): o Wilson confere no painel; se não voltar, trocar pelo informe da OMS (mais de 5 milhões de casos e mais de 3.000 óbitos em 2025).

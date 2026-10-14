@@ -5,6 +5,8 @@ fonte (Europe PMC e texto completo no PMC quando aberto; senão o abstract). Os 
 do texto de 23/09 e não tinham sido reconferidos. Conferi à parte, nos abstracts do Europe PMC,
 os quatro achados mais graves (Fang2024, Chen2025rj, Barcellos2024, Chen2025lstm).
 
+Correções aplicadas no `manuscript_src.tex` em 14/10/2026, com OK do Fabiano.
+
 Legenda: OK = confere; PARCIAL = exagera ou simplifica; NÃO = a fonte não sustenta ou contradiz.
 
 ## Não conferem (corrigir antes de submeter)

@@ -24,11 +24,11 @@ The authors received no specific funding for this work.
 The authors have declared that no competing interests exist.
 
 **Data Availability Statement**
-All data are publicly available. Monthly dengue case counts were obtained from the InfoDengue public API (https://info.dengue.mat.br/api/). The processed series, all model forecasts, result files, the pre-registered decision rule and the code that reproduces every table, figure and number in the manuscript are available at https://github.com/fabianofilho/dengue-time-series and archived at Zenodo (DOI: [PENDENTE, gerar ao abrir o repositório]).
+All data are publicly available. Monthly dengue case counts were obtained from the InfoDengue public API (https://info.dengue.mat.br/api/). The processed series, all model forecasts, result files, the pre-registered decision rule and the code that reproduces every table, figure and number in the manuscript are available at https://github.com/fabianofilho/dengue-time-series and will be archived at Zenodo with a DOI.
 
-> A PLOS exige o conjunto mínimo de dados público, em repositório com DOI ou accession, com
-> licença no máximo tão restritiva quanto CC BY. O GitHub sozinho não basta; o arquivamento
-> no Zenodo dá o DOI.
+> A PLOS exige o conjunto mínimo de dados público até a publicação, em repositório com DOI ou
+> accession, com licença no máximo tão restritiva quanto CC BY. Antes de submeter: abrir o
+> repositório; o DOI do Zenodo entra aqui assim que gerado (pode ser atualizado depois).
 
 **Ethics statement**
 Not applicable: publicly available, aggregated surveillance data with no individual-level information (CNS Resolution 510/2016, Article 1, items II and V). The full statement is in the Methods.

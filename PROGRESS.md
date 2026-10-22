@@ -1,6 +1,6 @@
 # PROGRESS: Dengue Forecast Prediction (DFP)
 
-Atualizado em 2026-10-14, sessão encerrada: retorno do grupo de 11 a 14/10 lido, resumo para o Alexandre pronto e afirmações sobre outros estudos conferidas nas fontes (13 trechos a corrigir, esperando o OK do Fabiano).
+Atualizado em 2026-10-22, sessão encerrada: versão final para submissão pronta (19/10) e enviada ao grupo em 22/10; o Wilson submete, com o Fabiano como autor correspondente. Faltam do Fabiano: compartilhar a pasta de submissão com o Wilson e abrir o repositório antes do submit.
 
 ## Objetivo
 Artigo comparando o TimesFM 2.5 zero-shot com modelos treinados por cidade na previsão mensal de dengue em 8 capitais, horizonte de 12 meses, para a **PLOS Neglected Tropical Diseases**.
@@ -31,7 +31,7 @@ Artigo comparando o TimesFM 2.5 zero-shot com modelos treinados por cidade na pr
 - Versão de 06/10 do .docx (com a Introduction do Wilson; md5 cc9490d3a6ac8c3a3faed910e64f51c6) no Drive (id 11SoDdZ11lw238Op1U2OPyRJLfLuul7yv) e enviada ao grupo em 06/10 às 06:41 pelo Fermes (status ok em ver_envios), com aviso de que o número da OMS está PENDING e de que a ref. 5 (TimesFM-3) ficou de fora.
 - LAB-135 (05/10): comentário registrando que o critério de 23/09 (commit 0f7fdd6, fixado 4 min antes da primeira rodada) resolve o bloqueio para a publicação de dengue. A issue já estava Done pelo lado do OPT.
 - 05/10 07:10: mensagem com as decisões, o deck (`scripts/build_deck.py` gera `build/DFP_deck_pipeline_AAAA-MM-DD.pdf`, 11 slides, números do verified_numbers) e o .docx de revisão enviados ao grupo de WhatsApp "Artigo pred dengue" (José e Wilson) pelo Fermes. O Alexandre não está no grupo; o Fabiano fala com ele. O grupo tem 3 participantes, mas a busca só identificou o Wilson pelo nome: confirmar que o José recebeu. Os arquivos enviados ficaram em `/opt/fermes-mcp/uploads` na VPS.
-- Remoto em dia em 14/10. Próxima sessão: `git fetch` antes de tudo e `/zap grupo` para ler o que chegou desde 14/10 09:47 (o Wilson ficou de mandar a revisão da Introdução e da Discussion).
+- Remoto em dia em 22/10. Próxima sessão: `git fetch` antes de tudo e `/zap grupo` para ler o que chegou desde o envio de 22/10 às 17:32.
 
 ## Retorno do grupo (05/10, lido na Evolution API)
 Só o Wilson escreveu; o José não se manifestou no grupo (o Wilson mandou a afiliação dele).
@@ -67,6 +67,13 @@ Comunicação: grupo de WhatsApp "Artigo pred dengue" (conectado na /zap em 07/1
 - **22/10 17:32:** versão final (.docx de 19/10, md5 d55091d7) enviada ao grupo pelo Fermes (status ok): TRIPOD fora, OMS pelo WER, título curto, pedido ao Wilson para submeter com o Fabiano como correspondente e avisar antes do submit (para abrir o repositório). A pasta de submissão AINDA NÃO está compartilhada com o Wilson: o compartilhamento pelo conector do Drive foi bloqueado pelo modo automático; o Fabiano compartilha à mão (wilson.academic.mail@gmail.com, editor).
 
 ## Próximos passos
+**Para submeter (estado de 22/10):**
+- a. [Fabiano] Compartilhar `Labs/Dengue Time Series/submissao_PLOS_NTD_2026-10-19/` (Drive id 14bbW97HJz7IIscYe_ON4sb3963ECxPsi) com wilson.academic.mail@gmail.com, editor. O conector do Drive foi bloqueado pelo modo automático ao tentar.
+- b. [Fabiano] Decidir o histórico do git (recomendação: manter) e abrir o repositório antes do submit; o texto e o campo de disponibilidade já dizem que está no GitHub. Depois, release no GitHub com Zenodo e o DOI no campo de disponibilidade (pode ser atualizado depois).
+- c. [Wilson] Submeter no Editorial Manager com os arquivos da pasta, o Fabiano como correspondente (ORCID no sistema), avisando antes do submit.
+- d. [Fabiano] Alexandre: recebeu só a versão de 11/10 por e-mail; levar a final na próxima conversa. Taxa da PLOS (cerca de US$ 2.670, não conferida) ou isenção.
+- e. José: sem resposta desde 06/10.
+
 0. [feito 14/10, com OK do Fabiano] **Correções da literatura** aplicadas no `manuscript_src.tex` (12 trechos; Codeco2018 mantido). As checagens passam. A caixa da cópia de revisão lista o que mudou desde 11/10, inclusive as duas frases da introdução do Wilson (Leung2023, Roster2022) para ele aprovar. Versão de 14/10 (md5 d6e3dde4) no Drive (`DFP_manuscrito_revisao_coautores_2026-10-14.docx`) e enviada ao grupo em 14/10 às 14:40 pelo Fermes (status ok), com o resumo das correções, o pedido ao Wilson sobre as duas frases da introdução e o retorno sobre os resumos visuais (preferência pela versão azul, trocar travessões). Documentação do projeto no Drive atualizada em 14/10 (link da versão de 14/10, item de Estado, pendência 1 refeita).
 1. **Coautores:** [enviado ao grupo em 11/10] esperar o retorno do José e do Wilson (literatura, número da OMS, CRediT). **Alexandre:** recebeu em 14/10 às 20:53, por e-mail (combo com CPT/IJF e OPT/CSP, Gmail msg 1a13cd57a8aac6fd), a versão de **11/10** (md5 45e741c8), não a de 14/10: a sessão do e-mail não viu as correções da literatura feitas à tarde. **Decisão do Fabiano (14/10, 21h): não reenviar agora**; o Alexandre fica com a de 11/10 e recebe a versão atual quando houver o próximo contato (resposta dele ou a reunião de quarta). Arquivos de 14/10 prontos em `~/Downloads/Email_Alexandre_2026-10-14_dengue/`. O e-mail pede a ele que confirme o CRediT. Ler o grupo: `/zap grupo`.
 2. **Número da OMS** (`\pending` na Introdução): o Wilson confere no painel; se não voltar, trocar pelo informe da OMS (mais de 5 milhões de casos e mais de 3.000 óbitos em 2025).

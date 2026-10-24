@@ -1,6 +1,6 @@
 # PROGRESS: Dengue Forecast Prediction (DFP)
 
-Atualizado em 2026-10-22, sessão encerrada: versão final para submissão pronta (19/10) e enviada ao grupo em 22/10; o Wilson submete, com o Fabiano como autor correspondente. Faltam do Fabiano: compartilhar a pasta de submissão com o Wilson e abrir o repositório antes do submit.
+Atualizado em 2026-10-24: **SUBMETIDO na PLOS NTD em 24/10/2026 às 09:48, manuscrito PNTD-D-26-02067** (o PNTD-S-26-02670 era o número provisório antes da aprovação). O Fabiano submeteu ele mesmo; grupo avisado. Próximo: esperar a checagem técnica da revista e o editor; Zenodo, LICENSE e isenção da taxa pendentes.
 
 ## Objetivo
 Artigo comparando o TimesFM 2.5 zero-shot com modelos treinados por cidade na previsão mensal de dengue em 8 capitais, horizonte de 12 meses, para a **PLOS Neglected Tropical Diseases**.
@@ -67,17 +67,18 @@ Comunicação: grupo de WhatsApp "Artigo pred dengue" (conectado na /zap em 07/1
 - **22/10 17:32:** versão final (.docx de 19/10, md5 d55091d7) enviada ao grupo pelo Fermes (status ok): TRIPOD fora, OMS pelo WER, título curto, pedido ao Wilson para submeter com o Fabiano como correspondente e avisar antes do submit (para abrir o repositório). A pasta de submissão AINDA NÃO está compartilhada com o Wilson: o compartilhamento pelo conector do Drive foi bloqueado pelo modo automático; o Fabiano compartilha à mão (o e-mail do Wilson, editor).
 
 ## Próximos passos
-**Submissão em andamento (23/10, o Fabiano submete ele mesmo, não o Wilson):**
-- Repositório aberto em 23/10 (público, com histórico; antes, e-mail de coautor tirado do PROGRESS). Sem LICENSE ainda (sugerido MIT).
-- Conta do Fabiano criada no Editorial Manager da PLOS NTD (cadastro feito por ele). Submissão salva em "Incomplete Submissions" (Edit Submission). Feito: Research Article; 12 arquivos (Cover Letter, Manuscript PDF, Fig 1 a 10, ordem salva); seção Virus; classificações e revisor sugerido (Matheus Coradini, USP) pelo Fabiano; Additional Information salvo (sem gov. EUA, sem funding, sem conflitos, Data Availability com GitHub + Zenodo, sem humanos, related work "No", sem interação prévia, sem preprint anterior, publicação antecipada Yes, coleção No).
-- Pendente: preprint PLOS/medRxiv deve ficar "No - do not post" (a troca abre confirmação nativa do Chrome; conferir se salvou); o medRxiv exige declarar aprovação de todos os coautores, que ainda não existe. Manuscript Data: título, título curto, abstract, palavras-chave (preenchidos uma vez e perdidos ao trocar de aba; valores em build/plos/campos_para_colar_2026-10-23.txt), coautores (José: LIHE, 100 Lambeth Palace Road, London SE1 7AR; Wilson: UNIFIPA, R. dos Estudantes 225, Catanduva, 15809-144; Alexandre: FSP/USP, Av. Dr. Arnaldo 715, 01246-904; endereços conferidos nos sites oficiais), CRediT de cada um, funding. Depois: Build PDF for Approval e o Fabiano aprova.
-- Avisar o grupo que o Fabiano submete (o Wilson disse que enviaria no fim de semana).
+**Submetido em 24/10/2026 (o Fabiano submeteu ele mesmo):**
+- E-mails do Editorial Manager (Gmail, 24/10): 09:42 PDF pronto para aprovação; 09:48 confirmação de recebimento e número **PNTD-D-26-02067**. Próximo status esperado: "With Editor" ou "Editor Invited", depois da checagem técnica dos arquivos (a revista pode pedir ajustes).
+- Conteúdo submetido: Research Article, seção Virus; 12 arquivos (cover letter, PDF do manuscrito de 19/10, Fig 1 a 10 em TIFF); 4 autores com afiliação, CRediT e o Fabiano como correspondente; sem financiamento e sem conflitos; Data Availability com GitHub + Zenodo; preprint "não postar" (o medRxiv exigiria aprovação declarada de todos os coautores); publicação antecipada Yes; revisor sugerido Matheus Coradini (USP).
+- Taxa: aceite da cobrança registrado no sistema em 24/10 às 08:37. Isenção (PLOS Fee Assistance, formulário da Alchemer) NÃO enviada até 24/10: nenhum e-mail sobre ela. Documentos prontos em `~/Desktop/DFP_submissao_PLOS/`: carta do Alexandre como orientador (precisa ler e assinar) e declaração do próprio Fabiano (assinar e exportar em PDF).
+- Grupo avisado em 24/10 pelo Fermes (status enviado) com o número e o próximo passo da revista.
+- Repositório público desde 23/10, sem LICENSE (sugerido MIT, esperando OK).
 
-**Para submeter (estado de 22/10):**
-- a. [Fabiano] Compartilhar `Labs/Dengue Time Series/submissao_PLOS_NTD_2026-10-19/` (Drive id 14bbW97HJz7IIscYe_ON4sb3963ECxPsi) com o e-mail do Wilson, editor. O conector do Drive foi bloqueado pelo modo automático ao tentar.
-- b. [Fabiano] Decidir o histórico do git (recomendação: manter) e abrir o repositório antes do submit; o texto e o campo de disponibilidade já dizem que está no GitHub. Depois, release no GitHub com Zenodo e o DOI no campo de disponibilidade (pode ser atualizado depois).
-- c. [Wilson] Submeter no Editorial Manager com os arquivos da pasta, o Fabiano como correspondente (ORCID no sistema), avisando antes do submit.
-- d. [Fabiano] Alexandre: recebeu só a versão de 11/10 por e-mail; levar a final na próxima conversa. Taxa da PLOS (cerca de US$ 2.670, não conferida) ou isenção.
+**Pendências (lista de 22/10, revista em 24/10):**
+- a. [Fabiano, opcional depois da submissão] Compartilhar `Labs/Dengue Time Series/submissao_PLOS_NTD_2026-10-19/` (Drive id 14bbW97HJz7IIscYe_ON4sb3963ECxPsi) com o e-mail do Wilson, editor. O conector do Drive foi bloqueado pelo modo automático ao tentar.
+- b. [feito 23/10] Repositório aberto com o histórico. [Fabiano + Claude] Falta: release no GitHub com Zenodo e o DOI no campo de disponibilidade (pode ser atualizado depois).
+- c. [feito 24/10] Submetido pelo Fabiano (PNTD-D-26-02067).
+- d. [Fabiano] Alexandre: recebeu só a versão de 11/10 por e-mail; levar a final (a submetida) na próxima conversa e pedir que assine a carta da isenção da taxa, se o Fabiano for por esse caminho.
 - e. José: sem resposta desde 06/10.
 
 0. [feito 14/10, com OK do Fabiano] **Correções da literatura** aplicadas no `manuscript_src.tex` (12 trechos; Codeco2018 mantido). As checagens passam. A caixa da cópia de revisão lista o que mudou desde 11/10, inclusive as duas frases da introdução do Wilson (Leung2023, Roster2022) para ele aprovar. Versão de 14/10 (md5 d6e3dde4) no Drive (`DFP_manuscrito_revisao_coautores_2026-10-14.docx`) e enviada ao grupo em 14/10 às 14:40 pelo Fermes (status ok), com o resumo das correções, o pedido ao Wilson sobre as duas frases da introdução e o retorno sobre os resumos visuais (preferência pela versão azul, trocar travessões). Documentação do projeto no Drive atualizada em 14/10 (link da versão de 14/10, item de Estado, pendência 1 refeita).

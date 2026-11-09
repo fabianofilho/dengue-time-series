@@ -1,6 +1,19 @@
 # PROGRESS: Dengue Forecast Prediction (DFP)
 
-Atualizado em 2026-10-24: **SUBMETIDO na PLOS NTD em 24/10/2026 às 09:48, manuscrito PNTD-D-26-02067** (o PNTD-S-26-02670 era o número provisório antes da aprovação). O Fabiano submeteu ele mesmo; grupo avisado. Próximo: esperar a checagem técnica da revista e o editor; Zenodo, LICENSE e isenção da taxa pendentes. Sessão encerrada em 24/10.
+Atualizado em 2026-11-09: **PLOS NTD rejeitou em 05/11 (PNTD-D-26-02067, sem comentários de revisores no e-mail) e ofereceu transferência ao PLOS ONE (oferta vale até 04/01/2027). Transferido em 08/11; em 09/11 o PLOS ONE devolveu o manuscrito ao autor pedindo informações e cover letter nova, prazo de 21 dias (cerca de 30/11, extensão de até 1 mês por plosone@plos.org).** Estado no Editorial Manager do PLOS ONE (pasta "Submissions Sent Back to Author"): Article Type, Section (Medicine and Health Sciences) e arquivos ok; Additional Information preenchida em parte (ver Próximos passos 2026-11-09). Não enviado ainda.
+
+Histórico: submetido na PLOS NTD em 24/10/2026 às 09:48, manuscrito PNTD-D-26-02067 (o PNTD-S-26-02670 era o número provisório antes da aprovação). O Fabiano submeteu ele mesmo; grupo avisado.
+
+## Próximos passos 2026-11-09 (PLOS ONE)
+Feito nesta sessão: cover letter do PLOS ONE em `paper/submission/cover_letter_plosone.md` e `.docx` (números conferidos pelo `check_numbers.py`; "pre-registered" trocado por "fixed in advance", porque a regra foi fixada no repo e não em um registro oficial); LICENSE MIT adicionada ao repo; no formulário foram preenchidos subsection (Public health and epidemiology), competing interests, ética, data availability, copyright/dual publication ("No"), group authorship ("No"), funcionário dos EUA ("No") e preprint já postado ("No").
+Falta, nesta ordem:
+1. [Fabiano] Subir `cover_letter_plosone.docx` em Attach Files, no lugar de `DFP_cover_letter_2026-10-19.docx` (a do NTD). O Claude não alcança o seletor de arquivos.
+2. [Fabiano] Marcar as 5 declarações da etapa Additional Information (autores concordam e cumprem autoria; Agradecimentos; padrões de dados e reporte; relação com manuscritos), a confirmação das figuras e, em Previous Interactions, "previamente submetido a outro periódico PLOS" (já marcado pelo Claude, conferir). O sistema de permissões barrou o Claude de marcar as de autoria. Antes, confirmar com José, Wilson e Alexandre.
+3. [Fabiano] Decidir "PLOS posta no bioRxiv/medRxiv antes da revisão?" (no NTD foi "não postar").
+4. [Fabiano] No campo Data Availability do formulário, trocar "pre-registered decision rule" por "pre-specified decision rule".
+5. [Fabiano] Conferir valor da taxa do PLOS ONE e se o PLOS Fee Assistance vale; a carta do Alexandre e a declaração do Fabiano para isenção não foram achadas em `~/Desktop/DFP_submissao_PLOS/` (pasta inexistente em 09/11).
+6. [Fabiano + Claude] Zenodo: ativar a integração GitHub no zenodo.org (login dele), criar o release e pôr o DOI em Data Availability. LICENSE já está no repo.
+7. Atualizar `paper/plos/submission_fields.md` e `cover_letter.md` só se o PLOS ONE pedir; hoje eles descrevem o PLOS NTD.
 
 ## Objetivo
 Artigo comparando o TimesFM 2.5 zero-shot com modelos treinados por cidade na previsão mensal de dengue em 8 capitais, horizonte de 12 meses, para a **PLOS Neglected Tropical Diseases**.

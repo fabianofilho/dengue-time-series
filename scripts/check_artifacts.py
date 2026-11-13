@@ -29,12 +29,11 @@ PDF = ROOT / "build" / "plos" / "manuscript.pdf"
 DOCX = ROOT / "build" / "plos" / "manuscript_review.docx"
 NUMBERS = ROOT / "paper" / "verified_numbers.json"
 
-# Secoes que a PLOS NTD exige no manuscrito. Funding, competing interests,
+# Secoes que a PLOS ONE exige no manuscrito (o Author summary e do NTD e nao entra aqui). Funding, competing interests,
 # autoria e disponibilidade de dados vao nos campos do sistema
 # (paper/plos/submission_fields.md), nao aqui.
 REQUIRED = [
     "Abstract",
-    "Author summary",
     "Introduction",
     "Methods",
     "Ethics statement",

@@ -116,8 +116,9 @@ Para reenviar material ao grupo: `make paper PYTHON=.venv/bin/python` (ou `pytho
 - Submeter o manuscrito do repo `dengue-timeseries-skforecast`.
 - RSBMT como revista-alvo.
 
-## Estado de 2026-11-13 (branch `revisao-linguagem`, não mergeada)
+## Estado de 2026-11-13 (revisão de linguagem MERGEADA na main, depois do ok do Fabiano)
 - Edições do Alexandre (docx de 10/11) aplicadas na `main` (f4d020f). Revisão de linguagem científica (32 mudanças, conferência em `build/plos/revisao_linguagem_2026-11-13.docx`) está na branch `revisao-linguagem` (c88e04e), aguardando o "ok" do Fabiano; merge só depois.
 - Falta antes de subir o manuscrito no PLOS ONE (regras conferidas em journals.plos.org/plosone/s/submission-guidelines em 13/11): (1) abstract tem cerca de 304 palavras e o limite é 300 (a frase nova do Alexandre passou do limite); (2) o PLOS ONE não lista Author Summary, e o manuscrito tem um de 202 palavras (tirar da versão PLOS ONE); (3) por conferir se o abstract estruturado (Background/Methodology/Conclusions) é aceito ou deve virar parágrafo único.
 - Pedido do Alexandre ainda sem resposta: explicar por que as 8 capitais foram escolhidas (critério não documentado no repo).
 - Aprovação dos coautores e Zenodo/DOI continuam pendentes; a taxa e o pedido de isenção entram em campo próprio do sistema, nunca na cover letter.
+- 13/11, feito: revisão de linguagem mergeada; abstract cortado para 295 palavras (limite 300); Author summary removido (PLOS ONE não o tem) e `check_artifacts.py` não o exige mais. PDF novo em `build/plos/manuscript.pdf` (não é o que está no sistema do PLOS ONE). Resta: abstract estruturado ou parágrafo único (por conferir), as 8 capitais, OK dos coautores, subir manuscrito e cover letter, declarações, Zenodo.
